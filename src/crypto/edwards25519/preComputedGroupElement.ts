@@ -75,9 +75,9 @@ export class PreComputedGroupElement {
             this.cMove(CONST_BASE[pos][i], this.equal(bAbs, i + 1));
         }
 
-        minusT.yPlusX = new FieldElement(this.yMinusX.data);
-        minusT.yMinusX = new FieldElement(this.yPlusX.data);
-        minusT.xy2d = new FieldElement(this.xy2d.data);
+        minusT.yPlusX = this.yMinusX.clone();
+        minusT.yMinusX = this.yPlusX.clone();
+        minusT.xy2d = this.xy2d.clone();
         minusT.xy2d.neg();
 
         this.cMove(minusT, bNegative);

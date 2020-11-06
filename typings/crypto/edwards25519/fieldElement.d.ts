@@ -7,6 +7,10 @@
  */
 export declare class FieldElement {
     /**
+     * Field element size.
+     */
+    private static readonly FIELD_ELEMENT_SIZE;
+    /**
      * The data for the element.
      */
     data: Int32Array;
@@ -200,4 +204,9 @@ export declare class FieldElement {
      * Zero all the values and set the first byte to 1.
      */
     one(): void;
+    /**
+     * Clone the field element.
+     * @returns The clones element.
+     */
+    clone(): FieldElement;
 }

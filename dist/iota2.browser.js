@@ -1506,7 +1506,7 @@
 
 	});
 
-	var common$1 = createCommonjsModule(function (module, exports) {
+	var bigIntCommon = createCommonjsModule(function (module, exports) {
 	/* eslint-disable no-bitwise */
 	/**
 	 * This is a port of the Go code from https://github.com/hdevalence/ed25519consensus
@@ -1514,10 +1514,14 @@
 	 * which in a port of the “ref10” implementation of ed25519 from SUPERCOP
 	 */
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.load4BytesBigInt = exports.load3BytesBigInt = exports.BIG_8388607 = exports.BIG_2097151 = exports.BIG_683901 = exports.BIG_136657 = exports.BIG_997805 = exports.BIG_654183 = exports.BIG_470296 = exports.BIG_666643 = exports.BIG_38 = exports.BIG_ARR = exports.BIG_1_SHIFTL_25 = exports.BIG_1_SHIFTL_24 = exports.BIG_1_SHIFTL_20 = void 0;
+	exports.bigIntLoad8 = exports.bigIntLoad4 = exports.bigIntLoad3 = exports.BIG_8388607 = exports.BIG_2097151 = exports.BIG_683901 = exports.BIG_136657 = exports.BIG_997805 = exports.BIG_654183 = exports.BIG_470296 = exports.BIG_666643 = exports.BIG_38 = exports.BIG_32 = exports.BIG_ARR = exports.BIG_1_SHIFTL_25 = exports.BIG_1_SHIFTL_24 = exports.BIG_1_SHIFTL_20 = void 0;
+	// @internal
 	exports.BIG_1_SHIFTL_20 = BigInt(1) << BigInt(20);
+	// @internal
 	exports.BIG_1_SHIFTL_24 = BigInt(1) << BigInt(24);
+	// @internal
 	exports.BIG_1_SHIFTL_25 = BigInt(1) << BigInt(25);
+	// @internal
 	exports.BIG_ARR = [
 	    BigInt(0), BigInt(1), BigInt(2), BigInt(3), BigInt(4), BigInt(5),
 	    BigInt(6), BigInt(7), BigInt(8), BigInt(9), BigInt(10), BigInt(11),
@@ -1525,44 +1529,74 @@
 	    BigInt(18), BigInt(19), BigInt(20), BigInt(21), BigInt(22), BigInt(23),
 	    BigInt(24), BigInt(25), BigInt(26)
 	];
+	// @internal
+	exports.BIG_32 = BigInt(32);
+	// @internal
 	exports.BIG_38 = BigInt(38);
+	// @internal
 	exports.BIG_666643 = BigInt(666643);
+	// @internal
 	exports.BIG_470296 = BigInt(470296);
+	// @internal
 	exports.BIG_654183 = BigInt(654183);
+	// @internal
 	exports.BIG_997805 = BigInt(997805);
+	// @internal
 	exports.BIG_136657 = BigInt(136657);
+	// @internal
 	exports.BIG_683901 = BigInt(683901);
+	// @internal
 	exports.BIG_2097151 = BigInt(2097151);
+	// @internal
 	exports.BIG_8388607 = BigInt(8388607);
 	/**
 	 * Load 3 bytes from array as bigint.
-	 * @param input The input array.
-	 * @param startIndex The start index to read from.
+	 * @param data The input array.
+	 * @param byteOffset The start index to read from.
 	 * @returns The bigint.
+	 * @internal
 	 */
-	function load3BytesBigInt(input, startIndex) {
-	    var r;
-	    r = BigInt(input[startIndex]);
-	    r |= BigInt(input[startIndex + 1]) << exports.BIG_ARR[8];
-	    r |= BigInt(input[startIndex + 2]) << exports.BIG_ARR[16];
-	    return r;
+	function bigIntLoad3(data, byteOffset) {
+	    var v0 = (data[byteOffset + 0] +
+	        (data[byteOffset + 1] << 8) +
+	        (data[byteOffset + 2] << 16)) >>> 0;
+	    return BigInt(v0);
 	}
-	exports.load3BytesBigInt = load3BytesBigInt;
+	exports.bigIntLoad3 = bigIntLoad3;
 	/**
 	 * Load 4 bytes from array as bigint.
-	 * @param input The input array.
-	 * @param startIndex The start index to read from.
+	 * @param data The input array.
+	 * @param byteOffset The start index to read from.
 	 * @returns The bigint.
+	 * @internal
 	 */
-	function load4BytesBigInt(input, startIndex) {
-	    var r;
-	    r = BigInt(input[startIndex]);
-	    r |= BigInt(input[startIndex + 1]) << exports.BIG_ARR[8];
-	    r |= BigInt(input[startIndex + 2]) << exports.BIG_ARR[16];
-	    r |= BigInt(input[startIndex + 3]) << exports.BIG_ARR[24];
-	    return r;
+	function bigIntLoad4(data, byteOffset) {
+	    var v0 = (data[byteOffset + 0] +
+	        (data[byteOffset + 1] << 8) +
+	        (data[byteOffset + 2] << 16) +
+	        (data[byteOffset + 3] << 24)) >>> 0;
+	    return BigInt(v0);
 	}
-	exports.load4BytesBigInt = load4BytesBigInt;
+	exports.bigIntLoad4 = bigIntLoad4;
+	/**
+	 * Load 8 bytes from array as bigint.
+	 * @param data The data to read from.
+	 * @param byteOffset The start index to read from.
+	 * @returns The bigint.
+	 * @internal
+	 */
+	function bigIntLoad8(data, byteOffset) {
+	    var v0 = (data[byteOffset + 0] +
+	        (data[byteOffset + 1] << 8) +
+	        (data[byteOffset + 2] << 16) +
+	        (data[byteOffset + 3] << 24)) >>> 0;
+	    var v1 = (data[byteOffset + 4] +
+	        (data[byteOffset + 5] << 8) +
+	        (data[byteOffset + 6] << 16) +
+	        (data[byteOffset + 7] << 24)) >>> 0;
+	    return (BigInt(v1) << exports.BIG_32) | BigInt(v0);
+	}
+	exports.bigIntLoad8 = bigIntLoad8;
 
 	});
 
@@ -1590,7 +1624,7 @@
 	     * @param values A set of values to initialize the array.
 	     */
 	    function FieldElement(values) {
-	        this.data = new Int32Array(10);
+	        this.data = new Int32Array(FieldElement.FIELD_ELEMENT_SIZE);
 	        if (values) {
 	            this.data.set(values);
 	        }
@@ -1695,64 +1729,64 @@
 	          |h1| <= (1.1*1.1*2^51*(1+1+19+19+19+19+19+19+19+19))
 	            i.e. |h1| <= 1.5*2^58; narrower ranges for h3, h5, h7, h9
 	        */
-	        c0 = (h0 + common$1.BIG_1_SHIFTL_25) >> common$1.BIG_ARR[26];
+	        c0 = (h0 + bigIntCommon.BIG_1_SHIFTL_25) >> bigIntCommon.BIG_ARR[26];
 	        h1 += c0;
-	        h0 -= c0 << common$1.BIG_ARR[26];
-	        c4 = (h4 + common$1.BIG_1_SHIFTL_25) >> common$1.BIG_ARR[26];
+	        h0 -= c0 << bigIntCommon.BIG_ARR[26];
+	        c4 = (h4 + bigIntCommon.BIG_1_SHIFTL_25) >> bigIntCommon.BIG_ARR[26];
 	        h5 += c4;
-	        h4 -= c4 << common$1.BIG_ARR[26];
+	        h4 -= c4 << bigIntCommon.BIG_ARR[26];
 	        /* |h0| <= 2^25 */
 	        /* |h4| <= 2^25 */
 	        /* |h1| <= 1.51*2^58 */
 	        /* |h5| <= 1.51*2^58 */
-	        var c1 = (h1 + common$1.BIG_1_SHIFTL_24) >> common$1.BIG_ARR[25];
+	        var c1 = (h1 + bigIntCommon.BIG_1_SHIFTL_24) >> bigIntCommon.BIG_ARR[25];
 	        h2 += c1;
-	        h1 -= c1 << common$1.BIG_ARR[25];
-	        var c5 = (h5 + common$1.BIG_1_SHIFTL_24) >> common$1.BIG_ARR[25];
+	        h1 -= c1 << bigIntCommon.BIG_ARR[25];
+	        var c5 = (h5 + bigIntCommon.BIG_1_SHIFTL_24) >> bigIntCommon.BIG_ARR[25];
 	        h6 += c5;
-	        h5 -= c5 << common$1.BIG_ARR[25];
+	        h5 -= c5 << bigIntCommon.BIG_ARR[25];
 	        /* |h1| <= 2^24; from now on fits into: number */
 	        /* |h5| <= 2^24; from now on fits into: number */
 	        /* |h2| <= 1.21*2^59 */
 	        /* |h6| <= 1.21*2^59 */
-	        var c2 = (h2 + common$1.BIG_1_SHIFTL_25) >> common$1.BIG_ARR[26];
+	        var c2 = (h2 + bigIntCommon.BIG_1_SHIFTL_25) >> bigIntCommon.BIG_ARR[26];
 	        h3 += c2;
-	        h2 -= c2 << common$1.BIG_ARR[26];
-	        var c6 = (h6 + common$1.BIG_1_SHIFTL_25) >> common$1.BIG_ARR[26];
+	        h2 -= c2 << bigIntCommon.BIG_ARR[26];
+	        var c6 = (h6 + bigIntCommon.BIG_1_SHIFTL_25) >> bigIntCommon.BIG_ARR[26];
 	        h7 += c6;
-	        h6 -= c6 << common$1.BIG_ARR[26];
+	        h6 -= c6 << bigIntCommon.BIG_ARR[26];
 	        /* |h2| <= 2^25; from now on fits into: number unchanged */
 	        /* |h6| <= 2^25; from now on fits into: number unchanged */
 	        /* |h3| <= 1.51*2^58 */
 	        /* |h7| <= 1.51*2^58 */
-	        var c3 = (h3 + common$1.BIG_1_SHIFTL_24) >> common$1.BIG_ARR[25];
+	        var c3 = (h3 + bigIntCommon.BIG_1_SHIFTL_24) >> bigIntCommon.BIG_ARR[25];
 	        h4 += c3;
-	        h3 -= c3 << common$1.BIG_ARR[25];
-	        var c7 = (h7 + common$1.BIG_1_SHIFTL_24) >> common$1.BIG_ARR[25];
+	        h3 -= c3 << bigIntCommon.BIG_ARR[25];
+	        var c7 = (h7 + bigIntCommon.BIG_1_SHIFTL_24) >> bigIntCommon.BIG_ARR[25];
 	        h8 += c7;
-	        h7 -= c7 << common$1.BIG_ARR[25];
+	        h7 -= c7 << bigIntCommon.BIG_ARR[25];
 	        /* |h3| <= 2^24; from now on fits into: number unchanged */
 	        /* |h7| <= 2^24; from now on fits into: number unchanged */
 	        /* |h4| <= 1.52*2^33 */
 	        /* |h8| <= 1.52*2^33 */
-	        c4 = (h4 + common$1.BIG_1_SHIFTL_25) >> common$1.BIG_ARR[26];
+	        c4 = (h4 + bigIntCommon.BIG_1_SHIFTL_25) >> bigIntCommon.BIG_ARR[26];
 	        h5 += c4;
-	        h4 -= c4 << common$1.BIG_ARR[26];
-	        var c8 = (h8 + common$1.BIG_1_SHIFTL_25) >> common$1.BIG_ARR[26];
+	        h4 -= c4 << bigIntCommon.BIG_ARR[26];
+	        var c8 = (h8 + bigIntCommon.BIG_1_SHIFTL_25) >> bigIntCommon.BIG_ARR[26];
 	        h9 += c8;
-	        h8 -= c8 << common$1.BIG_ARR[26];
+	        h8 -= c8 << bigIntCommon.BIG_ARR[26];
 	        /* |h4| <= 2^25; from now on fits into: number unchanged */
 	        /* |h8| <= 2^25; from now on fits into: number unchanged */
 	        /* |h5| <= 1.01*2^24 */
 	        /* |h9| <= 1.51*2^58 */
-	        var c9 = (h9 + common$1.BIG_1_SHIFTL_24) >> common$1.BIG_ARR[25];
-	        h0 += c9 * common$1.BIG_ARR[19];
-	        h9 -= c9 << common$1.BIG_ARR[25];
+	        var c9 = (h9 + bigIntCommon.BIG_1_SHIFTL_24) >> bigIntCommon.BIG_ARR[25];
+	        h0 += c9 * bigIntCommon.BIG_ARR[19];
+	        h9 -= c9 << bigIntCommon.BIG_ARR[25];
 	        /* |h9| <= 2^24; from now on fits into: number unchanged */
 	        /* |h0| <= 1.8*2^37 */
-	        c0 = (h0 + common$1.BIG_1_SHIFTL_25) >> common$1.BIG_ARR[26];
+	        c0 = (h0 + bigIntCommon.BIG_1_SHIFTL_25) >> bigIntCommon.BIG_ARR[26];
 	        h1 += c0;
-	        h0 -= c0 << common$1.BIG_ARR[26];
+	        h0 -= c0 << bigIntCommon.BIG_ARR[26];
 	        /* |h0| <= 2^25; from now on fits into: number unchanged */
 	        /* |h1| <= 1.01*2^24 */
 	        this.data[0] = Number(h0);
@@ -1810,11 +1844,11 @@
 	        var f52 = BigInt(2 * f.data[5]);
 	        var f62 = BigInt(2 * f.data[6]);
 	        var f72 = BigInt(2 * f.data[7]);
-	        var f538 = common$1.BIG_38 * f5; // 1.31*2^30
-	        var f619 = common$1.BIG_ARR[19] * f6; // 1.31*2^30
-	        var f738 = common$1.BIG_38 * f7; // 1.31*2^30
-	        var f819 = common$1.BIG_ARR[19] * f8; // 1.31*2^30
-	        var f938 = common$1.BIG_38 * f9; // 1.31*2^30
+	        var f538 = bigIntCommon.BIG_38 * f5; // 1.31*2^30
+	        var f619 = bigIntCommon.BIG_ARR[19] * f6; // 1.31*2^30
+	        var f738 = bigIntCommon.BIG_38 * f7; // 1.31*2^30
+	        var f819 = bigIntCommon.BIG_ARR[19] * f8; // 1.31*2^30
+	        var f938 = bigIntCommon.BIG_38 * f9; // 1.31*2^30
 	        return {
 	            h0: (f0 * f0) + (f12 * f938) + (f22 * f819) + (f32 * f738) + (f42 * f619) + (f5 * f538),
 	            h1: (f02 * f1) + (f2 * f938) + (f32 * f819) + (f4 * f738) + (f52 * f619),
@@ -1894,16 +1928,16 @@
 	     * @param bytes The bytes to populate from.
 	     */
 	    FieldElement.prototype.fromBytes = function (bytes) {
-	        var h0 = common$1.load4BytesBigInt(bytes, 0);
-	        var h1 = common$1.load3BytesBigInt(bytes, 4) << common$1.BIG_ARR[6];
-	        var h2 = common$1.load3BytesBigInt(bytes, 7) << common$1.BIG_ARR[5];
-	        var h3 = common$1.load3BytesBigInt(bytes, 10) << common$1.BIG_ARR[3];
-	        var h4 = common$1.load3BytesBigInt(bytes, 13) << common$1.BIG_ARR[2];
-	        var h5 = common$1.load4BytesBigInt(bytes, 16);
-	        var h6 = common$1.load3BytesBigInt(bytes, 20) << common$1.BIG_ARR[7];
-	        var h7 = common$1.load3BytesBigInt(bytes, 23) << common$1.BIG_ARR[5];
-	        var h8 = common$1.load3BytesBigInt(bytes, 26) << common$1.BIG_ARR[4];
-	        var h9 = (common$1.load3BytesBigInt(bytes, 29) & common$1.BIG_8388607) << common$1.BIG_ARR[2];
+	        var h0 = bigIntCommon.bigIntLoad4(bytes, 0);
+	        var h1 = bigIntCommon.bigIntLoad3(bytes, 4) << bigIntCommon.BIG_ARR[6];
+	        var h2 = bigIntCommon.bigIntLoad3(bytes, 7) << bigIntCommon.BIG_ARR[5];
+	        var h3 = bigIntCommon.bigIntLoad3(bytes, 10) << bigIntCommon.BIG_ARR[3];
+	        var h4 = bigIntCommon.bigIntLoad3(bytes, 13) << bigIntCommon.BIG_ARR[2];
+	        var h5 = bigIntCommon.bigIntLoad4(bytes, 16);
+	        var h6 = bigIntCommon.bigIntLoad3(bytes, 20) << bigIntCommon.BIG_ARR[7];
+	        var h7 = bigIntCommon.bigIntLoad3(bytes, 23) << bigIntCommon.BIG_ARR[5];
+	        var h8 = bigIntCommon.bigIntLoad3(bytes, 26) << bigIntCommon.BIG_ARR[4];
+	        var h9 = (bigIntCommon.bigIntLoad3(bytes, 29) & bigIntCommon.BIG_8388607) << bigIntCommon.BIG_ARR[2];
 	        this.combine(h0, h1, h2, h3, h4, h5, h6, h7, h8, h9);
 	    };
 	    /**
@@ -1933,7 +1967,7 @@
 	     * @param bytes The bytes to populate.
 	     */
 	    FieldElement.prototype.toBytes = function (bytes) {
-	        var carry = new Int32Array(10);
+	        var carry = new Int32Array(FieldElement.FIELD_ELEMENT_SIZE);
 	        var q = ((19 * this.data[9]) + (1 << 24)) >> 25;
 	        q = (this.data[0] + q) >> 26;
 	        q = (this.data[1] + q) >> 25;
@@ -2050,16 +2084,9 @@
 	     *    |h| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
 	     */
 	    FieldElement.prototype.neg = function () {
-	        this.data[0] = -this.data[0];
-	        this.data[1] = -this.data[1];
-	        this.data[2] = -this.data[2];
-	        this.data[3] = -this.data[3];
-	        this.data[4] = -this.data[4];
-	        this.data[5] = -this.data[5];
-	        this.data[6] = -this.data[6];
-	        this.data[7] = -this.data[7];
-	        this.data[8] = -this.data[8];
-	        this.data[9] = -this.data[9];
+	        for (var i = 0; i < FieldElement.FIELD_ELEMENT_SIZE; i++) {
+	            this.data[i] = -this.data[i];
+	        }
 	    };
 	    /**
 	     * Invert
@@ -2131,9 +2158,9 @@
 	        var t2 = new FieldElement();
 	        var i;
 	        t0.square(z);
-	        for (i = 1; i < 1; i++) {
-	            t0.square(t0);
-	        }
+	        // for (i = 1; i < 1; i++) {
+	        //     t0.square(t0);
+	        // }
 	        t1.square(t0);
 	        for (i = 1; i < 2; i++) {
 	            t1.square(t1);
@@ -2141,9 +2168,9 @@
 	        t1.mul(z, t1);
 	        t0.mul(t0, t1);
 	        t0.square(t0);
-	        for (i = 1; i < 1; i++) {
-	            t0.square(t0);
-	        }
+	        // for (i = 1; i < 1; i++) {
+	        //     t0.square(t0);
+	        // }
 	        t0.mul(t1, t0);
 	        t1.square(t0);
 	        for (i = 1; i < 5; i++) {
@@ -2211,19 +2238,26 @@
 	     * Zero the values.
 	     */
 	    FieldElement.prototype.zero = function () {
-	        for (var i = 0; i < 10; i++) {
-	            this.data[i] = 0;
-	        }
+	        this.data.fill(0);
 	    };
 	    /**
 	     * Zero all the values and set the first byte to 1.
 	     */
 	    FieldElement.prototype.one = function () {
+	        this.data.fill(0);
 	        this.data[0] = 1;
-	        for (var i = 1; i < 10; i++) {
-	            this.data[i] = 0;
-	        }
 	    };
+	    /**
+	     * Clone the field element.
+	     * @returns The clones element.
+	     */
+	    FieldElement.prototype.clone = function () {
+	        return new FieldElement(this.data);
+	    };
+	    /**
+	     * Field element size.
+	     */
+	    FieldElement.FIELD_ELEMENT_SIZE = 10;
 	    return FieldElement;
 	}());
 	exports.FieldElement = FieldElement;
@@ -2443,9 +2477,9 @@
 	        for (var i = 0; i < 8; i++) {
 	            this.cMove(_const.CONST_BASE[pos][i], this.equal(bAbs, i + 1));
 	        }
-	        minusT.yPlusX = new fieldElement.FieldElement(this.yMinusX.data);
-	        minusT.yMinusX = new fieldElement.FieldElement(this.yPlusX.data);
-	        minusT.xy2d = new fieldElement.FieldElement(this.xy2d.data);
+	        minusT.yPlusX = this.yMinusX.clone();
+	        minusT.yMinusX = this.yPlusX.clone();
+	        minusT.xy2d = this.xy2d.clone();
 	        minusT.xy2d.neg();
 	        this.cMove(minusT, bNegative);
 	    };
@@ -2496,7 +2530,7 @@
 	// A is a constant in the Montgomery-form of curve25519.
 	exports.CONST_A = new fieldElement.FieldElement([486662, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 	// order is the order of Curve25519 in little-endian form.
-	exports.CONST_ORDER = new BigUint64Array([BigInt(0x5812631A5CF5D3ED), BigInt(0x14DEF9DEA2F79CD6), common$1.BIG_ARR[0], BigInt(0x1000000000000000)]);
+	exports.CONST_ORDER = [BigInt(0x5812631A5CF5D3ED), BigInt(0x14DEF9DEA2F79CD6), bigIntCommon.BIG_ARR[0], BigInt(0x1000000000000000)];
 	// bi contains precomputed multiples of the base-point. See the Ed25519 paper
 	// for a discussion about how these values are used.
 	exports.CONST_BI = [
@@ -3065,7 +3099,7 @@
 	    ExtendedGroupElement.prototype.toCached = function (cacheGroupElement) {
 	        cacheGroupElement.yPlusX.add(this.Y, this.X);
 	        cacheGroupElement.yMinusX.sub(this.Y, this.X);
-	        cacheGroupElement.Z = new fieldElement.FieldElement(this.Z.data);
+	        cacheGroupElement.Z = this.Z.clone();
 	        cacheGroupElement.T2d.mul(this.T, _const.CONST_D2);
 	    };
 	    /**
@@ -3073,9 +3107,9 @@
 	     * @param projectiveGroupElement The element to populate.
 	     */
 	    ExtendedGroupElement.prototype.toProjective = function (projectiveGroupElement) {
-	        projectiveGroupElement.X = new fieldElement.FieldElement(this.X.data);
-	        projectiveGroupElement.Y = new fieldElement.FieldElement(this.Y.data);
-	        projectiveGroupElement.Z = new fieldElement.FieldElement(this.Z.data);
+	        projectiveGroupElement.X = this.X.clone();
+	        projectiveGroupElement.Y = this.Y.clone();
+	        projectiveGroupElement.Z = this.Z.clone();
 	    };
 	    /**
 	     * Convert the element to bytes.
@@ -3252,42 +3286,42 @@
 	 * @param c The c.
 	 */
 	function scalarMulAdd(s, a, b, c) {
-	    var a0 = common$1.BIG_2097151 & common$1.load3BytesBigInt(a, 0);
-	    var a1 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(a, 2) >> common$1.BIG_ARR[5]);
-	    var a2 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(a, 5) >> common$1.BIG_ARR[2]);
-	    var a3 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(a, 7) >> common$1.BIG_ARR[7]);
-	    var a4 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(a, 10) >> common$1.BIG_ARR[4]);
-	    var a5 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(a, 13) >> common$1.BIG_ARR[1]);
-	    var a6 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(a, 15) >> common$1.BIG_ARR[6]);
-	    var a7 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(a, 18) >> common$1.BIG_ARR[3]);
-	    var a8 = common$1.BIG_2097151 & common$1.load3BytesBigInt(a, 21);
-	    var a9 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(a, 23) >> common$1.BIG_ARR[5]);
-	    var a10 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(a, 26) >> common$1.BIG_ARR[2]);
-	    var a11 = (common$1.load4BytesBigInt(a, 28) >> common$1.BIG_ARR[7]);
-	    var b0 = common$1.BIG_2097151 & common$1.load3BytesBigInt(b, 0);
-	    var b1 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(b, 2) >> common$1.BIG_ARR[5]);
-	    var b2 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(b, 5) >> common$1.BIG_ARR[2]);
-	    var b3 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(b, 7) >> common$1.BIG_ARR[7]);
-	    var b4 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(b, 10) >> common$1.BIG_ARR[4]);
-	    var b5 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(b, 13) >> common$1.BIG_ARR[1]);
-	    var b6 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(b, 15) >> common$1.BIG_ARR[6]);
-	    var b7 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(b, 18) >> common$1.BIG_ARR[3]);
-	    var b8 = common$1.BIG_2097151 & common$1.load3BytesBigInt(b, 21);
-	    var b9 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(b, 23) >> common$1.BIG_ARR[5]);
-	    var b10 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(b, 26) >> common$1.BIG_ARR[2]);
-	    var b11 = (common$1.load4BytesBigInt(b, 28) >> common$1.BIG_ARR[7]);
-	    var c0 = common$1.BIG_2097151 & common$1.load3BytesBigInt(c, 0);
-	    var c1 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(c, 2) >> common$1.BIG_ARR[5]);
-	    var c2 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(c, 5) >> common$1.BIG_ARR[2]);
-	    var c3 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(c, 7) >> common$1.BIG_ARR[7]);
-	    var c4 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(c, 10) >> common$1.BIG_ARR[4]);
-	    var c5 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(c, 13) >> common$1.BIG_ARR[1]);
-	    var c6 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(c, 15) >> common$1.BIG_ARR[6]);
-	    var c7 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(c, 18) >> common$1.BIG_ARR[3]);
-	    var c8 = common$1.BIG_2097151 & common$1.load3BytesBigInt(c, 21);
-	    var c9 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(c, 23) >> common$1.BIG_ARR[5]);
-	    var c10 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(c, 26) >> common$1.BIG_ARR[2]);
-	    var c11 = (common$1.load4BytesBigInt(c, 28) >> common$1.BIG_ARR[7]);
+	    var a0 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(a, 0);
+	    var a1 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(a, 2) >> bigIntCommon.BIG_ARR[5]);
+	    var a2 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(a, 5) >> bigIntCommon.BIG_ARR[2]);
+	    var a3 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(a, 7) >> bigIntCommon.BIG_ARR[7]);
+	    var a4 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(a, 10) >> bigIntCommon.BIG_ARR[4]);
+	    var a5 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(a, 13) >> bigIntCommon.BIG_ARR[1]);
+	    var a6 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(a, 15) >> bigIntCommon.BIG_ARR[6]);
+	    var a7 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(a, 18) >> bigIntCommon.BIG_ARR[3]);
+	    var a8 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(a, 21);
+	    var a9 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(a, 23) >> bigIntCommon.BIG_ARR[5]);
+	    var a10 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(a, 26) >> bigIntCommon.BIG_ARR[2]);
+	    var a11 = (bigIntCommon.bigIntLoad4(a, 28) >> bigIntCommon.BIG_ARR[7]);
+	    var b0 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(b, 0);
+	    var b1 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(b, 2) >> bigIntCommon.BIG_ARR[5]);
+	    var b2 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(b, 5) >> bigIntCommon.BIG_ARR[2]);
+	    var b3 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(b, 7) >> bigIntCommon.BIG_ARR[7]);
+	    var b4 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(b, 10) >> bigIntCommon.BIG_ARR[4]);
+	    var b5 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(b, 13) >> bigIntCommon.BIG_ARR[1]);
+	    var b6 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(b, 15) >> bigIntCommon.BIG_ARR[6]);
+	    var b7 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(b, 18) >> bigIntCommon.BIG_ARR[3]);
+	    var b8 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(b, 21);
+	    var b9 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(b, 23) >> bigIntCommon.BIG_ARR[5]);
+	    var b10 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(b, 26) >> bigIntCommon.BIG_ARR[2]);
+	    var b11 = (bigIntCommon.bigIntLoad4(b, 28) >> bigIntCommon.BIG_ARR[7]);
+	    var c0 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(c, 0);
+	    var c1 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(c, 2) >> bigIntCommon.BIG_ARR[5]);
+	    var c2 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(c, 5) >> bigIntCommon.BIG_ARR[2]);
+	    var c3 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(c, 7) >> bigIntCommon.BIG_ARR[7]);
+	    var c4 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(c, 10) >> bigIntCommon.BIG_ARR[4]);
+	    var c5 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(c, 13) >> bigIntCommon.BIG_ARR[1]);
+	    var c6 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(c, 15) >> bigIntCommon.BIG_ARR[6]);
+	    var c7 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(c, 18) >> bigIntCommon.BIG_ARR[3]);
+	    var c8 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(c, 21);
+	    var c9 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(c, 23) >> bigIntCommon.BIG_ARR[5]);
+	    var c10 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(c, 26) >> bigIntCommon.BIG_ARR[2]);
+	    var c11 = (bigIntCommon.bigIntLoad4(c, 28) >> bigIntCommon.BIG_ARR[7]);
 	    var carry = new BigInt64Array(32);
 	    var s0 = c0 + (a0 * b0);
 	    var s1 = c1 + (a0 * b1) + (a1 * b0);
@@ -3312,344 +3346,344 @@
 	    var s20 = (a9 * b11) + (a10 * b10) + (a11 * b9);
 	    var s21 = (a10 * b11) + (a11 * b10);
 	    var s22 = (a11 * b11);
-	    var s23 = common$1.BIG_ARR[0];
-	    carry[0] = (s0 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    var s23 = bigIntCommon.BIG_ARR[0];
+	    carry[0] = (s0 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s1 += carry[0];
-	    s0 -= carry[0] << common$1.BIG_ARR[21];
-	    carry[2] = (s2 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s0 -= carry[0] << bigIntCommon.BIG_ARR[21];
+	    carry[2] = (s2 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s3 += carry[2];
-	    s2 -= carry[2] << common$1.BIG_ARR[21];
-	    carry[4] = (s4 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s2 -= carry[2] << bigIntCommon.BIG_ARR[21];
+	    carry[4] = (s4 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s5 += carry[4];
-	    s4 -= carry[4] << common$1.BIG_ARR[21];
-	    carry[6] = (s6 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s4 -= carry[4] << bigIntCommon.BIG_ARR[21];
+	    carry[6] = (s6 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s7 += carry[6];
-	    s6 -= carry[6] << common$1.BIG_ARR[21];
-	    carry[8] = (s8 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s6 -= carry[6] << bigIntCommon.BIG_ARR[21];
+	    carry[8] = (s8 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s9 += carry[8];
-	    s8 -= carry[8] << common$1.BIG_ARR[21];
-	    carry[10] = (s10 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s8 -= carry[8] << bigIntCommon.BIG_ARR[21];
+	    carry[10] = (s10 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s11 += carry[10];
-	    s10 -= carry[10] << common$1.BIG_ARR[21];
-	    carry[12] = (s12 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s10 -= carry[10] << bigIntCommon.BIG_ARR[21];
+	    carry[12] = (s12 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s13 += carry[12];
-	    s12 -= carry[12] << common$1.BIG_ARR[21];
-	    carry[14] = (s14 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s12 -= carry[12] << bigIntCommon.BIG_ARR[21];
+	    carry[14] = (s14 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s15 += carry[14];
-	    s14 -= carry[14] << common$1.BIG_ARR[21];
-	    carry[16] = (s16 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s14 -= carry[14] << bigIntCommon.BIG_ARR[21];
+	    carry[16] = (s16 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s17 += carry[16];
-	    s16 -= carry[16] << common$1.BIG_ARR[21];
-	    carry[18] = (s18 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s16 -= carry[16] << bigIntCommon.BIG_ARR[21];
+	    carry[18] = (s18 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s19 += carry[18];
-	    s18 -= carry[18] << common$1.BIG_ARR[21];
-	    carry[20] = (s20 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s18 -= carry[18] << bigIntCommon.BIG_ARR[21];
+	    carry[20] = (s20 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s21 += carry[20];
-	    s20 -= carry[20] << common$1.BIG_ARR[21];
-	    carry[22] = (s22 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s20 -= carry[20] << bigIntCommon.BIG_ARR[21];
+	    carry[22] = (s22 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s23 += carry[22];
-	    s22 -= carry[22] << common$1.BIG_ARR[21];
-	    carry[1] = (s1 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s22 -= carry[22] << bigIntCommon.BIG_ARR[21];
+	    carry[1] = (s1 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s2 += carry[1];
-	    s1 -= carry[1] << common$1.BIG_ARR[21];
-	    carry[3] = (s3 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s1 -= carry[1] << bigIntCommon.BIG_ARR[21];
+	    carry[3] = (s3 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s4 += carry[3];
-	    s3 -= carry[3] << common$1.BIG_ARR[21];
-	    carry[5] = (s5 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s3 -= carry[3] << bigIntCommon.BIG_ARR[21];
+	    carry[5] = (s5 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s6 += carry[5];
-	    s5 -= carry[5] << common$1.BIG_ARR[21];
-	    carry[7] = (s7 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s5 -= carry[5] << bigIntCommon.BIG_ARR[21];
+	    carry[7] = (s7 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s8 += carry[7];
-	    s7 -= carry[7] << common$1.BIG_ARR[21];
-	    carry[9] = (s9 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s7 -= carry[7] << bigIntCommon.BIG_ARR[21];
+	    carry[9] = (s9 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s10 += carry[9];
-	    s9 -= carry[9] << common$1.BIG_ARR[21];
-	    carry[11] = (s11 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s9 -= carry[9] << bigIntCommon.BIG_ARR[21];
+	    carry[11] = (s11 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s12 += carry[11];
-	    s11 -= carry[11] << common$1.BIG_ARR[21];
-	    carry[13] = (s13 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s11 -= carry[11] << bigIntCommon.BIG_ARR[21];
+	    carry[13] = (s13 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s14 += carry[13];
-	    s13 -= carry[13] << common$1.BIG_ARR[21];
-	    carry[15] = (s15 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s13 -= carry[13] << bigIntCommon.BIG_ARR[21];
+	    carry[15] = (s15 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s16 += carry[15];
-	    s15 -= carry[15] << common$1.BIG_ARR[21];
-	    carry[17] = (s17 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s15 -= carry[15] << bigIntCommon.BIG_ARR[21];
+	    carry[17] = (s17 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s18 += carry[17];
-	    s17 -= carry[17] << common$1.BIG_ARR[21];
-	    carry[19] = (s19 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s17 -= carry[17] << bigIntCommon.BIG_ARR[21];
+	    carry[19] = (s19 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s20 += carry[19];
-	    s19 -= carry[19] << common$1.BIG_ARR[21];
-	    carry[21] = (s21 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s19 -= carry[19] << bigIntCommon.BIG_ARR[21];
+	    carry[21] = (s21 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s22 += carry[21];
-	    s21 -= carry[21] << common$1.BIG_ARR[21];
-	    s11 += s23 * common$1.BIG_666643;
-	    s12 += s23 * common$1.BIG_470296;
-	    s13 += s23 * common$1.BIG_654183;
-	    s14 -= s23 * common$1.BIG_997805;
-	    s15 += s23 * common$1.BIG_136657;
-	    s16 -= s23 * common$1.BIG_683901;
-	    s23 = common$1.BIG_ARR[0];
-	    s10 += s22 * common$1.BIG_666643;
-	    s11 += s22 * common$1.BIG_470296;
-	    s12 += s22 * common$1.BIG_654183;
-	    s13 -= s22 * common$1.BIG_997805;
-	    s14 += s22 * common$1.BIG_136657;
-	    s15 -= s22 * common$1.BIG_683901;
-	    s22 = common$1.BIG_ARR[0];
-	    s9 += s21 * common$1.BIG_666643;
-	    s10 += s21 * common$1.BIG_470296;
-	    s11 += s21 * common$1.BIG_654183;
-	    s12 -= s21 * common$1.BIG_997805;
-	    s13 += s21 * common$1.BIG_136657;
-	    s14 -= s21 * common$1.BIG_683901;
-	    s21 = common$1.BIG_ARR[0];
-	    s8 += s20 * common$1.BIG_666643;
-	    s9 += s20 * common$1.BIG_470296;
-	    s10 += s20 * common$1.BIG_654183;
-	    s11 -= s20 * common$1.BIG_997805;
-	    s12 += s20 * common$1.BIG_136657;
-	    s13 -= s20 * common$1.BIG_683901;
-	    s20 = common$1.BIG_ARR[0];
-	    s7 += s19 * common$1.BIG_666643;
-	    s8 += s19 * common$1.BIG_470296;
-	    s9 += s19 * common$1.BIG_654183;
-	    s10 -= s19 * common$1.BIG_997805;
-	    s11 += s19 * common$1.BIG_136657;
-	    s12 -= s19 * common$1.BIG_683901;
-	    s19 = common$1.BIG_ARR[0];
-	    s6 += s18 * common$1.BIG_666643;
-	    s7 += s18 * common$1.BIG_470296;
-	    s8 += s18 * common$1.BIG_654183;
-	    s9 -= s18 * common$1.BIG_997805;
-	    s10 += s18 * common$1.BIG_136657;
-	    s11 -= s18 * common$1.BIG_683901;
-	    s18 = common$1.BIG_ARR[0];
-	    carry[6] = (s6 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s21 -= carry[21] << bigIntCommon.BIG_ARR[21];
+	    s11 += s23 * bigIntCommon.BIG_666643;
+	    s12 += s23 * bigIntCommon.BIG_470296;
+	    s13 += s23 * bigIntCommon.BIG_654183;
+	    s14 -= s23 * bigIntCommon.BIG_997805;
+	    s15 += s23 * bigIntCommon.BIG_136657;
+	    s16 -= s23 * bigIntCommon.BIG_683901;
+	    s23 = bigIntCommon.BIG_ARR[0];
+	    s10 += s22 * bigIntCommon.BIG_666643;
+	    s11 += s22 * bigIntCommon.BIG_470296;
+	    s12 += s22 * bigIntCommon.BIG_654183;
+	    s13 -= s22 * bigIntCommon.BIG_997805;
+	    s14 += s22 * bigIntCommon.BIG_136657;
+	    s15 -= s22 * bigIntCommon.BIG_683901;
+	    s22 = bigIntCommon.BIG_ARR[0];
+	    s9 += s21 * bigIntCommon.BIG_666643;
+	    s10 += s21 * bigIntCommon.BIG_470296;
+	    s11 += s21 * bigIntCommon.BIG_654183;
+	    s12 -= s21 * bigIntCommon.BIG_997805;
+	    s13 += s21 * bigIntCommon.BIG_136657;
+	    s14 -= s21 * bigIntCommon.BIG_683901;
+	    s21 = bigIntCommon.BIG_ARR[0];
+	    s8 += s20 * bigIntCommon.BIG_666643;
+	    s9 += s20 * bigIntCommon.BIG_470296;
+	    s10 += s20 * bigIntCommon.BIG_654183;
+	    s11 -= s20 * bigIntCommon.BIG_997805;
+	    s12 += s20 * bigIntCommon.BIG_136657;
+	    s13 -= s20 * bigIntCommon.BIG_683901;
+	    s20 = bigIntCommon.BIG_ARR[0];
+	    s7 += s19 * bigIntCommon.BIG_666643;
+	    s8 += s19 * bigIntCommon.BIG_470296;
+	    s9 += s19 * bigIntCommon.BIG_654183;
+	    s10 -= s19 * bigIntCommon.BIG_997805;
+	    s11 += s19 * bigIntCommon.BIG_136657;
+	    s12 -= s19 * bigIntCommon.BIG_683901;
+	    s19 = bigIntCommon.BIG_ARR[0];
+	    s6 += s18 * bigIntCommon.BIG_666643;
+	    s7 += s18 * bigIntCommon.BIG_470296;
+	    s8 += s18 * bigIntCommon.BIG_654183;
+	    s9 -= s18 * bigIntCommon.BIG_997805;
+	    s10 += s18 * bigIntCommon.BIG_136657;
+	    s11 -= s18 * bigIntCommon.BIG_683901;
+	    s18 = bigIntCommon.BIG_ARR[0];
+	    carry[6] = (s6 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s7 += carry[6];
-	    s6 -= carry[6] << common$1.BIG_ARR[21];
-	    carry[8] = (s8 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s6 -= carry[6] << bigIntCommon.BIG_ARR[21];
+	    carry[8] = (s8 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s9 += carry[8];
-	    s8 -= carry[8] << common$1.BIG_ARR[21];
-	    carry[10] = (s10 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s8 -= carry[8] << bigIntCommon.BIG_ARR[21];
+	    carry[10] = (s10 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s11 += carry[10];
-	    s10 -= carry[10] << common$1.BIG_ARR[21];
-	    carry[12] = (s12 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s10 -= carry[10] << bigIntCommon.BIG_ARR[21];
+	    carry[12] = (s12 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s13 += carry[12];
-	    s12 -= carry[12] << common$1.BIG_ARR[21];
-	    carry[14] = (s14 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s12 -= carry[12] << bigIntCommon.BIG_ARR[21];
+	    carry[14] = (s14 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s15 += carry[14];
-	    s14 -= carry[14] << common$1.BIG_ARR[21];
-	    carry[16] = (s16 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s14 -= carry[14] << bigIntCommon.BIG_ARR[21];
+	    carry[16] = (s16 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s17 += carry[16];
-	    s16 -= carry[16] << common$1.BIG_ARR[21];
-	    carry[7] = (s7 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s16 -= carry[16] << bigIntCommon.BIG_ARR[21];
+	    carry[7] = (s7 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s8 += carry[7];
-	    s7 -= carry[7] << common$1.BIG_ARR[21];
-	    carry[9] = (s9 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s7 -= carry[7] << bigIntCommon.BIG_ARR[21];
+	    carry[9] = (s9 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s10 += carry[9];
-	    s9 -= carry[9] << common$1.BIG_ARR[21];
-	    carry[11] = (s11 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s9 -= carry[9] << bigIntCommon.BIG_ARR[21];
+	    carry[11] = (s11 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s12 += carry[11];
-	    s11 -= carry[11] << common$1.BIG_ARR[21];
-	    carry[13] = (s13 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s11 -= carry[11] << bigIntCommon.BIG_ARR[21];
+	    carry[13] = (s13 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s14 += carry[13];
-	    s13 -= carry[13] << common$1.BIG_ARR[21];
-	    carry[15] = (s15 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s13 -= carry[13] << bigIntCommon.BIG_ARR[21];
+	    carry[15] = (s15 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s16 += carry[15];
-	    s15 -= carry[15] << common$1.BIG_ARR[21];
-	    s5 += s17 * common$1.BIG_666643;
-	    s6 += s17 * common$1.BIG_470296;
-	    s7 += s17 * common$1.BIG_654183;
-	    s8 -= s17 * common$1.BIG_997805;
-	    s9 += s17 * common$1.BIG_136657;
-	    s10 -= s17 * common$1.BIG_683901;
-	    s17 = common$1.BIG_ARR[0];
-	    s4 += s16 * common$1.BIG_666643;
-	    s5 += s16 * common$1.BIG_470296;
-	    s6 += s16 * common$1.BIG_654183;
-	    s7 -= s16 * common$1.BIG_997805;
-	    s8 += s16 * common$1.BIG_136657;
-	    s9 -= s16 * common$1.BIG_683901;
-	    s16 = common$1.BIG_ARR[0];
-	    s3 += s15 * common$1.BIG_666643;
-	    s4 += s15 * common$1.BIG_470296;
-	    s5 += s15 * common$1.BIG_654183;
-	    s6 -= s15 * common$1.BIG_997805;
-	    s7 += s15 * common$1.BIG_136657;
-	    s8 -= s15 * common$1.BIG_683901;
-	    s15 = common$1.BIG_ARR[0];
-	    s2 += s14 * common$1.BIG_666643;
-	    s3 += s14 * common$1.BIG_470296;
-	    s4 += s14 * common$1.BIG_654183;
-	    s5 -= s14 * common$1.BIG_997805;
-	    s6 += s14 * common$1.BIG_136657;
-	    s7 -= s14 * common$1.BIG_683901;
-	    s14 = common$1.BIG_ARR[0];
-	    s1 += s13 * common$1.BIG_666643;
-	    s2 += s13 * common$1.BIG_470296;
-	    s3 += s13 * common$1.BIG_654183;
-	    s4 -= s13 * common$1.BIG_997805;
-	    s5 += s13 * common$1.BIG_136657;
-	    s6 -= s13 * common$1.BIG_683901;
-	    s13 = common$1.BIG_ARR[0];
-	    s0 += s12 * common$1.BIG_666643;
-	    s1 += s12 * common$1.BIG_470296;
-	    s2 += s12 * common$1.BIG_654183;
-	    s3 -= s12 * common$1.BIG_997805;
-	    s4 += s12 * common$1.BIG_136657;
-	    s5 -= s12 * common$1.BIG_683901;
-	    s12 = common$1.BIG_ARR[0];
-	    carry[0] = (s0 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s15 -= carry[15] << bigIntCommon.BIG_ARR[21];
+	    s5 += s17 * bigIntCommon.BIG_666643;
+	    s6 += s17 * bigIntCommon.BIG_470296;
+	    s7 += s17 * bigIntCommon.BIG_654183;
+	    s8 -= s17 * bigIntCommon.BIG_997805;
+	    s9 += s17 * bigIntCommon.BIG_136657;
+	    s10 -= s17 * bigIntCommon.BIG_683901;
+	    s17 = bigIntCommon.BIG_ARR[0];
+	    s4 += s16 * bigIntCommon.BIG_666643;
+	    s5 += s16 * bigIntCommon.BIG_470296;
+	    s6 += s16 * bigIntCommon.BIG_654183;
+	    s7 -= s16 * bigIntCommon.BIG_997805;
+	    s8 += s16 * bigIntCommon.BIG_136657;
+	    s9 -= s16 * bigIntCommon.BIG_683901;
+	    s16 = bigIntCommon.BIG_ARR[0];
+	    s3 += s15 * bigIntCommon.BIG_666643;
+	    s4 += s15 * bigIntCommon.BIG_470296;
+	    s5 += s15 * bigIntCommon.BIG_654183;
+	    s6 -= s15 * bigIntCommon.BIG_997805;
+	    s7 += s15 * bigIntCommon.BIG_136657;
+	    s8 -= s15 * bigIntCommon.BIG_683901;
+	    s15 = bigIntCommon.BIG_ARR[0];
+	    s2 += s14 * bigIntCommon.BIG_666643;
+	    s3 += s14 * bigIntCommon.BIG_470296;
+	    s4 += s14 * bigIntCommon.BIG_654183;
+	    s5 -= s14 * bigIntCommon.BIG_997805;
+	    s6 += s14 * bigIntCommon.BIG_136657;
+	    s7 -= s14 * bigIntCommon.BIG_683901;
+	    s14 = bigIntCommon.BIG_ARR[0];
+	    s1 += s13 * bigIntCommon.BIG_666643;
+	    s2 += s13 * bigIntCommon.BIG_470296;
+	    s3 += s13 * bigIntCommon.BIG_654183;
+	    s4 -= s13 * bigIntCommon.BIG_997805;
+	    s5 += s13 * bigIntCommon.BIG_136657;
+	    s6 -= s13 * bigIntCommon.BIG_683901;
+	    s13 = bigIntCommon.BIG_ARR[0];
+	    s0 += s12 * bigIntCommon.BIG_666643;
+	    s1 += s12 * bigIntCommon.BIG_470296;
+	    s2 += s12 * bigIntCommon.BIG_654183;
+	    s3 -= s12 * bigIntCommon.BIG_997805;
+	    s4 += s12 * bigIntCommon.BIG_136657;
+	    s5 -= s12 * bigIntCommon.BIG_683901;
+	    s12 = bigIntCommon.BIG_ARR[0];
+	    carry[0] = (s0 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s1 += carry[0];
-	    s0 -= carry[0] << common$1.BIG_ARR[21];
-	    carry[2] = (s2 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s0 -= carry[0] << bigIntCommon.BIG_ARR[21];
+	    carry[2] = (s2 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s3 += carry[2];
-	    s2 -= carry[2] << common$1.BIG_ARR[21];
-	    carry[4] = (s4 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s2 -= carry[2] << bigIntCommon.BIG_ARR[21];
+	    carry[4] = (s4 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s5 += carry[4];
-	    s4 -= carry[4] << common$1.BIG_ARR[21];
-	    carry[6] = (s6 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s4 -= carry[4] << bigIntCommon.BIG_ARR[21];
+	    carry[6] = (s6 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s7 += carry[6];
-	    s6 -= carry[6] << common$1.BIG_ARR[21];
-	    carry[8] = (s8 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s6 -= carry[6] << bigIntCommon.BIG_ARR[21];
+	    carry[8] = (s8 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s9 += carry[8];
-	    s8 -= carry[8] << common$1.BIG_ARR[21];
-	    carry[10] = (s10 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s8 -= carry[8] << bigIntCommon.BIG_ARR[21];
+	    carry[10] = (s10 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s11 += carry[10];
-	    s10 -= carry[10] << common$1.BIG_ARR[21];
-	    carry[1] = (s1 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s10 -= carry[10] << bigIntCommon.BIG_ARR[21];
+	    carry[1] = (s1 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s2 += carry[1];
-	    s1 -= carry[1] << common$1.BIG_ARR[21];
-	    carry[3] = (s3 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s1 -= carry[1] << bigIntCommon.BIG_ARR[21];
+	    carry[3] = (s3 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s4 += carry[3];
-	    s3 -= carry[3] << common$1.BIG_ARR[21];
-	    carry[5] = (s5 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s3 -= carry[3] << bigIntCommon.BIG_ARR[21];
+	    carry[5] = (s5 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s6 += carry[5];
-	    s5 -= carry[5] << common$1.BIG_ARR[21];
-	    carry[7] = (s7 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s5 -= carry[5] << bigIntCommon.BIG_ARR[21];
+	    carry[7] = (s7 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s8 += carry[7];
-	    s7 -= carry[7] << common$1.BIG_ARR[21];
-	    carry[9] = (s9 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s7 -= carry[7] << bigIntCommon.BIG_ARR[21];
+	    carry[9] = (s9 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s10 += carry[9];
-	    s9 -= carry[9] << common$1.BIG_ARR[21];
-	    carry[11] = (s11 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s9 -= carry[9] << bigIntCommon.BIG_ARR[21];
+	    carry[11] = (s11 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s12 += carry[11];
-	    s11 -= carry[11] << common$1.BIG_ARR[21];
-	    s0 += s12 * common$1.BIG_666643;
-	    s1 += s12 * common$1.BIG_470296;
-	    s2 += s12 * common$1.BIG_654183;
-	    s3 -= s12 * common$1.BIG_997805;
-	    s4 += s12 * common$1.BIG_136657;
-	    s5 -= s12 * common$1.BIG_683901;
-	    s12 = common$1.BIG_ARR[0];
-	    carry[0] = s0 >> common$1.BIG_ARR[21];
+	    s11 -= carry[11] << bigIntCommon.BIG_ARR[21];
+	    s0 += s12 * bigIntCommon.BIG_666643;
+	    s1 += s12 * bigIntCommon.BIG_470296;
+	    s2 += s12 * bigIntCommon.BIG_654183;
+	    s3 -= s12 * bigIntCommon.BIG_997805;
+	    s4 += s12 * bigIntCommon.BIG_136657;
+	    s5 -= s12 * bigIntCommon.BIG_683901;
+	    s12 = bigIntCommon.BIG_ARR[0];
+	    carry[0] = s0 >> bigIntCommon.BIG_ARR[21];
 	    s1 += carry[0];
-	    s0 -= carry[0] << common$1.BIG_ARR[21];
-	    carry[1] = s1 >> common$1.BIG_ARR[21];
+	    s0 -= carry[0] << bigIntCommon.BIG_ARR[21];
+	    carry[1] = s1 >> bigIntCommon.BIG_ARR[21];
 	    s2 += carry[1];
-	    s1 -= carry[1] << common$1.BIG_ARR[21];
-	    carry[2] = s2 >> common$1.BIG_ARR[21];
+	    s1 -= carry[1] << bigIntCommon.BIG_ARR[21];
+	    carry[2] = s2 >> bigIntCommon.BIG_ARR[21];
 	    s3 += carry[2];
-	    s2 -= carry[2] << common$1.BIG_ARR[21];
-	    carry[3] = s3 >> common$1.BIG_ARR[21];
+	    s2 -= carry[2] << bigIntCommon.BIG_ARR[21];
+	    carry[3] = s3 >> bigIntCommon.BIG_ARR[21];
 	    s4 += carry[3];
-	    s3 -= carry[3] << common$1.BIG_ARR[21];
-	    carry[4] = s4 >> common$1.BIG_ARR[21];
+	    s3 -= carry[3] << bigIntCommon.BIG_ARR[21];
+	    carry[4] = s4 >> bigIntCommon.BIG_ARR[21];
 	    s5 += carry[4];
-	    s4 -= carry[4] << common$1.BIG_ARR[21];
-	    carry[5] = s5 >> common$1.BIG_ARR[21];
+	    s4 -= carry[4] << bigIntCommon.BIG_ARR[21];
+	    carry[5] = s5 >> bigIntCommon.BIG_ARR[21];
 	    s6 += carry[5];
-	    s5 -= carry[5] << common$1.BIG_ARR[21];
-	    carry[6] = s6 >> common$1.BIG_ARR[21];
+	    s5 -= carry[5] << bigIntCommon.BIG_ARR[21];
+	    carry[6] = s6 >> bigIntCommon.BIG_ARR[21];
 	    s7 += carry[6];
-	    s6 -= carry[6] << common$1.BIG_ARR[21];
-	    carry[7] = s7 >> common$1.BIG_ARR[21];
+	    s6 -= carry[6] << bigIntCommon.BIG_ARR[21];
+	    carry[7] = s7 >> bigIntCommon.BIG_ARR[21];
 	    s8 += carry[7];
-	    s7 -= carry[7] << common$1.BIG_ARR[21];
-	    carry[8] = s8 >> common$1.BIG_ARR[21];
+	    s7 -= carry[7] << bigIntCommon.BIG_ARR[21];
+	    carry[8] = s8 >> bigIntCommon.BIG_ARR[21];
 	    s9 += carry[8];
-	    s8 -= carry[8] << common$1.BIG_ARR[21];
-	    carry[9] = s9 >> common$1.BIG_ARR[21];
+	    s8 -= carry[8] << bigIntCommon.BIG_ARR[21];
+	    carry[9] = s9 >> bigIntCommon.BIG_ARR[21];
 	    s10 += carry[9];
-	    s9 -= carry[9] << common$1.BIG_ARR[21];
-	    carry[10] = s10 >> common$1.BIG_ARR[21];
+	    s9 -= carry[9] << bigIntCommon.BIG_ARR[21];
+	    carry[10] = s10 >> bigIntCommon.BIG_ARR[21];
 	    s11 += carry[10];
-	    s10 -= carry[10] << common$1.BIG_ARR[21];
-	    carry[11] = s11 >> common$1.BIG_ARR[21];
+	    s10 -= carry[10] << bigIntCommon.BIG_ARR[21];
+	    carry[11] = s11 >> bigIntCommon.BIG_ARR[21];
 	    s12 += carry[11];
-	    s11 -= carry[11] << common$1.BIG_ARR[21];
-	    s0 += s12 * common$1.BIG_666643;
-	    s1 += s12 * common$1.BIG_470296;
-	    s2 += s12 * common$1.BIG_654183;
-	    s3 -= s12 * common$1.BIG_997805;
-	    s4 += s12 * common$1.BIG_136657;
-	    s5 -= s12 * common$1.BIG_683901;
-	    s12 = common$1.BIG_ARR[0];
-	    carry[0] = s0 >> common$1.BIG_ARR[21];
+	    s11 -= carry[11] << bigIntCommon.BIG_ARR[21];
+	    s0 += s12 * bigIntCommon.BIG_666643;
+	    s1 += s12 * bigIntCommon.BIG_470296;
+	    s2 += s12 * bigIntCommon.BIG_654183;
+	    s3 -= s12 * bigIntCommon.BIG_997805;
+	    s4 += s12 * bigIntCommon.BIG_136657;
+	    s5 -= s12 * bigIntCommon.BIG_683901;
+	    s12 = bigIntCommon.BIG_ARR[0];
+	    carry[0] = s0 >> bigIntCommon.BIG_ARR[21];
 	    s1 += carry[0];
-	    s0 -= carry[0] << common$1.BIG_ARR[21];
-	    carry[1] = s1 >> common$1.BIG_ARR[21];
+	    s0 -= carry[0] << bigIntCommon.BIG_ARR[21];
+	    carry[1] = s1 >> bigIntCommon.BIG_ARR[21];
 	    s2 += carry[1];
-	    s1 -= carry[1] << common$1.BIG_ARR[21];
-	    carry[2] = s2 >> common$1.BIG_ARR[21];
+	    s1 -= carry[1] << bigIntCommon.BIG_ARR[21];
+	    carry[2] = s2 >> bigIntCommon.BIG_ARR[21];
 	    s3 += carry[2];
-	    s2 -= carry[2] << common$1.BIG_ARR[21];
-	    carry[3] = s3 >> common$1.BIG_ARR[21];
+	    s2 -= carry[2] << bigIntCommon.BIG_ARR[21];
+	    carry[3] = s3 >> bigIntCommon.BIG_ARR[21];
 	    s4 += carry[3];
-	    s3 -= carry[3] << common$1.BIG_ARR[21];
-	    carry[4] = s4 >> common$1.BIG_ARR[21];
+	    s3 -= carry[3] << bigIntCommon.BIG_ARR[21];
+	    carry[4] = s4 >> bigIntCommon.BIG_ARR[21];
 	    s5 += carry[4];
-	    s4 -= carry[4] << common$1.BIG_ARR[21];
-	    carry[5] = s5 >> common$1.BIG_ARR[21];
+	    s4 -= carry[4] << bigIntCommon.BIG_ARR[21];
+	    carry[5] = s5 >> bigIntCommon.BIG_ARR[21];
 	    s6 += carry[5];
-	    s5 -= carry[5] << common$1.BIG_ARR[21];
-	    carry[6] = s6 >> common$1.BIG_ARR[21];
+	    s5 -= carry[5] << bigIntCommon.BIG_ARR[21];
+	    carry[6] = s6 >> bigIntCommon.BIG_ARR[21];
 	    s7 += carry[6];
-	    s6 -= carry[6] << common$1.BIG_ARR[21];
-	    carry[7] = s7 >> common$1.BIG_ARR[21];
+	    s6 -= carry[6] << bigIntCommon.BIG_ARR[21];
+	    carry[7] = s7 >> bigIntCommon.BIG_ARR[21];
 	    s8 += carry[7];
-	    s7 -= carry[7] << common$1.BIG_ARR[21];
-	    carry[8] = s8 >> common$1.BIG_ARR[21];
+	    s7 -= carry[7] << bigIntCommon.BIG_ARR[21];
+	    carry[8] = s8 >> bigIntCommon.BIG_ARR[21];
 	    s9 += carry[8];
-	    s8 -= carry[8] << common$1.BIG_ARR[21];
-	    carry[9] = s9 >> common$1.BIG_ARR[21];
+	    s8 -= carry[8] << bigIntCommon.BIG_ARR[21];
+	    carry[9] = s9 >> bigIntCommon.BIG_ARR[21];
 	    s10 += carry[9];
-	    s9 -= carry[9] << common$1.BIG_ARR[21];
-	    carry[10] = s10 >> common$1.BIG_ARR[21];
+	    s9 -= carry[9] << bigIntCommon.BIG_ARR[21];
+	    carry[10] = s10 >> bigIntCommon.BIG_ARR[21];
 	    s11 += carry[10];
-	    s10 -= carry[10] << common$1.BIG_ARR[21];
-	    s[0] = Number(s0 >> common$1.BIG_ARR[0]);
-	    s[1] = Number(s0 >> common$1.BIG_ARR[8]);
-	    s[2] = Number((s0 >> common$1.BIG_ARR[16]) | (s1 << common$1.BIG_ARR[5]));
-	    s[3] = Number(s1 >> common$1.BIG_ARR[3]);
-	    s[4] = Number(s1 >> common$1.BIG_ARR[11]);
-	    s[5] = Number((s1 >> common$1.BIG_ARR[19]) | (s2 << common$1.BIG_ARR[2]));
-	    s[6] = Number(s2 >> common$1.BIG_ARR[6]);
-	    s[7] = Number((s2 >> common$1.BIG_ARR[14]) | (s3 << common$1.BIG_ARR[7]));
-	    s[8] = Number(s3 >> common$1.BIG_ARR[1]);
-	    s[9] = Number(s3 >> common$1.BIG_ARR[9]);
-	    s[10] = Number((s3 >> common$1.BIG_ARR[17]) | (s4 << common$1.BIG_ARR[4]));
-	    s[11] = Number(s4 >> common$1.BIG_ARR[4]);
-	    s[12] = Number(s4 >> common$1.BIG_ARR[12]);
-	    s[13] = Number((s4 >> common$1.BIG_ARR[20]) | (s5 << common$1.BIG_ARR[1]));
-	    s[14] = Number(s5 >> common$1.BIG_ARR[7]);
-	    s[15] = Number((s5 >> common$1.BIG_ARR[15]) | (s6 << common$1.BIG_ARR[6]));
-	    s[16] = Number(s6 >> common$1.BIG_ARR[2]);
-	    s[17] = Number(s6 >> common$1.BIG_ARR[10]);
-	    s[18] = Number((s6 >> common$1.BIG_ARR[18]) | (s7 << common$1.BIG_ARR[3]));
-	    s[19] = Number(s7 >> common$1.BIG_ARR[5]);
-	    s[20] = Number(s7 >> common$1.BIG_ARR[13]);
-	    s[21] = Number(s8 >> common$1.BIG_ARR[0]);
-	    s[22] = Number(s8 >> common$1.BIG_ARR[8]);
-	    s[23] = Number((s8 >> common$1.BIG_ARR[16]) | (s9 << common$1.BIG_ARR[5]));
-	    s[24] = Number(s9 >> common$1.BIG_ARR[3]);
-	    s[25] = Number(s9 >> common$1.BIG_ARR[11]);
-	    s[26] = Number((s9 >> common$1.BIG_ARR[19]) | (s10 << common$1.BIG_ARR[2]));
-	    s[27] = Number(s10 >> common$1.BIG_ARR[6]);
-	    s[28] = Number((s10 >> common$1.BIG_ARR[14]) | (s11 << common$1.BIG_ARR[7]));
-	    s[29] = Number(s11 >> common$1.BIG_ARR[1]);
-	    s[30] = Number(s11 >> common$1.BIG_ARR[9]);
-	    s[31] = Number(s11 >> common$1.BIG_ARR[17]);
+	    s10 -= carry[10] << bigIntCommon.BIG_ARR[21];
+	    s[0] = Number(s0 >> bigIntCommon.BIG_ARR[0]);
+	    s[1] = Number(s0 >> bigIntCommon.BIG_ARR[8]);
+	    s[2] = Number((s0 >> bigIntCommon.BIG_ARR[16]) | (s1 << bigIntCommon.BIG_ARR[5]));
+	    s[3] = Number(s1 >> bigIntCommon.BIG_ARR[3]);
+	    s[4] = Number(s1 >> bigIntCommon.BIG_ARR[11]);
+	    s[5] = Number((s1 >> bigIntCommon.BIG_ARR[19]) | (s2 << bigIntCommon.BIG_ARR[2]));
+	    s[6] = Number(s2 >> bigIntCommon.BIG_ARR[6]);
+	    s[7] = Number((s2 >> bigIntCommon.BIG_ARR[14]) | (s3 << bigIntCommon.BIG_ARR[7]));
+	    s[8] = Number(s3 >> bigIntCommon.BIG_ARR[1]);
+	    s[9] = Number(s3 >> bigIntCommon.BIG_ARR[9]);
+	    s[10] = Number((s3 >> bigIntCommon.BIG_ARR[17]) | (s4 << bigIntCommon.BIG_ARR[4]));
+	    s[11] = Number(s4 >> bigIntCommon.BIG_ARR[4]);
+	    s[12] = Number(s4 >> bigIntCommon.BIG_ARR[12]);
+	    s[13] = Number((s4 >> bigIntCommon.BIG_ARR[20]) | (s5 << bigIntCommon.BIG_ARR[1]));
+	    s[14] = Number(s5 >> bigIntCommon.BIG_ARR[7]);
+	    s[15] = Number((s5 >> bigIntCommon.BIG_ARR[15]) | (s6 << bigIntCommon.BIG_ARR[6]));
+	    s[16] = Number(s6 >> bigIntCommon.BIG_ARR[2]);
+	    s[17] = Number(s6 >> bigIntCommon.BIG_ARR[10]);
+	    s[18] = Number((s6 >> bigIntCommon.BIG_ARR[18]) | (s7 << bigIntCommon.BIG_ARR[3]));
+	    s[19] = Number(s7 >> bigIntCommon.BIG_ARR[5]);
+	    s[20] = Number(s7 >> bigIntCommon.BIG_ARR[13]);
+	    s[21] = Number(s8 >> bigIntCommon.BIG_ARR[0]);
+	    s[22] = Number(s8 >> bigIntCommon.BIG_ARR[8]);
+	    s[23] = Number((s8 >> bigIntCommon.BIG_ARR[16]) | (s9 << bigIntCommon.BIG_ARR[5]));
+	    s[24] = Number(s9 >> bigIntCommon.BIG_ARR[3]);
+	    s[25] = Number(s9 >> bigIntCommon.BIG_ARR[11]);
+	    s[26] = Number((s9 >> bigIntCommon.BIG_ARR[19]) | (s10 << bigIntCommon.BIG_ARR[2]));
+	    s[27] = Number(s10 >> bigIntCommon.BIG_ARR[6]);
+	    s[28] = Number((s10 >> bigIntCommon.BIG_ARR[14]) | (s11 << bigIntCommon.BIG_ARR[7]));
+	    s[29] = Number(s11 >> bigIntCommon.BIG_ARR[1]);
+	    s[30] = Number(s11 >> bigIntCommon.BIG_ARR[9]);
+	    s[31] = Number(s11 >> bigIntCommon.BIG_ARR[17]);
 	}
 	exports.scalarMulAdd = scalarMulAdd;
 	/**
@@ -3659,299 +3693,299 @@
 	 * @param s s[0]+256*s[1]+...+256^63*s[63] = s
 	 */
 	function scalarReduce(out, s) {
-	    var s0 = common$1.BIG_2097151 & common$1.load3BytesBigInt(s, 0);
-	    var s1 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(s, 2) >> common$1.BIG_ARR[5]);
-	    var s2 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(s, 5) >> common$1.BIG_ARR[2]);
-	    var s3 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(s, 7) >> common$1.BIG_ARR[7]);
-	    var s4 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(s, 10) >> common$1.BIG_ARR[4]);
-	    var s5 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(s, 13) >> common$1.BIG_ARR[1]);
-	    var s6 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(s, 15) >> common$1.BIG_ARR[6]);
-	    var s7 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(s, 18) >> common$1.BIG_ARR[3]);
-	    var s8 = common$1.BIG_2097151 & common$1.load3BytesBigInt(s, 21);
-	    var s9 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(s, 23) >> common$1.BIG_ARR[5]);
-	    var s10 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(s, 26) >> common$1.BIG_ARR[2]);
-	    var s11 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(s, 28) >> common$1.BIG_ARR[7]);
-	    var s12 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(s, 31) >> common$1.BIG_ARR[4]);
-	    var s13 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(s, 34) >> common$1.BIG_ARR[1]);
-	    var s14 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(s, 36) >> common$1.BIG_ARR[6]);
-	    var s15 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(s, 39) >> common$1.BIG_ARR[3]);
-	    var s16 = common$1.BIG_2097151 & common$1.load3BytesBigInt(s, 42);
-	    var s17 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(s, 44) >> common$1.BIG_ARR[5]);
-	    var s18 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(s, 47) >> common$1.BIG_ARR[2]);
-	    var s19 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(s, 49) >> common$1.BIG_ARR[7]);
-	    var s20 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(s, 52) >> common$1.BIG_ARR[4]);
-	    var s21 = common$1.BIG_2097151 & (common$1.load3BytesBigInt(s, 55) >> common$1.BIG_ARR[1]);
-	    var s22 = common$1.BIG_2097151 & (common$1.load4BytesBigInt(s, 57) >> common$1.BIG_ARR[6]);
-	    var s23 = (common$1.load4BytesBigInt(s, 60) >> common$1.BIG_ARR[3]);
-	    s11 += s23 * common$1.BIG_666643;
-	    s12 += s23 * common$1.BIG_470296;
-	    s13 += s23 * common$1.BIG_654183;
-	    s14 -= s23 * common$1.BIG_997805;
-	    s15 += s23 * common$1.BIG_136657;
-	    s16 -= s23 * common$1.BIG_683901;
-	    s23 = common$1.BIG_ARR[0];
-	    s10 += s22 * common$1.BIG_666643;
-	    s11 += s22 * common$1.BIG_470296;
-	    s12 += s22 * common$1.BIG_654183;
-	    s13 -= s22 * common$1.BIG_997805;
-	    s14 += s22 * common$1.BIG_136657;
-	    s15 -= s22 * common$1.BIG_683901;
-	    s22 = common$1.BIG_ARR[0];
-	    s9 += s21 * common$1.BIG_666643;
-	    s10 += s21 * common$1.BIG_470296;
-	    s11 += s21 * common$1.BIG_654183;
-	    s12 -= s21 * common$1.BIG_997805;
-	    s13 += s21 * common$1.BIG_136657;
-	    s14 -= s21 * common$1.BIG_683901;
-	    s21 = common$1.BIG_ARR[0];
-	    s8 += s20 * common$1.BIG_666643;
-	    s9 += s20 * common$1.BIG_470296;
-	    s10 += s20 * common$1.BIG_654183;
-	    s11 -= s20 * common$1.BIG_997805;
-	    s12 += s20 * common$1.BIG_136657;
-	    s13 -= s20 * common$1.BIG_683901;
-	    s20 = common$1.BIG_ARR[0];
-	    s7 += s19 * common$1.BIG_666643;
-	    s8 += s19 * common$1.BIG_470296;
-	    s9 += s19 * common$1.BIG_654183;
-	    s10 -= s19 * common$1.BIG_997805;
-	    s11 += s19 * common$1.BIG_136657;
-	    s12 -= s19 * common$1.BIG_683901;
-	    s19 = common$1.BIG_ARR[0];
-	    s6 += s18 * common$1.BIG_666643;
-	    s7 += s18 * common$1.BIG_470296;
-	    s8 += s18 * common$1.BIG_654183;
-	    s9 -= s18 * common$1.BIG_997805;
-	    s10 += s18 * common$1.BIG_136657;
-	    s11 -= s18 * common$1.BIG_683901;
-	    s18 = common$1.BIG_ARR[0];
+	    var s0 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(s, 0);
+	    var s1 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 2) >> bigIntCommon.BIG_ARR[5]);
+	    var s2 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 5) >> bigIntCommon.BIG_ARR[2]);
+	    var s3 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 7) >> bigIntCommon.BIG_ARR[7]);
+	    var s4 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 10) >> bigIntCommon.BIG_ARR[4]);
+	    var s5 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 13) >> bigIntCommon.BIG_ARR[1]);
+	    var s6 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 15) >> bigIntCommon.BIG_ARR[6]);
+	    var s7 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 18) >> bigIntCommon.BIG_ARR[3]);
+	    var s8 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(s, 21);
+	    var s9 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 23) >> bigIntCommon.BIG_ARR[5]);
+	    var s10 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 26) >> bigIntCommon.BIG_ARR[2]);
+	    var s11 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 28) >> bigIntCommon.BIG_ARR[7]);
+	    var s12 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 31) >> bigIntCommon.BIG_ARR[4]);
+	    var s13 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 34) >> bigIntCommon.BIG_ARR[1]);
+	    var s14 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 36) >> bigIntCommon.BIG_ARR[6]);
+	    var s15 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 39) >> bigIntCommon.BIG_ARR[3]);
+	    var s16 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(s, 42);
+	    var s17 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 44) >> bigIntCommon.BIG_ARR[5]);
+	    var s18 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 47) >> bigIntCommon.BIG_ARR[2]);
+	    var s19 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 49) >> bigIntCommon.BIG_ARR[7]);
+	    var s20 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 52) >> bigIntCommon.BIG_ARR[4]);
+	    var s21 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 55) >> bigIntCommon.BIG_ARR[1]);
+	    var s22 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 57) >> bigIntCommon.BIG_ARR[6]);
+	    var s23 = (bigIntCommon.bigIntLoad4(s, 60) >> bigIntCommon.BIG_ARR[3]);
+	    s11 += s23 * bigIntCommon.BIG_666643;
+	    s12 += s23 * bigIntCommon.BIG_470296;
+	    s13 += s23 * bigIntCommon.BIG_654183;
+	    s14 -= s23 * bigIntCommon.BIG_997805;
+	    s15 += s23 * bigIntCommon.BIG_136657;
+	    s16 -= s23 * bigIntCommon.BIG_683901;
+	    s23 = bigIntCommon.BIG_ARR[0];
+	    s10 += s22 * bigIntCommon.BIG_666643;
+	    s11 += s22 * bigIntCommon.BIG_470296;
+	    s12 += s22 * bigIntCommon.BIG_654183;
+	    s13 -= s22 * bigIntCommon.BIG_997805;
+	    s14 += s22 * bigIntCommon.BIG_136657;
+	    s15 -= s22 * bigIntCommon.BIG_683901;
+	    s22 = bigIntCommon.BIG_ARR[0];
+	    s9 += s21 * bigIntCommon.BIG_666643;
+	    s10 += s21 * bigIntCommon.BIG_470296;
+	    s11 += s21 * bigIntCommon.BIG_654183;
+	    s12 -= s21 * bigIntCommon.BIG_997805;
+	    s13 += s21 * bigIntCommon.BIG_136657;
+	    s14 -= s21 * bigIntCommon.BIG_683901;
+	    s21 = bigIntCommon.BIG_ARR[0];
+	    s8 += s20 * bigIntCommon.BIG_666643;
+	    s9 += s20 * bigIntCommon.BIG_470296;
+	    s10 += s20 * bigIntCommon.BIG_654183;
+	    s11 -= s20 * bigIntCommon.BIG_997805;
+	    s12 += s20 * bigIntCommon.BIG_136657;
+	    s13 -= s20 * bigIntCommon.BIG_683901;
+	    s20 = bigIntCommon.BIG_ARR[0];
+	    s7 += s19 * bigIntCommon.BIG_666643;
+	    s8 += s19 * bigIntCommon.BIG_470296;
+	    s9 += s19 * bigIntCommon.BIG_654183;
+	    s10 -= s19 * bigIntCommon.BIG_997805;
+	    s11 += s19 * bigIntCommon.BIG_136657;
+	    s12 -= s19 * bigIntCommon.BIG_683901;
+	    s19 = bigIntCommon.BIG_ARR[0];
+	    s6 += s18 * bigIntCommon.BIG_666643;
+	    s7 += s18 * bigIntCommon.BIG_470296;
+	    s8 += s18 * bigIntCommon.BIG_654183;
+	    s9 -= s18 * bigIntCommon.BIG_997805;
+	    s10 += s18 * bigIntCommon.BIG_136657;
+	    s11 -= s18 * bigIntCommon.BIG_683901;
+	    s18 = bigIntCommon.BIG_ARR[0];
 	    var carry = new BigInt64Array(17);
-	    carry[6] = (s6 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    carry[6] = (s6 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s7 += carry[6];
-	    s6 -= carry[6] << common$1.BIG_ARR[21];
-	    carry[8] = (s8 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s6 -= carry[6] << bigIntCommon.BIG_ARR[21];
+	    carry[8] = (s8 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s9 += carry[8];
-	    s8 -= carry[8] << common$1.BIG_ARR[21];
-	    carry[10] = (s10 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s8 -= carry[8] << bigIntCommon.BIG_ARR[21];
+	    carry[10] = (s10 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s11 += carry[10];
-	    s10 -= carry[10] << common$1.BIG_ARR[21];
-	    carry[12] = (s12 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s10 -= carry[10] << bigIntCommon.BIG_ARR[21];
+	    carry[12] = (s12 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s13 += carry[12];
-	    s12 -= carry[12] << common$1.BIG_ARR[21];
-	    carry[14] = (s14 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s12 -= carry[12] << bigIntCommon.BIG_ARR[21];
+	    carry[14] = (s14 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s15 += carry[14];
-	    s14 -= carry[14] << common$1.BIG_ARR[21];
-	    carry[16] = (s16 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s14 -= carry[14] << bigIntCommon.BIG_ARR[21];
+	    carry[16] = (s16 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s17 += carry[16];
-	    s16 -= carry[16] << common$1.BIG_ARR[21];
-	    carry[7] = (s7 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s16 -= carry[16] << bigIntCommon.BIG_ARR[21];
+	    carry[7] = (s7 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s8 += carry[7];
-	    s7 -= carry[7] << common$1.BIG_ARR[21];
-	    carry[9] = (s9 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s7 -= carry[7] << bigIntCommon.BIG_ARR[21];
+	    carry[9] = (s9 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s10 += carry[9];
-	    s9 -= carry[9] << common$1.BIG_ARR[21];
-	    carry[11] = (s11 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s9 -= carry[9] << bigIntCommon.BIG_ARR[21];
+	    carry[11] = (s11 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s12 += carry[11];
-	    s11 -= carry[11] << common$1.BIG_ARR[21];
-	    carry[13] = (s13 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s11 -= carry[11] << bigIntCommon.BIG_ARR[21];
+	    carry[13] = (s13 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s14 += carry[13];
-	    s13 -= carry[13] << common$1.BIG_ARR[21];
-	    carry[15] = (s15 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s13 -= carry[13] << bigIntCommon.BIG_ARR[21];
+	    carry[15] = (s15 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s16 += carry[15];
-	    s15 -= carry[15] << common$1.BIG_ARR[21];
-	    s5 += s17 * common$1.BIG_666643;
-	    s6 += s17 * common$1.BIG_470296;
-	    s7 += s17 * common$1.BIG_654183;
-	    s8 -= s17 * common$1.BIG_997805;
-	    s9 += s17 * common$1.BIG_136657;
-	    s10 -= s17 * common$1.BIG_683901;
-	    s17 = common$1.BIG_ARR[0];
-	    s4 += s16 * common$1.BIG_666643;
-	    s5 += s16 * common$1.BIG_470296;
-	    s6 += s16 * common$1.BIG_654183;
-	    s7 -= s16 * common$1.BIG_997805;
-	    s8 += s16 * common$1.BIG_136657;
-	    s9 -= s16 * common$1.BIG_683901;
-	    s16 = common$1.BIG_ARR[0];
-	    s3 += s15 * common$1.BIG_666643;
-	    s4 += s15 * common$1.BIG_470296;
-	    s5 += s15 * common$1.BIG_654183;
-	    s6 -= s15 * common$1.BIG_997805;
-	    s7 += s15 * common$1.BIG_136657;
-	    s8 -= s15 * common$1.BIG_683901;
-	    s15 = common$1.BIG_ARR[0];
-	    s2 += s14 * common$1.BIG_666643;
-	    s3 += s14 * common$1.BIG_470296;
-	    s4 += s14 * common$1.BIG_654183;
-	    s5 -= s14 * common$1.BIG_997805;
-	    s6 += s14 * common$1.BIG_136657;
-	    s7 -= s14 * common$1.BIG_683901;
-	    s14 = common$1.BIG_ARR[0];
-	    s1 += s13 * common$1.BIG_666643;
-	    s2 += s13 * common$1.BIG_470296;
-	    s3 += s13 * common$1.BIG_654183;
-	    s4 -= s13 * common$1.BIG_997805;
-	    s5 += s13 * common$1.BIG_136657;
-	    s6 -= s13 * common$1.BIG_683901;
-	    s13 = common$1.BIG_ARR[0];
-	    s0 += s12 * common$1.BIG_666643;
-	    s1 += s12 * common$1.BIG_470296;
-	    s2 += s12 * common$1.BIG_654183;
-	    s3 -= s12 * common$1.BIG_997805;
-	    s4 += s12 * common$1.BIG_136657;
-	    s5 -= s12 * common$1.BIG_683901;
-	    s12 = common$1.BIG_ARR[0];
-	    carry[0] = (s0 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s15 -= carry[15] << bigIntCommon.BIG_ARR[21];
+	    s5 += s17 * bigIntCommon.BIG_666643;
+	    s6 += s17 * bigIntCommon.BIG_470296;
+	    s7 += s17 * bigIntCommon.BIG_654183;
+	    s8 -= s17 * bigIntCommon.BIG_997805;
+	    s9 += s17 * bigIntCommon.BIG_136657;
+	    s10 -= s17 * bigIntCommon.BIG_683901;
+	    s17 = bigIntCommon.BIG_ARR[0];
+	    s4 += s16 * bigIntCommon.BIG_666643;
+	    s5 += s16 * bigIntCommon.BIG_470296;
+	    s6 += s16 * bigIntCommon.BIG_654183;
+	    s7 -= s16 * bigIntCommon.BIG_997805;
+	    s8 += s16 * bigIntCommon.BIG_136657;
+	    s9 -= s16 * bigIntCommon.BIG_683901;
+	    s16 = bigIntCommon.BIG_ARR[0];
+	    s3 += s15 * bigIntCommon.BIG_666643;
+	    s4 += s15 * bigIntCommon.BIG_470296;
+	    s5 += s15 * bigIntCommon.BIG_654183;
+	    s6 -= s15 * bigIntCommon.BIG_997805;
+	    s7 += s15 * bigIntCommon.BIG_136657;
+	    s8 -= s15 * bigIntCommon.BIG_683901;
+	    s15 = bigIntCommon.BIG_ARR[0];
+	    s2 += s14 * bigIntCommon.BIG_666643;
+	    s3 += s14 * bigIntCommon.BIG_470296;
+	    s4 += s14 * bigIntCommon.BIG_654183;
+	    s5 -= s14 * bigIntCommon.BIG_997805;
+	    s6 += s14 * bigIntCommon.BIG_136657;
+	    s7 -= s14 * bigIntCommon.BIG_683901;
+	    s14 = bigIntCommon.BIG_ARR[0];
+	    s1 += s13 * bigIntCommon.BIG_666643;
+	    s2 += s13 * bigIntCommon.BIG_470296;
+	    s3 += s13 * bigIntCommon.BIG_654183;
+	    s4 -= s13 * bigIntCommon.BIG_997805;
+	    s5 += s13 * bigIntCommon.BIG_136657;
+	    s6 -= s13 * bigIntCommon.BIG_683901;
+	    s13 = bigIntCommon.BIG_ARR[0];
+	    s0 += s12 * bigIntCommon.BIG_666643;
+	    s1 += s12 * bigIntCommon.BIG_470296;
+	    s2 += s12 * bigIntCommon.BIG_654183;
+	    s3 -= s12 * bigIntCommon.BIG_997805;
+	    s4 += s12 * bigIntCommon.BIG_136657;
+	    s5 -= s12 * bigIntCommon.BIG_683901;
+	    s12 = bigIntCommon.BIG_ARR[0];
+	    carry[0] = (s0 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s1 += carry[0];
-	    s0 -= carry[0] << common$1.BIG_ARR[21];
-	    carry[2] = (s2 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s0 -= carry[0] << bigIntCommon.BIG_ARR[21];
+	    carry[2] = (s2 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s3 += carry[2];
-	    s2 -= carry[2] << common$1.BIG_ARR[21];
-	    carry[4] = (s4 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s2 -= carry[2] << bigIntCommon.BIG_ARR[21];
+	    carry[4] = (s4 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s5 += carry[4];
-	    s4 -= carry[4] << common$1.BIG_ARR[21];
-	    carry[6] = (s6 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s4 -= carry[4] << bigIntCommon.BIG_ARR[21];
+	    carry[6] = (s6 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s7 += carry[6];
-	    s6 -= carry[6] << common$1.BIG_ARR[21];
-	    carry[8] = (s8 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s6 -= carry[6] << bigIntCommon.BIG_ARR[21];
+	    carry[8] = (s8 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s9 += carry[8];
-	    s8 -= carry[8] << common$1.BIG_ARR[21];
-	    carry[10] = (s10 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s8 -= carry[8] << bigIntCommon.BIG_ARR[21];
+	    carry[10] = (s10 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s11 += carry[10];
-	    s10 -= carry[10] << common$1.BIG_ARR[21];
-	    carry[1] = (s1 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s10 -= carry[10] << bigIntCommon.BIG_ARR[21];
+	    carry[1] = (s1 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s2 += carry[1];
-	    s1 -= carry[1] << common$1.BIG_ARR[21];
-	    carry[3] = (s3 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s1 -= carry[1] << bigIntCommon.BIG_ARR[21];
+	    carry[3] = (s3 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s4 += carry[3];
-	    s3 -= carry[3] << common$1.BIG_ARR[21];
-	    carry[5] = (s5 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s3 -= carry[3] << bigIntCommon.BIG_ARR[21];
+	    carry[5] = (s5 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s6 += carry[5];
-	    s5 -= carry[5] << common$1.BIG_ARR[21];
-	    carry[7] = (s7 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s5 -= carry[5] << bigIntCommon.BIG_ARR[21];
+	    carry[7] = (s7 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s8 += carry[7];
-	    s7 -= carry[7] << common$1.BIG_ARR[21];
-	    carry[9] = (s9 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s7 -= carry[7] << bigIntCommon.BIG_ARR[21];
+	    carry[9] = (s9 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s10 += carry[9];
-	    s9 -= carry[9] << common$1.BIG_ARR[21];
-	    carry[11] = (s11 + common$1.BIG_1_SHIFTL_20) >> common$1.BIG_ARR[21];
+	    s9 -= carry[9] << bigIntCommon.BIG_ARR[21];
+	    carry[11] = (s11 + bigIntCommon.BIG_1_SHIFTL_20) >> bigIntCommon.BIG_ARR[21];
 	    s12 += carry[11];
-	    s11 -= carry[11] << common$1.BIG_ARR[21];
-	    s0 += s12 * common$1.BIG_666643;
-	    s1 += s12 * common$1.BIG_470296;
-	    s2 += s12 * common$1.BIG_654183;
-	    s3 -= s12 * common$1.BIG_997805;
-	    s4 += s12 * common$1.BIG_136657;
-	    s5 -= s12 * common$1.BIG_683901;
-	    s12 = common$1.BIG_ARR[0];
-	    carry[0] = s0 >> common$1.BIG_ARR[21];
+	    s11 -= carry[11] << bigIntCommon.BIG_ARR[21];
+	    s0 += s12 * bigIntCommon.BIG_666643;
+	    s1 += s12 * bigIntCommon.BIG_470296;
+	    s2 += s12 * bigIntCommon.BIG_654183;
+	    s3 -= s12 * bigIntCommon.BIG_997805;
+	    s4 += s12 * bigIntCommon.BIG_136657;
+	    s5 -= s12 * bigIntCommon.BIG_683901;
+	    s12 = bigIntCommon.BIG_ARR[0];
+	    carry[0] = s0 >> bigIntCommon.BIG_ARR[21];
 	    s1 += carry[0];
-	    s0 -= carry[0] << common$1.BIG_ARR[21];
-	    carry[1] = s1 >> common$1.BIG_ARR[21];
+	    s0 -= carry[0] << bigIntCommon.BIG_ARR[21];
+	    carry[1] = s1 >> bigIntCommon.BIG_ARR[21];
 	    s2 += carry[1];
-	    s1 -= carry[1] << common$1.BIG_ARR[21];
-	    carry[2] = s2 >> common$1.BIG_ARR[21];
+	    s1 -= carry[1] << bigIntCommon.BIG_ARR[21];
+	    carry[2] = s2 >> bigIntCommon.BIG_ARR[21];
 	    s3 += carry[2];
-	    s2 -= carry[2] << common$1.BIG_ARR[21];
-	    carry[3] = s3 >> common$1.BIG_ARR[21];
+	    s2 -= carry[2] << bigIntCommon.BIG_ARR[21];
+	    carry[3] = s3 >> bigIntCommon.BIG_ARR[21];
 	    s4 += carry[3];
-	    s3 -= carry[3] << common$1.BIG_ARR[21];
-	    carry[4] = s4 >> common$1.BIG_ARR[21];
+	    s3 -= carry[3] << bigIntCommon.BIG_ARR[21];
+	    carry[4] = s4 >> bigIntCommon.BIG_ARR[21];
 	    s5 += carry[4];
-	    s4 -= carry[4] << common$1.BIG_ARR[21];
-	    carry[5] = s5 >> common$1.BIG_ARR[21];
+	    s4 -= carry[4] << bigIntCommon.BIG_ARR[21];
+	    carry[5] = s5 >> bigIntCommon.BIG_ARR[21];
 	    s6 += carry[5];
-	    s5 -= carry[5] << common$1.BIG_ARR[21];
-	    carry[6] = s6 >> common$1.BIG_ARR[21];
+	    s5 -= carry[5] << bigIntCommon.BIG_ARR[21];
+	    carry[6] = s6 >> bigIntCommon.BIG_ARR[21];
 	    s7 += carry[6];
-	    s6 -= carry[6] << common$1.BIG_ARR[21];
-	    carry[7] = s7 >> common$1.BIG_ARR[21];
+	    s6 -= carry[6] << bigIntCommon.BIG_ARR[21];
+	    carry[7] = s7 >> bigIntCommon.BIG_ARR[21];
 	    s8 += carry[7];
-	    s7 -= carry[7] << common$1.BIG_ARR[21];
-	    carry[8] = s8 >> common$1.BIG_ARR[21];
+	    s7 -= carry[7] << bigIntCommon.BIG_ARR[21];
+	    carry[8] = s8 >> bigIntCommon.BIG_ARR[21];
 	    s9 += carry[8];
-	    s8 -= carry[8] << common$1.BIG_ARR[21];
-	    carry[9] = s9 >> common$1.BIG_ARR[21];
+	    s8 -= carry[8] << bigIntCommon.BIG_ARR[21];
+	    carry[9] = s9 >> bigIntCommon.BIG_ARR[21];
 	    s10 += carry[9];
-	    s9 -= carry[9] << common$1.BIG_ARR[21];
-	    carry[10] = s10 >> common$1.BIG_ARR[21];
+	    s9 -= carry[9] << bigIntCommon.BIG_ARR[21];
+	    carry[10] = s10 >> bigIntCommon.BIG_ARR[21];
 	    s11 += carry[10];
-	    s10 -= carry[10] << common$1.BIG_ARR[21];
-	    carry[11] = s11 >> common$1.BIG_ARR[21];
+	    s10 -= carry[10] << bigIntCommon.BIG_ARR[21];
+	    carry[11] = s11 >> bigIntCommon.BIG_ARR[21];
 	    s12 += carry[11];
-	    s11 -= carry[11] << common$1.BIG_ARR[21];
-	    s0 += s12 * common$1.BIG_666643;
-	    s1 += s12 * common$1.BIG_470296;
-	    s2 += s12 * common$1.BIG_654183;
-	    s3 -= s12 * common$1.BIG_997805;
-	    s4 += s12 * common$1.BIG_136657;
-	    s5 -= s12 * common$1.BIG_683901;
-	    s12 = common$1.BIG_ARR[0];
-	    carry[0] = s0 >> common$1.BIG_ARR[21];
+	    s11 -= carry[11] << bigIntCommon.BIG_ARR[21];
+	    s0 += s12 * bigIntCommon.BIG_666643;
+	    s1 += s12 * bigIntCommon.BIG_470296;
+	    s2 += s12 * bigIntCommon.BIG_654183;
+	    s3 -= s12 * bigIntCommon.BIG_997805;
+	    s4 += s12 * bigIntCommon.BIG_136657;
+	    s5 -= s12 * bigIntCommon.BIG_683901;
+	    s12 = bigIntCommon.BIG_ARR[0];
+	    carry[0] = s0 >> bigIntCommon.BIG_ARR[21];
 	    s1 += carry[0];
-	    s0 -= carry[0] << common$1.BIG_ARR[21];
-	    carry[1] = s1 >> common$1.BIG_ARR[21];
+	    s0 -= carry[0] << bigIntCommon.BIG_ARR[21];
+	    carry[1] = s1 >> bigIntCommon.BIG_ARR[21];
 	    s2 += carry[1];
-	    s1 -= carry[1] << common$1.BIG_ARR[21];
-	    carry[2] = s2 >> common$1.BIG_ARR[21];
+	    s1 -= carry[1] << bigIntCommon.BIG_ARR[21];
+	    carry[2] = s2 >> bigIntCommon.BIG_ARR[21];
 	    s3 += carry[2];
-	    s2 -= carry[2] << common$1.BIG_ARR[21];
-	    carry[3] = s3 >> common$1.BIG_ARR[21];
+	    s2 -= carry[2] << bigIntCommon.BIG_ARR[21];
+	    carry[3] = s3 >> bigIntCommon.BIG_ARR[21];
 	    s4 += carry[3];
-	    s3 -= carry[3] << common$1.BIG_ARR[21];
-	    carry[4] = s4 >> common$1.BIG_ARR[21];
+	    s3 -= carry[3] << bigIntCommon.BIG_ARR[21];
+	    carry[4] = s4 >> bigIntCommon.BIG_ARR[21];
 	    s5 += carry[4];
-	    s4 -= carry[4] << common$1.BIG_ARR[21];
-	    carry[5] = s5 >> common$1.BIG_ARR[21];
+	    s4 -= carry[4] << bigIntCommon.BIG_ARR[21];
+	    carry[5] = s5 >> bigIntCommon.BIG_ARR[21];
 	    s6 += carry[5];
-	    s5 -= carry[5] << common$1.BIG_ARR[21];
-	    carry[6] = s6 >> common$1.BIG_ARR[21];
+	    s5 -= carry[5] << bigIntCommon.BIG_ARR[21];
+	    carry[6] = s6 >> bigIntCommon.BIG_ARR[21];
 	    s7 += carry[6];
-	    s6 -= carry[6] << common$1.BIG_ARR[21];
-	    carry[7] = s7 >> common$1.BIG_ARR[21];
+	    s6 -= carry[6] << bigIntCommon.BIG_ARR[21];
+	    carry[7] = s7 >> bigIntCommon.BIG_ARR[21];
 	    s8 += carry[7];
-	    s7 -= carry[7] << common$1.BIG_ARR[21];
-	    carry[8] = s8 >> common$1.BIG_ARR[21];
+	    s7 -= carry[7] << bigIntCommon.BIG_ARR[21];
+	    carry[8] = s8 >> bigIntCommon.BIG_ARR[21];
 	    s9 += carry[8];
-	    s8 -= carry[8] << common$1.BIG_ARR[21];
-	    carry[9] = s9 >> common$1.BIG_ARR[21];
+	    s8 -= carry[8] << bigIntCommon.BIG_ARR[21];
+	    carry[9] = s9 >> bigIntCommon.BIG_ARR[21];
 	    s10 += carry[9];
-	    s9 -= carry[9] << common$1.BIG_ARR[21];
-	    carry[10] = s10 >> common$1.BIG_ARR[21];
+	    s9 -= carry[9] << bigIntCommon.BIG_ARR[21];
+	    carry[10] = s10 >> bigIntCommon.BIG_ARR[21];
 	    s11 += carry[10];
-	    s10 -= carry[10] << common$1.BIG_ARR[21];
-	    out[0] = Number(s0 >> common$1.BIG_ARR[0]);
-	    out[1] = Number(s0 >> common$1.BIG_ARR[8]);
-	    out[2] = Number((s0 >> common$1.BIG_ARR[16]) | (s1 << common$1.BIG_ARR[5]));
-	    out[3] = Number(s1 >> common$1.BIG_ARR[3]);
-	    out[4] = Number(s1 >> common$1.BIG_ARR[11]);
-	    out[5] = Number((s1 >> common$1.BIG_ARR[19]) | (s2 << common$1.BIG_ARR[2]));
-	    out[6] = Number(s2 >> common$1.BIG_ARR[6]);
-	    out[7] = Number((s2 >> common$1.BIG_ARR[14]) | (s3 << common$1.BIG_ARR[7]));
-	    out[8] = Number(s3 >> common$1.BIG_ARR[1]);
-	    out[9] = Number(s3 >> common$1.BIG_ARR[9]);
-	    out[10] = Number((s3 >> common$1.BIG_ARR[17]) | (s4 << common$1.BIG_ARR[4]));
-	    out[11] = Number(s4 >> common$1.BIG_ARR[4]);
-	    out[12] = Number(s4 >> common$1.BIG_ARR[12]);
-	    out[13] = Number((s4 >> common$1.BIG_ARR[20]) | (s5 << common$1.BIG_ARR[1]));
-	    out[14] = Number(s5 >> common$1.BIG_ARR[7]);
-	    out[15] = Number((s5 >> common$1.BIG_ARR[15]) | (s6 << common$1.BIG_ARR[6]));
-	    out[16] = Number(s6 >> common$1.BIG_ARR[2]);
-	    out[17] = Number(s6 >> common$1.BIG_ARR[10]);
-	    out[18] = Number((s6 >> common$1.BIG_ARR[18]) | (s7 << common$1.BIG_ARR[3]));
-	    out[19] = Number(s7 >> common$1.BIG_ARR[5]);
-	    out[20] = Number(s7 >> common$1.BIG_ARR[13]);
-	    out[21] = Number(s8 >> common$1.BIG_ARR[0]);
-	    out[22] = Number(s8 >> common$1.BIG_ARR[8]);
-	    out[23] = Number((s8 >> common$1.BIG_ARR[16]) | (s9 << common$1.BIG_ARR[5]));
-	    out[24] = Number(s9 >> common$1.BIG_ARR[3]);
-	    out[25] = Number(s9 >> common$1.BIG_ARR[11]);
-	    out[26] = Number((s9 >> common$1.BIG_ARR[19]) | (s10 << common$1.BIG_ARR[2]));
-	    out[27] = Number(s10 >> common$1.BIG_ARR[6]);
-	    out[28] = Number((s10 >> common$1.BIG_ARR[14]) | (s11 << common$1.BIG_ARR[7]));
-	    out[29] = Number(s11 >> common$1.BIG_ARR[1]);
-	    out[30] = Number(s11 >> common$1.BIG_ARR[9]);
-	    out[31] = Number(s11 >> common$1.BIG_ARR[17]);
+	    s10 -= carry[10] << bigIntCommon.BIG_ARR[21];
+	    out[0] = Number(s0 >> bigIntCommon.BIG_ARR[0]);
+	    out[1] = Number(s0 >> bigIntCommon.BIG_ARR[8]);
+	    out[2] = Number((s0 >> bigIntCommon.BIG_ARR[16]) | (s1 << bigIntCommon.BIG_ARR[5]));
+	    out[3] = Number(s1 >> bigIntCommon.BIG_ARR[3]);
+	    out[4] = Number(s1 >> bigIntCommon.BIG_ARR[11]);
+	    out[5] = Number((s1 >> bigIntCommon.BIG_ARR[19]) | (s2 << bigIntCommon.BIG_ARR[2]));
+	    out[6] = Number(s2 >> bigIntCommon.BIG_ARR[6]);
+	    out[7] = Number((s2 >> bigIntCommon.BIG_ARR[14]) | (s3 << bigIntCommon.BIG_ARR[7]));
+	    out[8] = Number(s3 >> bigIntCommon.BIG_ARR[1]);
+	    out[9] = Number(s3 >> bigIntCommon.BIG_ARR[9]);
+	    out[10] = Number((s3 >> bigIntCommon.BIG_ARR[17]) | (s4 << bigIntCommon.BIG_ARR[4]));
+	    out[11] = Number(s4 >> bigIntCommon.BIG_ARR[4]);
+	    out[12] = Number(s4 >> bigIntCommon.BIG_ARR[12]);
+	    out[13] = Number((s4 >> bigIntCommon.BIG_ARR[20]) | (s5 << bigIntCommon.BIG_ARR[1]));
+	    out[14] = Number(s5 >> bigIntCommon.BIG_ARR[7]);
+	    out[15] = Number((s5 >> bigIntCommon.BIG_ARR[15]) | (s6 << bigIntCommon.BIG_ARR[6]));
+	    out[16] = Number(s6 >> bigIntCommon.BIG_ARR[2]);
+	    out[17] = Number(s6 >> bigIntCommon.BIG_ARR[10]);
+	    out[18] = Number((s6 >> bigIntCommon.BIG_ARR[18]) | (s7 << bigIntCommon.BIG_ARR[3]));
+	    out[19] = Number(s7 >> bigIntCommon.BIG_ARR[5]);
+	    out[20] = Number(s7 >> bigIntCommon.BIG_ARR[13]);
+	    out[21] = Number(s8 >> bigIntCommon.BIG_ARR[0]);
+	    out[22] = Number(s8 >> bigIntCommon.BIG_ARR[8]);
+	    out[23] = Number((s8 >> bigIntCommon.BIG_ARR[16]) | (s9 << bigIntCommon.BIG_ARR[5]));
+	    out[24] = Number(s9 >> bigIntCommon.BIG_ARR[3]);
+	    out[25] = Number(s9 >> bigIntCommon.BIG_ARR[11]);
+	    out[26] = Number((s9 >> bigIntCommon.BIG_ARR[19]) | (s10 << bigIntCommon.BIG_ARR[2]));
+	    out[27] = Number(s10 >> bigIntCommon.BIG_ARR[6]);
+	    out[28] = Number((s10 >> bigIntCommon.BIG_ARR[14]) | (s11 << bigIntCommon.BIG_ARR[7]));
+	    out[29] = Number(s11 >> bigIntCommon.BIG_ARR[1]);
+	    out[30] = Number(s11 >> bigIntCommon.BIG_ARR[9]);
+	    out[31] = Number(s11 >> bigIntCommon.BIG_ARR[17]);
 	}
 	exports.scalarReduce = scalarReduce;
 	/**
@@ -3960,9 +3994,8 @@
 	 * @returns True if the given scalar is less than the order of the Curve
 	 */
 	function scalarMinimal(scalar) {
-	    var bigArray = new DataView(scalar.buffer);
 	    for (var i = 3; i >= 0; i--) {
-	        var v = bigArray.getBigUint64(i * 8, true);
+	        var v = bigIntCommon.bigIntLoad8(scalar, i * 8);
 	        if (v > _const.CONST_ORDER[i]) {
 	            return false;
 	        }

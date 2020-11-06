@@ -28,6 +28,7 @@ context.
 
 * [add](fieldelement.md#add)
 * [cMove](fieldelement.md#cmove)
+* [clone](fieldelement.md#clone)
 * [combine](fieldelement.md#combine)
 * [fromBytes](fieldelement.md#frombytes)
 * [internalSquare](fieldelement.md#internalsquare)
@@ -104,6 +105,18 @@ Name | Type | Description |
 `b` | number | The b value.  |
 
 **Returns:** void
+
+___
+
+### clone
+
+▸ **clone**(): [FieldElement](fieldelement.md)
+
+Clone the field element.
+
+**Returns:** [FieldElement](fieldelement.md)
+
+The clones element.
 
 ___
 

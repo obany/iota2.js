@@ -79,7 +79,7 @@ export class ExtendedGroupElement {
     public toCached(cacheGroupElement: CachedGroupElement): void {
         cacheGroupElement.yPlusX.add(this.Y, this.X);
         cacheGroupElement.yMinusX.sub(this.Y, this.X);
-        cacheGroupElement.Z = new FieldElement(this.Z.data);
+        cacheGroupElement.Z = this.Z.clone();
         cacheGroupElement.T2d.mul(this.T, CONST_D2);
     }
 
@@ -88,9 +88,9 @@ export class ExtendedGroupElement {
      * @param projectiveGroupElement The element to populate.
      */
     public toProjective(projectiveGroupElement: ProjectiveGroupElement): void {
-        projectiveGroupElement.X = new FieldElement(this.X.data);
-        projectiveGroupElement.Y = new FieldElement(this.Y.data);
-        projectiveGroupElement.Z = new FieldElement(this.Z.data);
+        projectiveGroupElement.X = this.X.clone();
+        projectiveGroupElement.Y = this.Y.clone();
+        projectiveGroupElement.Z = this.Z.clone();
     }
 
     /**

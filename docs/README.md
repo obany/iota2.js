@@ -93,8 +93,6 @@
 * [getUnspentAddress](README.md#getunspentaddress)
 * [getUnspentAddresses](README.md#getunspentaddresses)
 * [isHex](README.md#ishex)
-* [load3BytesBigInt](README.md#load3bytesbigint)
-* [load4BytesBigInt](README.md#load4bytesbigint)
 * [logAddress](README.md#logaddress)
 * [logInput](README.md#loginput)
 * [logMessage](README.md#logmessage)
@@ -583,44 +581,6 @@ Name | Type | Description |
 **Returns:** boolean
 
 true if the string is hex.
-
-___
-
-### load3BytesBigInt
-
-▸ **load3BytesBigInt**(`input`: Uint8Array, `startIndex`: number): bigint
-
-Load 3 bytes from array as bigint.
-
-#### Parameters:
-
-Name | Type | Description |
------- | ------ | ------ |
-`input` | Uint8Array | The input array. |
-`startIndex` | number | The start index to read from. |
-
-**Returns:** bigint
-
-The bigint.
-
-___
-
-### load4BytesBigInt
-
-▸ **load4BytesBigInt**(`input`: Uint8Array, `startIndex`: number): bigint
-
-Load 4 bytes from array as bigint.
-
-#### Parameters:
-
-Name | Type | Description |
------- | ------ | ------ |
-`input` | Uint8Array | The input array. |
-`startIndex` | number | The start index to read from. |
-
-**Returns:** bigint
-
-The bigint.
 
 ___
 

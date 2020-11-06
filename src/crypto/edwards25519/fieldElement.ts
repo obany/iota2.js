@@ -5,7 +5,7 @@
  * which is an extension of https://github.com/golang/crypto/tree/master/ed25519
  * which in a port of the “ref10” implementation of ed25519 from SUPERCOP
  */
-import { BIG_1_SHIFTL_24, BIG_1_SHIFTL_25, BIG_38, BIG_8388607, BIG_ARR, load3BytesBigInt, load4BytesBigInt } from "./common";
+import { BIG_1_SHIFTL_24, BIG_1_SHIFTL_25, BIG_38, BIG_8388607, BIG_ARR, bigIntLoad3, bigIntLoad4 } from "./bigIntCommon";
 
 /**
  * Class for field element operations.
@@ -16,6 +16,11 @@ import { BIG_1_SHIFTL_24, BIG_1_SHIFTL_25, BIG_38, BIG_8388607, BIG_ARR, load3By
  */
 export class FieldElement {
     /**
+     * Field element size.
+     */
+    private static readonly FIELD_ELEMENT_SIZE: number = 10;
+
+    /**
      * The data for the element.
      */
     public data: Int32Array;
@@ -25,7 +30,7 @@ export class FieldElement {
      * @param values A set of values to initialize the array.
      */
     constructor(values?: Int32Array | number[]) {
-        this.data = new Int32Array(10);
+        this.data = new Int32Array(FieldElement.FIELD_ELEMENT_SIZE);
         if (values) {
             this.data.set(values);
         }
@@ -365,16 +370,16 @@ export class FieldElement {
      * @param bytes The bytes to populate from.
      */
     public fromBytes(bytes: Uint8Array): void {
-        const h0 = load4BytesBigInt(bytes, 0);
-        const h1 = load3BytesBigInt(bytes, 4) << BIG_ARR[6];
-        const h2 = load3BytesBigInt(bytes, 7) << BIG_ARR[5];
-        const h3 = load3BytesBigInt(bytes, 10) << BIG_ARR[3];
-        const h4 = load3BytesBigInt(bytes, 13) << BIG_ARR[2];
-        const h5 = load4BytesBigInt(bytes, 16);
-        const h6 = load3BytesBigInt(bytes, 20) << BIG_ARR[7];
-        const h7 = load3BytesBigInt(bytes, 23) << BIG_ARR[5];
-        const h8 = load3BytesBigInt(bytes, 26) << BIG_ARR[4];
-        const h9 = (load3BytesBigInt(bytes, 29) & BIG_8388607) << BIG_ARR[2];
+        const h0 = bigIntLoad4(bytes, 0);
+        const h1 = bigIntLoad3(bytes, 4) << BIG_ARR[6];
+        const h2 = bigIntLoad3(bytes, 7) << BIG_ARR[5];
+        const h3 = bigIntLoad3(bytes, 10) << BIG_ARR[3];
+        const h4 = bigIntLoad3(bytes, 13) << BIG_ARR[2];
+        const h5 = bigIntLoad4(bytes, 16);
+        const h6 = bigIntLoad3(bytes, 20) << BIG_ARR[7];
+        const h7 = bigIntLoad3(bytes, 23) << BIG_ARR[5];
+        const h8 = bigIntLoad3(bytes, 26) << BIG_ARR[4];
+        const h9 = (bigIntLoad3(bytes, 29) & BIG_8388607) << BIG_ARR[2];
 
         this.combine(h0, h1, h2, h3, h4, h5, h6, h7, h8, h9);
     }
@@ -406,7 +411,7 @@ export class FieldElement {
      * @param bytes The bytes to populate.
      */
     public toBytes(bytes: Uint8Array): void {
-        const carry = new Int32Array(10);
+        const carry = new Int32Array(FieldElement.FIELD_ELEMENT_SIZE);
 
         let q = ((19 * this.data[9]) + (1 << 24)) >> 25;
         q = (this.data[0] + q) >> 26;
@@ -531,16 +536,9 @@ export class FieldElement {
      *    |h| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
      */
     public neg(): void {
-        this.data[0] = -this.data[0];
-        this.data[1] = -this.data[1];
-        this.data[2] = -this.data[2];
-        this.data[3] = -this.data[3];
-        this.data[4] = -this.data[4];
-        this.data[5] = -this.data[5];
-        this.data[6] = -this.data[6];
-        this.data[7] = -this.data[7];
-        this.data[8] = -this.data[8];
-        this.data[9] = -this.data[9];
+        for (let i = 0; i < FieldElement.FIELD_ELEMENT_SIZE; i++) {
+            this.data[i] = -this.data[i];
+        }
     }
 
     /**
@@ -616,9 +614,9 @@ export class FieldElement {
         let i;
 
         t0.square(z);
-        for (i = 1; i < 1; i++) {
-            t0.square(t0);
-        }
+        // for (i = 1; i < 1; i++) {
+        //     t0.square(t0);
+        // }
         t1.square(t0);
         for (i = 1; i < 2; i++) {
             t1.square(t1);
@@ -626,9 +624,9 @@ export class FieldElement {
         t1.mul(z, t1);
         t0.mul(t0, t1);
         t0.square(t0);
-        for (i = 1; i < 1; i++) {
-            t0.square(t0);
-        }
+        // for (i = 1; i < 1; i++) {
+        //     t0.square(t0);
+        // }
         t0.mul(t1, t0);
         t1.square(t0);
         for (i = 1; i < 5; i++) {
@@ -698,18 +696,22 @@ export class FieldElement {
      * Zero the values.
      */
     public zero(): void {
-        for (let i = 0; i < 10; i++) {
-            this.data[i] = 0;
-        }
+        this.data.fill(0);
     }
 
     /**
      * Zero all the values and set the first byte to 1.
      */
     public one(): void {
+        this.data.fill(0);
         this.data[0] = 1;
-        for (let i = 1; i < 10; i++) {
-            this.data[i] = 0;
-        }
+    }
+
+    /**
+     * Clone the field element.
+     * @returns The clones element.
+     */
+    public clone(): FieldElement {
+        return new FieldElement(this.data);
     }
 }

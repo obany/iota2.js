@@ -4,7 +4,7 @@
  * which is an extension of https://github.com/golang/crypto/tree/master/ed25519
  * which in a port of the “ref10” implementation of ed25519 from SUPERCOP
  */
-import { BIG_ARR } from "./common";
+import { BIG_ARR } from "./bigIntCommon";
 import { FieldElement } from "./fieldElement";
 import { PreComputedGroupElement } from "./preComputedGroupElement";
 
@@ -21,7 +21,7 @@ export const CONST_SQRT_M1 = new FieldElement([-32595792, -7943725, 9377950, 350
 export const CONST_A = new FieldElement([486662, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
 // order is the order of Curve25519 in little-endian form.
-export const CONST_ORDER = new BigUint64Array([BigInt(0x5812631A5CF5D3ED), BigInt(0x14DEF9DEA2F79CD6), BIG_ARR[0], BigInt(0x1000000000000000)]);
+export const CONST_ORDER = [BigInt(0x5812631A5CF5D3ED), BigInt(0x14DEF9DEA2F79CD6), BIG_ARR[0], BigInt(0x1000000000000000)];
 
 // bi contains precomputed multiples of the base-point. See the Ed25519 paper
 // for a discussion about how these values are used.
