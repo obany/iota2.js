@@ -48,7 +48,7 @@ export class Zip215 {
         const hReduced = new Uint8Array(32);
         scalarReduce(hReduced, digest);
 
-        const r = new Uint8Array(sig.subarray(32));
+        const r = new Uint8Array(sig.subarray(0, 32));
 
         const checkR = new ExtendedGroupElement();
         // ZIP215: this works because FromBytes does not check that encodings are canonical.
