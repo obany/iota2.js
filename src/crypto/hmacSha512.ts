@@ -50,6 +50,18 @@ export class HmacSha512 {
     }
 
     /**
+     * Perform Sum 512 on the data.
+     * @param key The key for thr hmac.
+     * @param data The data to operate on.
+     * @returns The sum 512 of the data.
+     */
+    public static sum512(key: Uint8Array, data: Uint8Array): Uint8Array {
+        const b2b = new HmacSha512(key, 512);
+        b2b.update(data);
+        return b2b.digest();
+    }
+
+    /**
      * Update the hash with the data.
      * @param message The data to update the hash with.
      * @returns The instance for chaining.

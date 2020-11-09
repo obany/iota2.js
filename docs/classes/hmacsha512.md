@@ -21,6 +21,7 @@ TypeScript conversion from https://github.com/emn178/js-sha512
 
 * [digest](hmacsha512.md#digest)
 * [update](hmacsha512.md#update)
+* [sum512](hmacsha512.md#sum512)
 
 ## Constructors
 
@@ -68,3 +69,22 @@ Name | Type | Description |
 **Returns:** [HmacSha512](hmacsha512.md)
 
 The instance for chaining.
+
+___
+
+### sum512
+
+▸ `Static`**sum512**(`key`: Uint8Array, `data`: Uint8Array): Uint8Array
+
+Perform Sum 512 on the data.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`key` | Uint8Array | The key for thr hmac. |
+`data` | Uint8Array | The data to operate on. |
+
+**Returns:** Uint8Array
+
+The sum 512 of the data.

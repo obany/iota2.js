@@ -9,6 +9,12 @@ export declare class Sha512 {
      */
     constructor(bits?: number);
     /**
+     * Perform Sum 512 on the data.
+     * @param data The data to operate on.
+     * @returns The sum 512 of the data.
+     */
+    static sum512(data: Uint8Array): Uint8Array;
+    /**
      * Update the hash with the data.
      * @param message The data to update the hash with.
      * @returns The instance for chaining.

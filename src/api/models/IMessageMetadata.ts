@@ -1,5 +1,5 @@
 /**
- * Response from the /tips endpoint.
+ * Response from the metadata endpoint.
  */
 export interface IMessageMetadata {
     /**

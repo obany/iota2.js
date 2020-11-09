@@ -23,7 +23,7 @@
         "build-compile": "tsc",
         "build-watch": "tsc --watch",
         "build": "run-s build-clean build-lint build-compile",
-        "test": "jest -w 1",
+        "test": "jest",
         "package-umd": "rollup --config rollup.config.js",
         "package-umd-min": "rollup --config rollup.config.js --environment MINIFY:true",
         "package-umd-browser": "rollup --config rollup.config.js --environment BROWSER:true",

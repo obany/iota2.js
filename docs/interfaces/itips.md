@@ -4,7 +4,7 @@
 
 # Interface: ITips
 
-Response from the /tips endpoint.
+Response from the tips endpoint.
 
 ## Hierarchy
 

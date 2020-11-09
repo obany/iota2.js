@@ -465,7 +465,7 @@ var FieldElement = /** @class */ (function () {
         this.toBytes(s);
         var x = 0;
         for (var i = 0; i < s.length; i++) {
-            x |= s[0];
+            x |= s[i];
         }
         x |= x >> 4;
         x |= x >> 2;

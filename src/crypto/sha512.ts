@@ -5,6 +5,12 @@
  */
 export class Sha512 {
     /**
+     * Sha512 512.
+     * @internal
+     */
+    public static SIZE_512: number = 512;
+
+    /**
      * Extra constants.
      * @internal
      */
@@ -301,6 +307,17 @@ export class Sha512 {
         this._lastByteIndex = 0;
         this._finalized = false;
         this._hashed = false;
+    }
+
+    /**
+     * Perform Sum 512 on the data.
+     * @param data The data to operate on.
+     * @returns The sum 512 of the data.
+     */
+    public static sum512(data: Uint8Array): Uint8Array {
+        const b2b = new Sha512(Sha512.SIZE_512);
+        b2b.update(data);
+        return b2b.digest();
     }
 
     /**

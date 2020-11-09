@@ -4,7 +4,7 @@
 
 # Interface: IMessageMetadata
 
-Response from the /tips endpoint.
+Response from the metadata endpoint.
 
 ## Hierarchy
 

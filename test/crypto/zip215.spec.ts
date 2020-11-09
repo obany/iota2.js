@@ -789,7 +789,8 @@ describe("Zip215", () => {
             [
                 "eeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
                 "eeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000000",
-            ]];
+            ]
+        ];
 
         for (const test of tests) {
             const key = Converter.hexToBytes(test[0]);

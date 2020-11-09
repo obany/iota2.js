@@ -30,7 +30,6 @@ export * from "./crypto/ed25519";
 export * from "./crypto/ed25519Address";
 export * from "./crypto/ed25519Seed";
 export * from "./crypto/hmacSha512";
-export * from "./crypto/sha3";
 export * from "./crypto/sha512";
 export * from "./crypto/slip0010";
 export * from "./crypto/zip215";
