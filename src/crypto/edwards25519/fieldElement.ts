@@ -518,7 +518,7 @@ export class FieldElement {
         this.toBytes(s);
         let x: number = 0;
         for (let i = 0; i < s.length; i++) {
-            x |= s[0];
+            x |= s[i];
         }
         x |= x >> 4;
         x |= x >> 2;
