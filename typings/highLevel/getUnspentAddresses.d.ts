@@ -1,5 +1,5 @@
-import { IClient } from "../api/models/IClient";
 import { Bip32Path } from "../crypto/bip32Path";
+import { IClient } from "../models/IClient";
 import { ISeed } from "../models/ISeed";
 /**
  * Get all the unspent addresses.

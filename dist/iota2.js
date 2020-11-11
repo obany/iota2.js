@@ -29,117 +29,6 @@
 		throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
 	}
 
-	var clientError = createCommonjsModule(function (module, exports) {
-	var __extends = (commonjsGlobal && commonjsGlobal.__extends) || (function () {
-	    var extendStatics = function (d, b) {
-	        extendStatics = Object.setPrototypeOf ||
-	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-	            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-	        return extendStatics(d, b);
-	    };
-	    return function (d, b) {
-	        extendStatics(d, b);
-	        function __() { this.constructor = d; }
-	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	    };
-	})();
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.ClientError = void 0;
-	/**
-	 * Class to handle http errors.
-	 */
-	var ClientError = /** @class */ (function (_super) {
-	    __extends(ClientError, _super);
-	    /**
-	     * Create a new instance of ClientError.
-	     * @param message The message for the error.
-	     * @param route The route the request was made to.
-	     * @param httpStatus The http status code.
-	     * @param code The code in the payload.
-	     */
-	    function ClientError(message, route, httpStatus, code) {
-	        var _this = _super.call(this, message) || this;
-	        _this.route = route;
-	        _this.httpStatus = httpStatus;
-	        _this.code = code;
-	        return _this;
-	    }
-	    return ClientError;
-	}(Error));
-	exports.ClientError = ClientError;
-
-	});
-
-	var IAddress = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IAddressOutputs = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IChildren = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IClient = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IGossipMetrics = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IInfo = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IMessageId = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IMessageMetadata = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IMessages = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IMilestone = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IOutput = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IPeer = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IResponse = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var ITips = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
 	var arrayHelper = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ArrayHelper = void 0;
@@ -4637,7 +4526,7 @@
 	        payload: payload$1,
 	        parent1MessageId: parent1MessageId,
 	        parent2MessageId: parent2MessageId,
-	        nonce: Number(nonce)
+	        nonce: nonce.toString(10)
 	    };
 	}
 	exports.deserializeMessage = deserializeMessage;
@@ -4655,6 +4544,348 @@
 	    writeStream.writeUInt64("message.nonce", BigInt(object.nonce));
 	}
 	exports.serializeMessage = serializeMessage;
+
+	});
+
+	var clientError = createCommonjsModule(function (module, exports) {
+	var __extends = (commonjsGlobal && commonjsGlobal.__extends) || (function () {
+	    var extendStatics = function (d, b) {
+	        extendStatics = Object.setPrototypeOf ||
+	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+	            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+	        return extendStatics(d, b);
+	    };
+	    return function (d, b) {
+	        extendStatics(d, b);
+	        function __() { this.constructor = d; }
+	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	    };
+	})();
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.ClientError = void 0;
+	/**
+	 * Class to handle http errors.
+	 */
+	var ClientError = /** @class */ (function (_super) {
+	    __extends(ClientError, _super);
+	    /**
+	     * Create a new instance of ClientError.
+	     * @param message The message for the error.
+	     * @param route The route the request was made to.
+	     * @param httpStatus The http status code.
+	     * @param code The code in the payload.
+	     */
+	    function ClientError(message, route, httpStatus, code) {
+	        var _this = _super.call(this, message) || this;
+	        _this.route = route;
+	        _this.httpStatus = httpStatus;
+	        _this.code = code;
+	        return _this;
+	    }
+	    return ClientError;
+	}(Error));
+	exports.ClientError = ClientError;
+
+	});
+
+	var converter = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.Converter = void 0;
+	/* eslint-disable no-bitwise */
+	/**
+	 * Convert arrays to and from different formats.
+	 */
+	var Converter = /** @class */ (function () {
+	    function Converter() {
+	    }
+	    /**
+	     * Encode a raw array to text string.
+	     * @param array The bytes to encode.
+	     * @param startIndex The index to start in the bytes.
+	     * @param length The length of bytes to read.
+	     * @returns The array formated as hex.
+	     */
+	    Converter.bytesToAscii = function (array, startIndex, length) {
+	        var ascii = "";
+	        var len = length !== null && length !== void 0 ? length : array.length;
+	        var start = startIndex !== null && startIndex !== void 0 ? startIndex : 0;
+	        for (var i = 0; i < len; i++) {
+	            ascii += String.fromCharCode(array[start + i]);
+	        }
+	        return ascii;
+	    };
+	    /**
+	     * Decode a text string to raw array.
+	     * @param ascii The text to decode.
+	     * @returns The array.
+	     */
+	    Converter.asciiToBytes = function (ascii) {
+	        var sizeof = ascii.length;
+	        var array = new Uint8Array(sizeof);
+	        for (var i = 0; i < ascii.length; i++) {
+	            array[i] = ascii.charCodeAt(i);
+	        }
+	        return array;
+	    };
+	    /**
+	     * Encode a raw array to hex string.
+	     * @param array The bytes to encode.
+	     * @param startIndex The index to start in the bytes.
+	     * @param length The length of bytes to read.
+	     * @param reverse Reverse the combine direction.
+	     * @returns The array formated as hex.
+	     */
+	    Converter.bytesToHex = function (array, startIndex, length, reverse) {
+	        var hex = "";
+	        this.buildHexLookups();
+	        if (Converter.ENCODE_LOOKUP) {
+	            var len = length !== null && length !== void 0 ? length : array.length;
+	            var start = startIndex !== null && startIndex !== void 0 ? startIndex : 0;
+	            if (reverse) {
+	                for (var i = 0; i < len; i++) {
+	                    hex = Converter.ENCODE_LOOKUP[array[start + i]] + hex;
+	                }
+	            }
+	            else {
+	                for (var i = 0; i < len; i++) {
+	                    hex += Converter.ENCODE_LOOKUP[array[start + i]];
+	                }
+	            }
+	        }
+	        return hex;
+	    };
+	    /**
+	     * Decode a hex string to raw array.
+	     * @param hex The hex to decode.
+	     * @param reverse Store the characters in reverse.
+	     * @returns The array.
+	     */
+	    Converter.hexToBytes = function (hex, reverse) {
+	        var sizeof = hex.length >> 1;
+	        var length = sizeof << 1;
+	        var array = new Uint8Array(sizeof);
+	        this.buildHexLookups();
+	        if (Converter.DECODE_LOOKUP) {
+	            var i = 0;
+	            var n = 0;
+	            while (i < length) {
+	                array[n++] =
+	                    (Converter.DECODE_LOOKUP[hex.charCodeAt(i++)] << 4) |
+	                        Converter.DECODE_LOOKUP[hex.charCodeAt(i++)];
+	            }
+	            if (reverse) {
+	                array.reverse();
+	            }
+	        }
+	        return array;
+	    };
+	    /**
+	     * Convert the ascii text to hex.
+	     * @param ascii The ascii to convert.
+	     * @returns The hex version of the bytes.
+	     */
+	    Converter.asciiToHex = function (ascii) {
+	        return Converter.bytesToHex(Converter.asciiToBytes(ascii));
+	    };
+	    /**
+	     * Convert the hex text to ascii.
+	     * @param hex The hex to convert.
+	     * @returns The ascii version of the bytes.
+	     */
+	    Converter.hexToAscii = function (hex) {
+	        return Converter.bytesToAscii(Converter.hexToBytes(hex));
+	    };
+	    /**
+	     * Build the static lookup tables.
+	     * @internal
+	     */
+	    Converter.buildHexLookups = function () {
+	        if (!Converter.ENCODE_LOOKUP || !Converter.DECODE_LOOKUP) {
+	            var alphabet = "0123456789abcdef";
+	            Converter.ENCODE_LOOKUP = [];
+	            Converter.DECODE_LOOKUP = [];
+	            for (var i = 0; i < 256; i++) {
+	                Converter.ENCODE_LOOKUP[i] = alphabet[(i >> 4) & 0xF] + alphabet[i & 0xF];
+	                if (i < 16) {
+	                    if (i < 10) {
+	                        Converter.DECODE_LOOKUP[0x30 + i] = i;
+	                    }
+	                    else {
+	                        Converter.DECODE_LOOKUP[0x61 - 10 + i] = i;
+	                    }
+	                }
+	            }
+	        }
+	    };
+	    return Converter;
+	}());
+	exports.Converter = Converter;
+
+	});
+
+	var writeStream = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.WriteStream = void 0;
+	/* eslint-disable no-bitwise */
+
+
+	/**
+	 * Keep track of the write index within a stream.
+	 */
+	var WriteStream = /** @class */ (function () {
+	    /**
+	     * Create a new instance of ReadStream.
+	     */
+	    function WriteStream() {
+	        this._storage = new Uint8Array(WriteStream.CHUNK_SIZE);
+	        this._writeIndex = 0;
+	    }
+	    /**
+	     * Get the length of the stream.
+	     * @returns The stream length.
+	     */
+	    WriteStream.prototype.length = function () {
+	        return this._storage.length;
+	    };
+	    /**
+	     * How much unused data is there.
+	     * @returns The amount of unused data.
+	     */
+	    WriteStream.prototype.unused = function () {
+	        return this._storage.length - this._writeIndex;
+	    };
+	    /**
+	     * Get the final stream as bytes.
+	     * @returns The final stream.
+	     */
+	    WriteStream.prototype.finalBytes = function () {
+	        return this._storage.subarray(0, this._writeIndex);
+	    };
+	    /**
+	     * Get the final stream as hex.
+	     * @returns The final stream as hex.
+	     */
+	    WriteStream.prototype.finalHex = function () {
+	        return converter.Converter.bytesToHex(this._storage.subarray(0, this._writeIndex));
+	    };
+	    /**
+	     * Get the current write index.
+	     * @returns The current write index.
+	     */
+	    WriteStream.prototype.getWriteIndex = function () {
+	        return this._writeIndex;
+	    };
+	    /**
+	     * Set the current write index.
+	     * @param writeIndex The current write index.
+	     */
+	    WriteStream.prototype.setWriteIndex = function (writeIndex) {
+	        this._writeIndex = writeIndex;
+	    };
+	    /**
+	     * Write fixed length stream.
+	     * @param name The name of the data we are trying to write.
+	     * @param length The length of the data to write.
+	     * @param val The data to write.
+	     */
+	    WriteStream.prototype.writeFixedHex = function (name, length, val) {
+	        if (!common.isHex(val)) {
+	            throw new Error("The " + val + " should be in hex format");
+	        }
+	        // Hex should be twice the length as each byte is 2 ascii characters
+	        if (length * 2 !== val.length) {
+	            throw new Error(name + " length " + val.length + " does not match expected length " + length * 2);
+	        }
+	        this.expand(length);
+	        this._storage.set(converter.Converter.hexToBytes(val), this._writeIndex);
+	        this._writeIndex += length;
+	    };
+	    /**
+	     * Write fixed length stream.
+	     * @param name The name of the data we are trying to write.
+	     * @param length The length of the data to write.
+	     * @param val The data to write.
+	     */
+	    WriteStream.prototype.writeBytes = function (name, length, val) {
+	        this.expand(length);
+	        this._storage.set(val, this._writeIndex);
+	        this._writeIndex += length;
+	    };
+	    /**
+	     * Write a byte to the stream.
+	     * @param name The name of the data we are trying to write.
+	     * @param val The data to write.
+	     */
+	    WriteStream.prototype.writeByte = function (name, val) {
+	        this.expand(1);
+	        this._storage[this._writeIndex++] = val & 0xFF;
+	    };
+	    /**
+	     * Write a UInt16 to the stream.
+	     * @param name The name of the data we are trying to write.
+	     * @param val The data to write.
+	     */
+	    WriteStream.prototype.writeUInt16 = function (name, val) {
+	        this.expand(2);
+	        this._storage[this._writeIndex++] = val & 0xFF;
+	        this._storage[this._writeIndex++] = val >>> 8;
+	    };
+	    /**
+	     * Write a UInt32 to the stream.
+	     * @param name The name of the data we are trying to write.
+	     * @param val The data to write.
+	     */
+	    WriteStream.prototype.writeUInt32 = function (name, val) {
+	        this.expand(4);
+	        this._storage[this._writeIndex++] = val & 0xFF;
+	        this._storage[this._writeIndex++] = val >>> 8;
+	        this._storage[this._writeIndex++] = val >>> 16;
+	        this._storage[this._writeIndex++] = val >>> 24;
+	    };
+	    /**
+	     * Write a UInt64 to the stream.
+	     * @param name The name of the data we are trying to write.
+	     * @param val The data to write.
+	     */
+	    WriteStream.prototype.writeUInt64 = function (name, val) {
+	        this.expand(8);
+	        var hex = val.toString(16).padStart(16, "0");
+	        var arr = converter.Converter.hexToBytes(hex, true);
+	        this._storage.set(arr, this._writeIndex);
+	        this._writeIndex += 8;
+	    };
+	    /**
+	     * Write a string to the stream.
+	     * @param name The name of the data we are trying to write.
+	     * @param val The data to write.
+	     * @returns The string.
+	     */
+	    WriteStream.prototype.writeString = function (name, val) {
+	        this.writeUInt16(name, val.length);
+	        this.expand(val.length);
+	        this._storage.set(converter.Converter.asciiToBytes(val), this._writeIndex);
+	        this._writeIndex += val.length;
+	        return val;
+	    };
+	    /**
+	     * Expand the storage if there is not enough spave.
+	     * @param additional The amount of space needed.
+	     */
+	    WriteStream.prototype.expand = function (additional) {
+	        if (this._writeIndex + additional > this._storage.byteLength) {
+	            var newArr = new Uint8Array(this._storage.length + WriteStream.CHUNK_SIZE);
+	            newArr.set(this._storage, 0);
+	            this._storage = newArr;
+	        }
+	    };
+	    /**
+	     * Chunk size to expand the storage.
+	     * @internal
+	     */
+	    WriteStream.CHUNK_SIZE = 4096;
+	    return WriteStream;
+	}());
+	exports.WriteStream = WriteStream;
 
 	});
 
@@ -4698,6 +4929,10 @@
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SingleNodeClient = void 0;
 
+
+
+
+
 	/**
 	 * Client for API communication.
 	 */
@@ -4705,12 +4940,14 @@
 	    /**
 	     * Create a new instance of client.
 	     * @param endpoint The endpoint.
+	     * @param powProvider Optional local POW provider.
 	     */
-	    function SingleNodeClient(endpoint) {
+	    function SingleNodeClient(endpoint, powProvider) {
 	        if (!/^https?:\/\/\w+(\.\w+)*(:\d+)?(\/.*)?$/.test(endpoint)) {
 	            throw new Error("The endpoint is not in the correct format");
 	        }
 	        this._endpoint = endpoint.replace(/\/+$/, "");
+	        this._powProvider = powProvider;
 	    }
 	    /**
 	     * Get the health of the node.
@@ -4798,14 +5035,25 @@
 	     * @param message The message to submit.
 	     * @returns The messageId.
 	     */
-	    SingleNodeClient.prototype.messageSubmit = function (message) {
+	    SingleNodeClient.prototype.messageSubmit = function (message$1) {
 	        return __awaiter(this, void 0, void 0, function () {
-	            var response;
-	            return __generator(this, function (_a) {
-	                switch (_a.label) {
-	                    case 0: return [4 /*yield*/, this.fetchJson("post", "/api/v1/messages", message)];
+	            var writeStream$1, messageBytes, _a, response;
+	            return __generator(this, function (_b) {
+	                switch (_b.label) {
+	                    case 0:
+	                        if (!(this._powProvider &&
+	                            (!message$1.nonce || message$1.nonce.length === 0 || message$1.nonce === "0"))) return [3 /*break*/, 2];
+	                        writeStream$1 = new writeStream.WriteStream();
+	                        message.serializeMessage(writeStream$1, message$1);
+	                        messageBytes = writeStream$1.finalBytes();
+	                        _a = message$1;
+	                        return [4 /*yield*/, this._powProvider.doPow(messageBytes)];
 	                    case 1:
-	                        response = _a.sent();
+	                        _a.nonce = (_b.sent()).toString(10);
+	                        _b.label = 2;
+	                    case 2: return [4 /*yield*/, this.fetchJson("post", "/api/v1/messages", message$1)];
+	                    case 3:
+	                        response = _b.sent();
 	                        return [2 /*return*/, response.messageId];
 	                }
 	            });
@@ -4818,11 +5066,20 @@
 	     */
 	    SingleNodeClient.prototype.messageSubmitRaw = function (message) {
 	        return __awaiter(this, void 0, void 0, function () {
-	            var response;
+	            var nonce, hex, nonceBytes, response;
 	            return __generator(this, function (_a) {
 	                switch (_a.label) {
-	                    case 0: return [4 /*yield*/, this.fetchBinary("post", "/api/v1/messages", message)];
+	                    case 0:
+	                        if (!(this._powProvider && arrayHelper.ArrayHelper.equal(message.slice(-8), SingleNodeClient.NONCE_ZERO))) return [3 /*break*/, 2];
+	                        return [4 /*yield*/, this._powProvider.doPow(message)];
 	                    case 1:
+	                        nonce = _a.sent();
+	                        hex = nonce.toString(16).padStart(16, "0");
+	                        nonceBytes = converter.Converter.hexToBytes(hex, true);
+	                        message.set(nonceBytes, message.length - 8);
+	                        _a.label = 2;
+	                    case 2: return [4 /*yield*/, this.fetchBinary("post", "/api/v1/messages", message)];
+	                    case 3:
 	                        response = _a.sent();
 	                        return [2 /*return*/, response.messageId];
 	                }
@@ -5054,6 +5311,10 @@
 	            });
 	        });
 	    };
+	    /**
+	     * A zero nonce.
+	     */
+	    SingleNodeClient.NONCE_ZERO = new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]);
 	    return SingleNodeClient;
 	}());
 	exports.SingleNodeClient = SingleNodeClient;
@@ -5393,141 +5654,6 @@
 	    return RandomHelper;
 	}());
 	exports.RandomHelper = RandomHelper;
-
-	});
-
-	var converter = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.Converter = void 0;
-	/* eslint-disable no-bitwise */
-	/**
-	 * Convert arrays to and from different formats.
-	 */
-	var Converter = /** @class */ (function () {
-	    function Converter() {
-	    }
-	    /**
-	     * Encode a raw array to text string.
-	     * @param array The bytes to encode.
-	     * @param startIndex The index to start in the bytes.
-	     * @param length The length of bytes to read.
-	     * @returns The array formated as hex.
-	     */
-	    Converter.bytesToAscii = function (array, startIndex, length) {
-	        var ascii = "";
-	        var len = length !== null && length !== void 0 ? length : array.length;
-	        var start = startIndex !== null && startIndex !== void 0 ? startIndex : 0;
-	        for (var i = 0; i < len; i++) {
-	            ascii += String.fromCharCode(array[start + i]);
-	        }
-	        return ascii;
-	    };
-	    /**
-	     * Decode a text string to raw array.
-	     * @param ascii The text to decode.
-	     * @returns The array.
-	     */
-	    Converter.asciiToBytes = function (ascii) {
-	        var sizeof = ascii.length;
-	        var array = new Uint8Array(sizeof);
-	        for (var i = 0; i < ascii.length; i++) {
-	            array[i] = ascii.charCodeAt(i);
-	        }
-	        return array;
-	    };
-	    /**
-	     * Encode a raw array to hex string.
-	     * @param array The bytes to encode.
-	     * @param startIndex The index to start in the bytes.
-	     * @param length The length of bytes to read.
-	     * @param reverse Reverse the combine direction.
-	     * @returns The array formated as hex.
-	     */
-	    Converter.bytesToHex = function (array, startIndex, length, reverse) {
-	        var hex = "";
-	        this.buildHexLookups();
-	        if (Converter.ENCODE_LOOKUP) {
-	            var len = length !== null && length !== void 0 ? length : array.length;
-	            var start = startIndex !== null && startIndex !== void 0 ? startIndex : 0;
-	            if (reverse) {
-	                for (var i = 0; i < len; i++) {
-	                    hex = Converter.ENCODE_LOOKUP[array[start + i]] + hex;
-	                }
-	            }
-	            else {
-	                for (var i = 0; i < len; i++) {
-	                    hex += Converter.ENCODE_LOOKUP[array[start + i]];
-	                }
-	            }
-	        }
-	        return hex;
-	    };
-	    /**
-	     * Decode a hex string to raw array.
-	     * @param hex The hex to decode.
-	     * @param reverse Store the characters in reverse.
-	     * @returns The array.
-	     */
-	    Converter.hexToBytes = function (hex, reverse) {
-	        var sizeof = hex.length >> 1;
-	        var length = sizeof << 1;
-	        var array = new Uint8Array(sizeof);
-	        this.buildHexLookups();
-	        if (Converter.DECODE_LOOKUP) {
-	            var i = 0;
-	            var n = 0;
-	            while (i < length) {
-	                array[n++] =
-	                    (Converter.DECODE_LOOKUP[hex.charCodeAt(i++)] << 4) |
-	                        Converter.DECODE_LOOKUP[hex.charCodeAt(i++)];
-	            }
-	            if (reverse) {
-	                array.reverse();
-	            }
-	        }
-	        return array;
-	    };
-	    /**
-	     * Convert the ascii text to hex.
-	     * @param ascii The ascii to convert.
-	     * @returns The hex version of the bytes.
-	     */
-	    Converter.asciiToHex = function (ascii) {
-	        return Converter.bytesToHex(Converter.asciiToBytes(ascii));
-	    };
-	    /**
-	     * Convert the hex text to ascii.
-	     * @param hex The hex to convert.
-	     * @returns The ascii version of the bytes.
-	     */
-	    Converter.hexToAscii = function (hex) {
-	        return Converter.bytesToAscii(Converter.hexToBytes(hex));
-	    };
-	    /**
-	     * Build the static lookup tables.
-	     * @internal
-	     */
-	    Converter.buildHexLookups = function () {
-	        if (!Converter.ENCODE_LOOKUP || !Converter.DECODE_LOOKUP) {
-	            var alphabet = "0123456789abcdef";
-	            Converter.ENCODE_LOOKUP = [];
-	            Converter.DECODE_LOOKUP = [];
-	            for (var i = 0; i < 256; i++) {
-	                Converter.ENCODE_LOOKUP[i] = alphabet[(i >> 4) & 0xF] + alphabet[i & 0xF];
-	                if (i < 16) {
-	                    if (i < 10) {
-	                        Converter.DECODE_LOOKUP[0x30 + i] = i;
-	                    }
-	                    else {
-	                        Converter.DECODE_LOOKUP[0x61 - 10 + i] = i;
-	                    }
-	                }
-	            }
-	        }
-	    };
-	    return Converter;
-	}());
-	exports.Converter = Converter;
 
 	});
 
@@ -6133,173 +6259,18 @@
 
 	});
 
-	var writeStream = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.WriteStream = void 0;
-	/* eslint-disable no-bitwise */
-
-
-	/**
-	 * Keep track of the write index within a stream.
-	 */
-	var WriteStream = /** @class */ (function () {
-	    /**
-	     * Create a new instance of ReadStream.
-	     */
-	    function WriteStream() {
-	        this._storage = new Uint8Array(WriteStream.CHUNK_SIZE);
-	        this._writeIndex = 0;
-	    }
-	    /**
-	     * Get the length of the stream.
-	     * @returns The stream length.
-	     */
-	    WriteStream.prototype.length = function () {
-	        return this._storage.length;
-	    };
-	    /**
-	     * How much unused data is there.
-	     * @returns The amount of unused data.
-	     */
-	    WriteStream.prototype.unused = function () {
-	        return this._storage.length - this._writeIndex;
-	    };
-	    /**
-	     * Get the final stream as bytes.
-	     * @returns The final stream.
-	     */
-	    WriteStream.prototype.finalBytes = function () {
-	        return this._storage.subarray(0, this._writeIndex);
-	    };
-	    /**
-	     * Get the final stream as hex.
-	     * @returns The final stream as hex.
-	     */
-	    WriteStream.prototype.finalHex = function () {
-	        return converter.Converter.bytesToHex(this._storage.subarray(0, this._writeIndex));
-	    };
-	    /**
-	     * Get the current write index.
-	     * @returns The current write index.
-	     */
-	    WriteStream.prototype.getWriteIndex = function () {
-	        return this._writeIndex;
-	    };
-	    /**
-	     * Set the current write index.
-	     * @param writeIndex The current write index.
-	     */
-	    WriteStream.prototype.setWriteIndex = function (writeIndex) {
-	        this._writeIndex = writeIndex;
-	    };
-	    /**
-	     * Write fixed length stream.
-	     * @param name The name of the data we are trying to write.
-	     * @param length The length of the data to write.
-	     * @param val The data to write.
-	     */
-	    WriteStream.prototype.writeFixedHex = function (name, length, val) {
-	        if (!common.isHex(val)) {
-	            throw new Error("The " + val + " should be in hex format");
-	        }
-	        // Hex should be twice the length as each byte is 2 ascii characters
-	        if (length * 2 !== val.length) {
-	            throw new Error(name + " length " + val.length + " does not match expected length " + length * 2);
-	        }
-	        this.expand(length);
-	        this._storage.set(converter.Converter.hexToBytes(val), this._writeIndex);
-	        this._writeIndex += length;
-	    };
-	    /**
-	     * Write fixed length stream.
-	     * @param name The name of the data we are trying to write.
-	     * @param length The length of the data to write.
-	     * @param val The data to write.
-	     */
-	    WriteStream.prototype.writeBytes = function (name, length, val) {
-	        this.expand(length);
-	        this._storage.set(val, this._writeIndex);
-	        this._writeIndex += length;
-	    };
-	    /**
-	     * Write a byte to the stream.
-	     * @param name The name of the data we are trying to write.
-	     * @param val The data to write.
-	     */
-	    WriteStream.prototype.writeByte = function (name, val) {
-	        this.expand(1);
-	        this._storage[this._writeIndex++] = val & 0xFF;
-	    };
-	    /**
-	     * Write a UInt16 to the stream.
-	     * @param name The name of the data we are trying to write.
-	     * @param val The data to write.
-	     */
-	    WriteStream.prototype.writeUInt16 = function (name, val) {
-	        this.expand(2);
-	        this._storage[this._writeIndex++] = val & 0xFF;
-	        this._storage[this._writeIndex++] = val >>> 8;
-	    };
-	    /**
-	     * Write a UInt32 to the stream.
-	     * @param name The name of the data we are trying to write.
-	     * @param val The data to write.
-	     */
-	    WriteStream.prototype.writeUInt32 = function (name, val) {
-	        this.expand(4);
-	        this._storage[this._writeIndex++] = val & 0xFF;
-	        this._storage[this._writeIndex++] = val >>> 8;
-	        this._storage[this._writeIndex++] = val >>> 16;
-	        this._storage[this._writeIndex++] = val >>> 24;
-	    };
-	    /**
-	     * Write a UInt64 to the stream.
-	     * @param name The name of the data we are trying to write.
-	     * @param val The data to write.
-	     */
-	    WriteStream.prototype.writeUInt64 = function (name, val) {
-	        this.expand(8);
-	        var hex = val.toString(16).padStart(16, "0");
-	        var arr = converter.Converter.hexToBytes(hex, true);
-	        this._storage.set(arr, this._writeIndex);
-	        this._writeIndex += 8;
-	    };
-	    /**
-	     * Write a string to the stream.
-	     * @param name The name of the data we are trying to write.
-	     * @param val The data to write.
-	     * @returns The string.
-	     */
-	    WriteStream.prototype.writeString = function (name, val) {
-	        this.writeUInt16(name, val.length);
-	        this.expand(val.length);
-	        this._storage.set(converter.Converter.asciiToBytes(val), this._writeIndex);
-	        this._writeIndex += val.length;
-	        return val;
-	    };
-	    /**
-	     * Expand the storage if there is not enough spave.
-	     * @param additional The amount of space needed.
-	     */
-	    WriteStream.prototype.expand = function (additional) {
-	        if (this._writeIndex + additional > this._storage.byteLength) {
-	            var newArr = new Uint8Array(this._storage.length + WriteStream.CHUNK_SIZE);
-	            newArr.set(this._storage, 0);
-	            this._storage = newArr;
-	        }
-	    };
-	    /**
-	     * Chunk size to expand the storage.
-	     * @internal
-	     */
-	    WriteStream.CHUNK_SIZE = 4096;
-	    return WriteStream;
-	}());
-	exports.WriteStream = WriteStream;
-
-	});
-
 	var sendAdvanced_1 = createCommonjsModule(function (module, exports) {
+	var __assign = (commonjsGlobal && commonjsGlobal.__assign) || function () {
+	    __assign = Object.assign || function(t) {
+	        for (var s, i = 1, n = arguments.length; i < n; i++) {
+	            s = arguments[i];
+	            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+	                t[p] = s[p];
+	        }
+	        return t;
+	    };
+	    return __assign.apply(this, arguments);
+	};
 	var __awaiter = (commonjsGlobal && commonjsGlobal.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
@@ -6344,102 +6315,30 @@
 
 
 
-
 	/**
 	 * Send a transfer from the balance on the seed.
 	 * @param client The client to send the transfer with.
-	 * @param seed The seed to use for address generation.
-	 * @param basePath The base path to start looking for addresses.
+	 * @param inputsAndSignatureKeyPairs The inputs with the signature key pairs needed to sign transfers.
 	 * @param outputs The outputs to send.
-	 * @param startIndex Optional start index for the wallet count address, defaults to 0.
 	 * @param indexationKey Optional indexation key.
 	 * @param indexationData Optional index data.
 	 * @returns The id of the message created and the remainder address if one was needed.
 	 */
-	function sendAdvanced(client, seed, basePath, outputs, startIndex, indexationKey, indexationData) {
+	function sendAdvanced(client, inputsAndSignatureKeyPairs, outputs, indexationKey, indexationData) {
 	    return __awaiter(this, void 0, void 0, function () {
-	        var requiredBalance, localStartIndex, consumedBalance, inputsAndSignatureKeyPairs, finished, addressKeyPair, address, addressOutputIds, _i, _a, addressOutputId, addressOutput, input$1, writeStream$1, outputsWithSerialization, _b, outputs_1, output$1, sigLockedOutput, writeStream$1, sortedInputs, sortedOutputs, transactionEssence, binaryEssence, essenceFinal, unlockBlocks, addressToUnlockBlock, _c, sortedInputs_1, input$1, hexInputAddressPublic, transactionPayload, tips, message, messageId;
-	        return __generator(this, function (_d) {
-	            switch (_d.label) {
+	        var outputsWithSerialization, _i, outputs_1, output$1, sigLockedOutput, writeStream$1, inputsAndSignatureKeyPairsSerialized, sortedInputs, sortedOutputs, transactionEssence, binaryEssence, essenceFinal, unlockBlocks, addressToUnlockBlock, _a, sortedInputs_1, input$1, hexInputAddressPublic, transactionPayload, tips, message, messageId;
+	        return __generator(this, function (_b) {
+	            switch (_b.label) {
 	                case 0:
+	                    if (!inputsAndSignatureKeyPairs || inputsAndSignatureKeyPairs.length === 0) {
+	                        throw new Error("You must specify some inputs");
+	                    }
 	                    if (!outputs || outputs.length === 0) {
 	                        throw new Error("You must specify some outputs");
 	                    }
-	                    requiredBalance = outputs.reduce(function (total, output) { return total + output.amount; }, 0);
-	                    localStartIndex = startIndex !== null && startIndex !== void 0 ? startIndex : 0;
-	                    consumedBalance = 0;
-	                    inputsAndSignatureKeyPairs = [];
-	                    finished = false;
-	                    _d.label = 1;
-	                case 1:
-	                    basePath.push(localStartIndex);
-	                    addressKeyPair = seed.generateSeedFromPath(basePath).keyPair();
-	                    basePath.pop();
-	                    address = converter.Converter.bytesToHex(ed25519Address.Ed25519Address.publicKeyToAddress(addressKeyPair.publicKey));
-	                    return [4 /*yield*/, client.addressOutputs(address)];
-	                case 2:
-	                    addressOutputIds = _d.sent();
-	                    if (!(addressOutputIds.count === 0)) return [3 /*break*/, 3];
-	                    finished = true;
-	                    return [3 /*break*/, 7];
-	                case 3:
-	                    _i = 0, _a = addressOutputIds.outputIds;
-	                    _d.label = 4;
-	                case 4:
-	                    if (!(_i < _a.length)) return [3 /*break*/, 7];
-	                    addressOutputId = _a[_i];
-	                    return [4 /*yield*/, client.output(addressOutputId)];
-	                case 5:
-	                    addressOutput = _d.sent();
-	                    if (!addressOutput.isSpent &&
-	                        consumedBalance < requiredBalance) {
-	                        if (addressOutput.output.amount === 0) {
-	                            finished = true;
-	                        }
-	                        else {
-	                            consumedBalance += addressOutput.output.amount;
-	                            input$1 = {
-	                                type: 0,
-	                                transactionId: addressOutput.transactionId,
-	                                transactionOutputIndex: addressOutput.outputIndex
-	                            };
-	                            writeStream$1 = new writeStream.WriteStream();
-	                            input.serializeInput(writeStream$1, input$1);
-	                            inputsAndSignatureKeyPairs.push({
-	                                input: input$1,
-	                                addressKeyPair: addressKeyPair,
-	                                serialized: writeStream$1.finalHex()
-	                            });
-	                            if (consumedBalance >= requiredBalance) {
-	                                // We didn't use all the balance from the last input
-	                                // so return the rest to the same address.
-	                                if (consumedBalance - requiredBalance > 0) {
-	                                    outputs.push({
-	                                        amount: consumedBalance - requiredBalance,
-	                                        address: address
-	                                    });
-	                                }
-	                                finished = true;
-	                            }
-	                        }
-	                    }
-	                    _d.label = 6;
-	                case 6:
-	                    _i++;
-	                    return [3 /*break*/, 4];
-	                case 7:
-	                    localStartIndex++;
-	                    _d.label = 8;
-	                case 8:
-	                    if (!finished) return [3 /*break*/, 1];
-	                    _d.label = 9;
-	                case 9:
-	                    if (consumedBalance < requiredBalance) {
-	                        throw new Error("There are not enough funds in the inputs for the required balance");
-	                    }
 	                    outputsWithSerialization = [];
-	                    for (_b = 0, outputs_1 = outputs; _b < outputs_1.length; _b++) {
-	                        output$1 = outputs_1[_b];
+	                    for (_i = 0, outputs_1 = outputs; _i < outputs_1.length; _i++) {
+	                        output$1 = outputs_1[_i];
 	                        sigLockedOutput = {
 	                            type: 0,
 	                            address: {
@@ -6455,7 +6354,12 @@
 	                            serialized: writeStream$1.finalHex()
 	                        });
 	                    }
-	                    sortedInputs = inputsAndSignatureKeyPairs.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
+	                    inputsAndSignatureKeyPairsSerialized = inputsAndSignatureKeyPairs.map(function (i) {
+	                        var writeStream$1 = new writeStream.WriteStream();
+	                        input.serializeInput(writeStream$1, i.input);
+	                        return __assign(__assign({}, i), { serialized: writeStream$1.finalHex() });
+	                    });
+	                    sortedInputs = inputsAndSignatureKeyPairsSerialized.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
 	                    sortedOutputs = outputsWithSerialization.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
 	                    transactionEssence = {
 	                        type: 0,
@@ -6474,8 +6378,8 @@
 	                    essenceFinal = binaryEssence.finalBytes();
 	                    unlockBlocks = [];
 	                    addressToUnlockBlock = {};
-	                    for (_c = 0, sortedInputs_1 = sortedInputs; _c < sortedInputs_1.length; _c++) {
-	                        input$1 = sortedInputs_1[_c];
+	                    for (_a = 0, sortedInputs_1 = sortedInputs; _a < sortedInputs_1.length; _a++) {
+	                        input$1 = sortedInputs_1[_a];
 	                        hexInputAddressPublic = converter.Converter.bytesToHex(input$1.addressKeyPair.publicKey);
 	                        if (addressToUnlockBlock[hexInputAddressPublic]) {
 	                            unlockBlocks.push({
@@ -6504,18 +6408,18 @@
 	                        unlockBlocks: unlockBlocks
 	                    };
 	                    return [4 /*yield*/, client.tips()];
-	                case 10:
-	                    tips = _d.sent();
+	                case 1:
+	                    tips = _b.sent();
 	                    message = {
 	                        version: 1,
 	                        parent1MessageId: tips.tip1MessageId,
 	                        parent2MessageId: tips.tip2MessageId,
 	                        payload: transactionPayload,
-	                        nonce: 0
+	                        nonce: "0"
 	                    };
 	                    return [4 /*yield*/, client.messageSubmit(message)];
-	                case 11:
-	                    messageId = _d.sent();
+	                case 2:
+	                    messageId = _b.sent();
 	                    return [2 /*return*/, {
 	                            messageId: messageId,
 	                            message: message
@@ -6566,7 +6470,9 @@
 	    }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.send = void 0;
+	exports.calculateInputs = exports.send = void 0;
+
+
 
 	/**
 	 * Send a transfer from the balance on the seed.
@@ -6580,11 +6486,16 @@
 	 */
 	function send(client, seed, basePath, address, amount, startIndex) {
 	    return __awaiter(this, void 0, void 0, function () {
-	        var response;
+	        var outputs, inputsAndKey, response;
 	        return __generator(this, function (_a) {
 	            switch (_a.label) {
-	                case 0: return [4 /*yield*/, sendAdvanced_1.sendAdvanced(client, seed, basePath, [{ address: address, amount: amount }], startIndex)];
+	                case 0:
+	                    outputs = [{ address: address, amount: amount }];
+	                    return [4 /*yield*/, calculateInputs(client, seed, basePath, outputs, startIndex)];
 	                case 1:
+	                    inputsAndKey = _a.sent();
+	                    return [4 /*yield*/, sendAdvanced_1.sendAdvanced(client, inputsAndKey, outputs)];
+	                case 2:
 	                    response = _a.sent();
 	                    return [2 /*return*/, {
 	                            messageId: response.messageId,
@@ -6595,6 +6506,96 @@
 	    });
 	}
 	exports.send = send;
+	/**
+	 * Calculate the inputs from the seed and basePath.
+	 * @param client The client to send the transfer with.
+	 * @param seed The seed to use for address generation.
+	 * @param basePath The base path to start looking for addresses.
+	 * @param outputs The outputs to send.
+	 * @param startIndex The start index for the wallet count address, defaults to 0.
+	 * @returns The id of the message created and the contructed message.
+	 */
+	function calculateInputs(client, seed, basePath, outputs, startIndex) {
+	    return __awaiter(this, void 0, void 0, function () {
+	        var requiredBalance, localStartIndex, consumedBalance, inputsAndSignatureKeyPairs, finished, addressKeyPair, address, addressOutputIds, _i, _a, addressOutputId, addressOutput, input;
+	        return __generator(this, function (_b) {
+	            switch (_b.label) {
+	                case 0:
+	                    requiredBalance = outputs.reduce(function (total, output) { return total + output.amount; }, 0);
+	                    localStartIndex = startIndex !== null && startIndex !== void 0 ? startIndex : 0;
+	                    consumedBalance = 0;
+	                    inputsAndSignatureKeyPairs = [];
+	                    finished = false;
+	                    _b.label = 1;
+	                case 1:
+	                    basePath.push(localStartIndex);
+	                    addressKeyPair = seed.generateSeedFromPath(basePath).keyPair();
+	                    basePath.pop();
+	                    address = converter.Converter.bytesToHex(ed25519Address.Ed25519Address.publicKeyToAddress(addressKeyPair.publicKey));
+	                    return [4 /*yield*/, client.addressOutputs(address)];
+	                case 2:
+	                    addressOutputIds = _b.sent();
+	                    if (!(addressOutputIds.count === 0)) return [3 /*break*/, 3];
+	                    finished = true;
+	                    return [3 /*break*/, 7];
+	                case 3:
+	                    _i = 0, _a = addressOutputIds.outputIds;
+	                    _b.label = 4;
+	                case 4:
+	                    if (!(_i < _a.length)) return [3 /*break*/, 7];
+	                    addressOutputId = _a[_i];
+	                    return [4 /*yield*/, client.output(addressOutputId)];
+	                case 5:
+	                    addressOutput = _b.sent();
+	                    if (!addressOutput.isSpent &&
+	                        consumedBalance < requiredBalance) {
+	                        if (addressOutput.output.amount === 0) {
+	                            finished = true;
+	                        }
+	                        else {
+	                            consumedBalance += addressOutput.output.amount;
+	                            input = {
+	                                type: 0,
+	                                transactionId: addressOutput.transactionId,
+	                                transactionOutputIndex: addressOutput.outputIndex
+	                            };
+	                            inputsAndSignatureKeyPairs.push({
+	                                input: input,
+	                                addressKeyPair: addressKeyPair
+	                            });
+	                            if (consumedBalance >= requiredBalance) {
+	                                // We didn't use all the balance from the last input
+	                                // so return the rest to the same address.
+	                                if (consumedBalance - requiredBalance > 0) {
+	                                    outputs.push({
+	                                        amount: consumedBalance - requiredBalance,
+	                                        address: address
+	                                    });
+	                                }
+	                                finished = true;
+	                            }
+	                        }
+	                    }
+	                    _b.label = 6;
+	                case 6:
+	                    _i++;
+	                    return [3 /*break*/, 4];
+	                case 7:
+	                    localStartIndex++;
+	                    _b.label = 8;
+	                case 8:
+	                    if (!finished) return [3 /*break*/, 1];
+	                    _b.label = 9;
+	                case 9:
+	                    if (consumedBalance < requiredBalance) {
+	                        throw new Error("There are not enough funds in the inputs for the required balance");
+	                    }
+	                    return [2 /*return*/, inputsAndSignatureKeyPairs];
+	            }
+	        });
+	    });
+	}
+	exports.calculateInputs = calculateInputs;
 
 	});
 
@@ -6651,6 +6652,9 @@
 	        return __generator(this, function (_a) {
 	            switch (_a.label) {
 	                case 0:
+	                    if (!indexationKey || indexationKey.length === 0) {
+	                        throw new Error("indexationKey must not be empty");
+	                    }
 	                    indexationPayload = {
 	                        type: 2,
 	                        index: indexationKey,
@@ -6664,7 +6668,7 @@
 	                        parent1MessageId: tips.tip1MessageId,
 	                        parent2MessageId: tips.tip2MessageId,
 	                        payload: indexationPayload,
-	                        nonce: 0
+	                        nonce: "0"
 	                    };
 	                    return [4 /*yield*/, client.messageSubmit(message)];
 	                case 2:
@@ -6678,6 +6682,76 @@
 	    });
 	}
 	exports.sendData = sendData;
+
+	});
+
+	var IAddress = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IAddressOutputs = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IChildren = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IGossipMetrics = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IInfo = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IMessageId = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IMessageMetadata = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IMessages = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IMilestone = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IOutput = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IPeer = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IResponse = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var ITips = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IClient = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
 
@@ -7174,21 +7248,6 @@
 	    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	__exportStar(clientError, exports);
-	__exportStar(IAddress, exports);
-	__exportStar(IAddressOutputs, exports);
-	__exportStar(IChildren, exports);
-	__exportStar(IClient, exports);
-	__exportStar(IGossipMetrics, exports);
-	__exportStar(IInfo, exports);
-	__exportStar(IMessageId, exports);
-	__exportStar(IMessageMetadata, exports);
-	__exportStar(IMessages, exports);
-	__exportStar(IMilestone, exports);
-	__exportStar(IOutput, exports);
-	__exportStar(IPeer, exports);
-	__exportStar(IResponse, exports);
-	__exportStar(ITips, exports);
 	__exportStar(address, exports);
 	__exportStar(common, exports);
 	__exportStar(input, exports);
@@ -7198,6 +7257,7 @@
 	__exportStar(signature, exports);
 	__exportStar(transaction, exports);
 	__exportStar(unlockBlock, exports);
+	__exportStar(clientError, exports);
 	__exportStar(singleNodeClient, exports);
 	__exportStar(bech32, exports);
 	__exportStar(bip32Path, exports);
@@ -7216,6 +7276,20 @@
 	__exportStar(send_1, exports);
 	__exportStar(sendAdvanced_1, exports);
 	__exportStar(sendData_1, exports);
+	__exportStar(IAddress, exports);
+	__exportStar(IAddressOutputs, exports);
+	__exportStar(IChildren, exports);
+	__exportStar(IGossipMetrics, exports);
+	__exportStar(IInfo, exports);
+	__exportStar(IMessageId, exports);
+	__exportStar(IMessageMetadata, exports);
+	__exportStar(IMessages, exports);
+	__exportStar(IMilestone, exports);
+	__exportStar(IOutput, exports);
+	__exportStar(IPeer, exports);
+	__exportStar(IResponse, exports);
+	__exportStar(ITips, exports);
+	__exportStar(IClient, exports);
 	__exportStar(IEd25519Address, exports);
 	__exportStar(IEd25519Signature, exports);
 	__exportStar(IIndexationPayload, exports);
@@ -7233,8 +7307,8 @@
 	__exportStar(arrayHelper, exports);
 	__exportStar(bech32Helper, exports);
 	__exportStar(converter, exports);
-	__exportStar(randomHelper, exports);
 	__exportStar(logging, exports);
+	__exportStar(randomHelper, exports);
 	__exportStar(readStream, exports);
 	__exportStar(writeStream, exports);
 

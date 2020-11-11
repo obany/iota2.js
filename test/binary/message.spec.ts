@@ -39,7 +39,7 @@ describe("Binary Message", () => {
         expect(message.version).toEqual(1);
         expect(message.parent1MessageId).toEqual("4594267ca0446739d5e4c6dcf060d640aafb68ab929aa2bb8c2bcdce8b3bc89e");
         expect(message.parent2MessageId).toEqual("6901c7b37adbddfc3fc170773632489f263af4decc9ed5813c849a07319ecd73");
-        expect(message.nonce).toEqual(0);
+        expect(message.nonce).toEqual("0");
     });
 
     test("Can fail with additional data", () => {
@@ -68,7 +68,7 @@ describe("Binary Message", () => {
         expect(payload.inclusionMerkleProof).toEqual("786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce");
         expect(payload.signatures.length).toEqual(1);
         expect(payload.signatures[0]).toEqual("2c59d43952bda7ca60d3c2288ebc00703b4b60c928d277382cad5f57b02a90825f2d3a8509d6594498e0488f086d8fa3f13d9636d20e759eb5806ffe663bac0d");
-        expect(message.nonce).toEqual(0);
+        expect(message.nonce).toEqual("0");
     });
 
     test("Can succeed with indexation data", () => {
@@ -81,7 +81,7 @@ describe("Binary Message", () => {
         expect(payload.type).toEqual(2);
         expect(payload.index).toEqual("Foo");
         expect(Converter.hexToAscii(payload.data)).toEqual("Bar");
-        expect(message.nonce).toEqual(0);
+        expect(message.nonce).toEqual("0");
     });
 
     test("Can succeed with actual milestone data", () => {
@@ -104,7 +104,7 @@ describe("Binary Message", () => {
         expect(payload.type).toEqual(2);
         expect(payload.index).toEqual("Foo");
         expect(Converter.hexToAscii(payload.data)).toEqual("Bar");
-        expect(message.nonce).toEqual(0);
+        expect(message.nonce).toEqual("0");
     });
 
     test("Can succeed with actual transaction data", () => {
@@ -134,6 +134,6 @@ describe("Binary Message", () => {
         const unlockBlock = payload.unlockBlocks[0] as ISignatureUnlockBlock;
         expect(unlockBlock.signature.publicKey).toEqual("14fe414a9eccf9589b38c7c89a2fa5921b4b170ebefc04b6a812b3d02068cfd7");
         expect(unlockBlock.signature.signature).toEqual("3163a90017ed5fe9530f52fb0d30836a453a37204f4d59e03012d82e0a946f31c930ac54f4a35aef9578b9dec9c12887404be353c5f7ebd88bcbefcc78e29c05");
-        expect(message.nonce).toEqual(0);
+        expect(message.nonce).toEqual("0");
     });
 });

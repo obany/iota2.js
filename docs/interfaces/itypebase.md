@@ -16,6 +16,10 @@ Name |
 
 * **ITypeBase**
 
+  ↳ [IEd25519Address](ied25519address.md)
+
+  ↳ [IUTXOInput](iutxoinput.md)
+
   ↳ [IIndexationPayload](iindexationpayload.md)
 
   ↳ [IMilestonePayload](imilestonepayload.md)
@@ -26,11 +30,7 @@ Name |
 
   ↳ [ISignatureUnlockBlock](isignatureunlockblock.md)
 
-  ↳ [IEd25519Address](ied25519address.md)
-
   ↳ [ISigLockedSingleOutput](isiglockedsingleoutput.md)
-
-  ↳ [IUTXOInput](iutxoinput.md)
 
   ↳ [ITransactionEssence](itransactionessence.md)
 

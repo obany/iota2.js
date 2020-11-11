@@ -1,4 +1,4 @@
-import { IClient } from "../api/models/IClient";
+import { IClient } from "../models/IClient";
 import { IIndexationPayload } from "../models/IIndexationPayload";
 import { Converter } from "../utils/converter";
 

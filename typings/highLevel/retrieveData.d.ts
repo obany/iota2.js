@@ -1,4 +1,4 @@
-import { IClient } from "../api/models/IClient";
+import { IClient } from "../models/IClient";
 /**
  * Retrieve a data message.
  * @param client The client to send the transfer with.

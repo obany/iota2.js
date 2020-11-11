@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -41,104 +52,32 @@ var input_1 = require("../binary/input");
 var output_1 = require("../binary/output");
 var transaction_1 = require("../binary/transaction");
 var ed25519_1 = require("../crypto/ed25519");
-var ed25519Address_1 = require("../crypto/ed25519Address");
 var converter_1 = require("../utils/converter");
 var writeStream_1 = require("../utils/writeStream");
 /**
  * Send a transfer from the balance on the seed.
  * @param client The client to send the transfer with.
- * @param seed The seed to use for address generation.
- * @param basePath The base path to start looking for addresses.
+ * @param inputsAndSignatureKeyPairs The inputs with the signature key pairs needed to sign transfers.
  * @param outputs The outputs to send.
- * @param startIndex Optional start index for the wallet count address, defaults to 0.
  * @param indexationKey Optional indexation key.
  * @param indexationData Optional index data.
  * @returns The id of the message created and the remainder address if one was needed.
  */
-function sendAdvanced(client, seed, basePath, outputs, startIndex, indexationKey, indexationData) {
+function sendAdvanced(client, inputsAndSignatureKeyPairs, outputs, indexationKey, indexationData) {
     return __awaiter(this, void 0, void 0, function () {
-        var requiredBalance, localStartIndex, consumedBalance, inputsAndSignatureKeyPairs, finished, addressKeyPair, address, addressOutputIds, _i, _a, addressOutputId, addressOutput, input, writeStream, outputsWithSerialization, _b, outputs_1, output, sigLockedOutput, writeStream, sortedInputs, sortedOutputs, transactionEssence, binaryEssence, essenceFinal, unlockBlocks, addressToUnlockBlock, _c, sortedInputs_1, input, hexInputAddressPublic, transactionPayload, tips, message, messageId;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
+        var outputsWithSerialization, _i, outputs_1, output, sigLockedOutput, writeStream, inputsAndSignatureKeyPairsSerialized, sortedInputs, sortedOutputs, transactionEssence, binaryEssence, essenceFinal, unlockBlocks, addressToUnlockBlock, _a, sortedInputs_1, input, hexInputAddressPublic, transactionPayload, tips, message, messageId;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
+                    if (!inputsAndSignatureKeyPairs || inputsAndSignatureKeyPairs.length === 0) {
+                        throw new Error("You must specify some inputs");
+                    }
                     if (!outputs || outputs.length === 0) {
                         throw new Error("You must specify some outputs");
                     }
-                    requiredBalance = outputs.reduce(function (total, output) { return total + output.amount; }, 0);
-                    localStartIndex = startIndex !== null && startIndex !== void 0 ? startIndex : 0;
-                    consumedBalance = 0;
-                    inputsAndSignatureKeyPairs = [];
-                    finished = false;
-                    _d.label = 1;
-                case 1:
-                    basePath.push(localStartIndex);
-                    addressKeyPair = seed.generateSeedFromPath(basePath).keyPair();
-                    basePath.pop();
-                    address = converter_1.Converter.bytesToHex(ed25519Address_1.Ed25519Address.publicKeyToAddress(addressKeyPair.publicKey));
-                    return [4 /*yield*/, client.addressOutputs(address)];
-                case 2:
-                    addressOutputIds = _d.sent();
-                    if (!(addressOutputIds.count === 0)) return [3 /*break*/, 3];
-                    finished = true;
-                    return [3 /*break*/, 7];
-                case 3:
-                    _i = 0, _a = addressOutputIds.outputIds;
-                    _d.label = 4;
-                case 4:
-                    if (!(_i < _a.length)) return [3 /*break*/, 7];
-                    addressOutputId = _a[_i];
-                    return [4 /*yield*/, client.output(addressOutputId)];
-                case 5:
-                    addressOutput = _d.sent();
-                    if (!addressOutput.isSpent &&
-                        consumedBalance < requiredBalance) {
-                        if (addressOutput.output.amount === 0) {
-                            finished = true;
-                        }
-                        else {
-                            consumedBalance += addressOutput.output.amount;
-                            input = {
-                                type: 0,
-                                transactionId: addressOutput.transactionId,
-                                transactionOutputIndex: addressOutput.outputIndex
-                            };
-                            writeStream = new writeStream_1.WriteStream();
-                            input_1.serializeInput(writeStream, input);
-                            inputsAndSignatureKeyPairs.push({
-                                input: input,
-                                addressKeyPair: addressKeyPair,
-                                serialized: writeStream.finalHex()
-                            });
-                            if (consumedBalance >= requiredBalance) {
-                                // We didn't use all the balance from the last input
-                                // so return the rest to the same address.
-                                if (consumedBalance - requiredBalance > 0) {
-                                    outputs.push({
-                                        amount: consumedBalance - requiredBalance,
-                                        address: address
-                                    });
-                                }
-                                finished = true;
-                            }
-                        }
-                    }
-                    _d.label = 6;
-                case 6:
-                    _i++;
-                    return [3 /*break*/, 4];
-                case 7:
-                    localStartIndex++;
-                    _d.label = 8;
-                case 8:
-                    if (!finished) return [3 /*break*/, 1];
-                    _d.label = 9;
-                case 9:
-                    if (consumedBalance < requiredBalance) {
-                        throw new Error("There are not enough funds in the inputs for the required balance");
-                    }
                     outputsWithSerialization = [];
-                    for (_b = 0, outputs_1 = outputs; _b < outputs_1.length; _b++) {
-                        output = outputs_1[_b];
+                    for (_i = 0, outputs_1 = outputs; _i < outputs_1.length; _i++) {
+                        output = outputs_1[_i];
                         sigLockedOutput = {
                             type: 0,
                             address: {
@@ -154,7 +93,12 @@ function sendAdvanced(client, seed, basePath, outputs, startIndex, indexationKey
                             serialized: writeStream.finalHex()
                         });
                     }
-                    sortedInputs = inputsAndSignatureKeyPairs.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
+                    inputsAndSignatureKeyPairsSerialized = inputsAndSignatureKeyPairs.map(function (i) {
+                        var writeStream = new writeStream_1.WriteStream();
+                        input_1.serializeInput(writeStream, i.input);
+                        return __assign(__assign({}, i), { serialized: writeStream.finalHex() });
+                    });
+                    sortedInputs = inputsAndSignatureKeyPairsSerialized.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
                     sortedOutputs = outputsWithSerialization.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
                     transactionEssence = {
                         type: 0,
@@ -173,8 +117,8 @@ function sendAdvanced(client, seed, basePath, outputs, startIndex, indexationKey
                     essenceFinal = binaryEssence.finalBytes();
                     unlockBlocks = [];
                     addressToUnlockBlock = {};
-                    for (_c = 0, sortedInputs_1 = sortedInputs; _c < sortedInputs_1.length; _c++) {
-                        input = sortedInputs_1[_c];
+                    for (_a = 0, sortedInputs_1 = sortedInputs; _a < sortedInputs_1.length; _a++) {
+                        input = sortedInputs_1[_a];
                         hexInputAddressPublic = converter_1.Converter.bytesToHex(input.addressKeyPair.publicKey);
                         if (addressToUnlockBlock[hexInputAddressPublic]) {
                             unlockBlocks.push({
@@ -203,18 +147,18 @@ function sendAdvanced(client, seed, basePath, outputs, startIndex, indexationKey
                         unlockBlocks: unlockBlocks
                     };
                     return [4 /*yield*/, client.tips()];
-                case 10:
-                    tips = _d.sent();
+                case 1:
+                    tips = _b.sent();
                     message = {
                         version: 1,
                         parent1MessageId: tips.tip1MessageId,
                         parent2MessageId: tips.tip2MessageId,
                         payload: transactionPayload,
-                        nonce: 0
+                        nonce: "0"
                     };
                     return [4 /*yield*/, client.messageSubmit(message)];
-                case 11:
-                    messageId = _d.sent();
+                case 2:
+                    messageId = _b.sent();
                     return [2 /*return*/, {
                             messageId: messageId,
                             message: message
@@ -224,4 +168,4 @@ function sendAdvanced(client, seed, basePath, outputs, startIndex, indexationKey
     });
 }
 exports.sendAdvanced = sendAdvanced;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2VuZEFkdmFuY2VkLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL2hpZ2hMZXZlbC9zZW5kQWR2YW5jZWQudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBQ0EseUNBQWlEO0FBQ2pELDJDQUFtRDtBQUNuRCxxREFBb0U7QUFFcEUsNkNBQTRDO0FBQzVDLDJEQUEwRDtBQVUxRCxnREFBK0M7QUFDL0Msb0RBQW1EO0FBRW5EOzs7Ozs7Ozs7O0dBVUc7QUFDSCxTQUFzQixZQUFZLENBQzlCLE1BQWUsRUFDZixJQUFXLEVBQ1gsUUFBbUIsRUFDbkIsT0FBOEMsRUFDOUMsVUFBbUIsRUFDbkIsYUFBc0IsRUFDdEIsY0FBMkI7Ozs7OztvQkFJM0IsSUFBSSxDQUFDLE9BQU8sSUFBSSxPQUFPLENBQUMsTUFBTSxLQUFLLENBQUMsRUFBRTt3QkFDbEMsTUFBTSxJQUFJLEtBQUssQ0FBQywrQkFBK0IsQ0FBQyxDQUFDO3FCQUNwRDtvQkFFSyxlQUFlLEdBQUcsT0FBTyxDQUFDLE1BQU0sQ0FBQyxVQUFDLEtBQUssRUFBRSxNQUFNLElBQUssT0FBQSxLQUFLLEdBQUcsTUFBTSxDQUFDLE1BQU0sRUFBckIsQ0FBcUIsRUFBRSxDQUFDLENBQUMsQ0FBQztvQkFFaEYsZUFBZSxHQUFHLFVBQVUsYUFBVixVQUFVLGNBQVYsVUFBVSxHQUFJLENBQUMsQ0FBQztvQkFDbEMsZUFBZSxHQUFHLENBQUMsQ0FBQztvQkFDbEIsMEJBQTBCLEdBSTFCLEVBQUUsQ0FBQztvQkFDTCxRQUFRLEdBQUcsS0FBSyxDQUFDOzs7b0JBR2pCLFFBQVEsQ0FBQyxJQUFJLENBQUMsZUFBZSxDQUFDLENBQUM7b0JBQ3pCLGNBQWMsR0FBRyxJQUFJLENBQUMsb0JBQW9CLENBQUMsUUFBUSxDQUFDLENBQUMsT0FBTyxFQUFFLENBQUM7b0JBQ3JFLFFBQVEsQ0FBQyxHQUFHLEVBQUUsQ0FBQztvQkFFVCxP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
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2VuZEFkdmFuY2VkLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL2hpZ2hMZXZlbC9zZW5kQWR2YW5jZWQudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSx5Q0FBaUQ7QUFDakQsMkNBQW1EO0FBQ25ELHFEQUFvRTtBQUNwRSw2Q0FBNEM7QUFVNUMsZ0RBQStDO0FBQy9DLG9EQUFtRDtBQUVuRDs7Ozs7Ozs7R0FRRztBQUNILFNBQXNCLFlBQVksQ0FDOUIsTUFBZSxFQUNmLDBCQUdHLEVBQ0gsT0FBOEMsRUFDOUMsYUFBc0IsRUFDdEIsY0FBMkI7Ozs7OztvQkFJM0IsSUFBSSxDQUFDLDBCQUEwQixJQUFJLDBCQUEwQixDQUFDLE1BQU0sS0FBSyxDQUFDLEVBQUU7d0JBQ3hFLE1BQU0sSUFBSSxLQUFLLENBQUMsOEJBQThCLENBQUMsQ0FBQztxQkFDbkQ7b0JBQ0QsSUFBSSxDQUFDLE9BQU8sSUFBSSxPQUFPLENBQUMsTUFBTSxLQUFLLENBQUMsRUFBRTt3QkFDbEMsTUFBTSxJQUFJLEtBQUssQ0FBQywrQkFBK0IsQ0FBQyxDQUFDO3FCQUNwRDtvQkFFSyx3QkFBd0IsR0FHeEIsRUFBRSxDQUFDO29CQUVULFdBQTRCLEVBQVAsbUJBQU8sRUFBUCxxQkFBTyxFQUFQLElBQU8sRUFBRTt3QkFBbkIsTUFBTTt3QkFDUCxlQUFlLEdBQTJCOzRCQUM1QyxJQUFJLEVBQUUsQ0FBQzs0QkFDUCxPQUFPLEVBQUU7Z0NBQ0wsSUFBSSxFQUFFLENBQUM7Z0NBQ1AsT0FBTyxFQUFFLE1BQU0sQ0FBQyxPQUFPOzZCQUMxQjs0QkFDRCxNQUFNLEVBQUUsTUFBTSxDQUFDLE1BQU07eUJBQ3hCLENBQUM7d0JBQ0ksV0FBVyxHQUFHLElBQUkseUJBQVcsRUFBRSxDQUFDO3dCQUN0Qyx3QkFBZSxDQUFDLFdBQVcsRUFBRSxlQUFlLENBQUMsQ0FBQzt3QkFD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

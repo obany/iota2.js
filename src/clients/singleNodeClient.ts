@@ -1,24 +1,33 @@
-import { ClientError } from "../api/clientError";
-import { IAddress } from "../api/models/IAddress";
-import { IAddressOutputs } from "../api/models/IAddressOutputs";
-import { IChildren } from "../api/models/IChildren";
-import { IClient } from "../api/models/IClient";
-import { IInfo } from "../api/models/IInfo";
-import { IMessageId } from "../api/models/IMessageId";
-import { IMessageMetadata } from "../api/models/IMessageMetadata";
-import { IMessages } from "../api/models/IMessages";
-import { IMilestone } from "../api/models/IMilestone";
-import { IOutput } from "../api/models/IOutput";
-import { IPeer } from "../api/models/IPeer";
-import { IResponse } from "../api/models/IResponse";
-import { ITips } from "../api/models/ITips";
+import { serializeMessage } from "../binary/message";
+import { IAddress } from "../models/api/IAddress";
+import { IAddressOutputs } from "../models/api/IAddressOutputs";
+import { IChildren } from "../models/api/IChildren";
+import { IInfo } from "../models/api/IInfo";
+import { IMessageId } from "../models/api/IMessageId";
+import { IMessageMetadata } from "../models/api/IMessageMetadata";
+import { IMessages } from "../models/api/IMessages";
+import { IMilestone } from "../models/api/IMilestone";
+import { IOutput } from "../models/api/IOutput";
+import { IPeer } from "../models/api/IPeer";
+import { IResponse } from "../models/api/IResponse";
+import { ITips } from "../models/api/ITips";
+import { IClient } from "../models/IClient";
 import { IMessage } from "../models/IMessage";
-
+import { IPowProvider } from "../models/IPowProvider";
+import { ArrayHelper } from "../utils/arrayHelper";
+import { Converter } from "../utils/converter";
+import { WriteStream } from "../utils/writeStream";
+import { ClientError } from "./clientError";
 
 /**
  * Client for API communication.
  */
 export class SingleNodeClient implements IClient {
+    /**
+     * A zero nonce.
+     */
+    private static readonly NONCE_ZERO: Uint8Array = new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]);
+
     /**
      * The endpoint for the API.
      * @internal
@@ -26,14 +35,21 @@ export class SingleNodeClient implements IClient {
     private readonly _endpoint: string;
 
     /**
+     * Optional POW provider to be used for messages with nonce=0.
+     */
+    private readonly _powProvider?: IPowProvider;
+
+    /**
      * Create a new instance of client.
      * @param endpoint The endpoint.
+     * @param powProvider Optional local POW provider.
      */
-    constructor(endpoint: string) {
+    constructor(endpoint: string, powProvider?: IPowProvider) {
         if (!/^https?:\/\/\w+(\.\w+)*(:\d+)?(\/.*)?$/.test(endpoint)) {
             throw new Error("The endpoint is not in the correct format");
         }
         this._endpoint = endpoint.replace(/\/+$/, "");
+        this._powProvider = powProvider;
     }
 
     /**
@@ -101,6 +117,14 @@ export class SingleNodeClient implements IClient {
      * @returns The messageId.
      */
     public async messageSubmit(message: IMessage): Promise<string> {
+        if (this._powProvider &&
+            (!message.nonce || message.nonce.length === 0 || message.nonce === "0")) {
+            const writeStream = new WriteStream();
+            serializeMessage(writeStream, message);
+            const messageBytes = writeStream.finalBytes();
+            message.nonce = (await this._powProvider.doPow(messageBytes)).toString(10);
+        }
+
         const response = await this.fetchJson<IMessage, IMessageId>("post", "/api/v1/messages", message);
 
         return response.messageId;
@@ -112,6 +136,13 @@ export class SingleNodeClient implements IClient {
      * @returns The messageId.
      */
     public async messageSubmitRaw(message: Uint8Array): Promise<string> {
+        if (this._powProvider && ArrayHelper.equal(message.slice(-8), SingleNodeClient.NONCE_ZERO)) {
+            const nonce = await this._powProvider.doPow(message);
+            const hex = nonce.toString(16).padStart(16, "0");
+            const nonceBytes = Converter.hexToBytes(hex, true);
+            message.set(nonceBytes, message.length - 8);
+        }
+
         const response = await this.fetchBinary<IMessageId>("post", "/api/v1/messages", message);
 
         return (response as IMessageId).messageId;

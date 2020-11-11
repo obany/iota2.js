@@ -1,14 +1,14 @@
-import { IMessage } from "../../models/IMessage";
-import { IAddress } from "./IAddress";
-import { IAddressOutputs } from "./IAddressOutputs";
-import { IChildren } from "./IChildren";
-import { IInfo } from "./IInfo";
-import { IMessageMetadata } from "./IMessageMetadata";
-import { IMessages } from "./IMessages";
-import { IMilestone } from "./IMilestone";
-import { IOutput } from "./IOutput";
-import { IPeer } from "./IPeer";
-import { ITips } from "./ITips";
+import { IAddress } from "./api/IAddress";
+import { IAddressOutputs } from "./api/IAddressOutputs";
+import { IChildren } from "./api/IChildren";
+import { IInfo } from "./api/IInfo";
+import { IMessageMetadata } from "./api/IMessageMetadata";
+import { IMessages } from "./api/IMessages";
+import { IMilestone } from "./api/IMilestone";
+import { IOutput } from "./api/IOutput";
+import { IPeer } from "./api/IPeer";
+import { ITips } from "./api/ITips";
+import { IMessage } from "./IMessage";
 
 /**
  * Client interface definition for API communication.

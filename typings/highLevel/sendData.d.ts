@@ -1,4 +1,4 @@
-import { IClient } from "../api/models/IClient";
+import { IClient } from "../models/IClient";
 import { IMessage } from "../models/IMessage";
 /**
  * Send a data message.

@@ -45,7 +45,7 @@ Client for API communication.
 
 ### constructor
 
-\+ **new SingleNodeClient**(`endpoint`: string): [SingleNodeClient](singlenodeclient.md)
+\+ **new SingleNodeClient**(`endpoint`: string, `powProvider?`: [IPowProvider](../interfaces/ipowprovider.md)): [SingleNodeClient](singlenodeclient.md)
 
 Create a new instance of client.
 
@@ -53,7 +53,8 @@ Create a new instance of client.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`endpoint` | string | The endpoint.  |
+`endpoint` | string | The endpoint. |
+`powProvider?` | [IPowProvider](../interfaces/ipowprovider.md) | Optional local POW provider.  |
 
 **Returns:** [SingleNodeClient](singlenodeclient.md)
 

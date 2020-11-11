@@ -1,6 +1,6 @@
-import { IClient } from "../api/models/IClient";
 import { Bip32Path } from "../crypto/bip32Path";
 import { Ed25519Address } from "../crypto/ed25519Address";
+import { IClient } from "../models/IClient";
 import { ISeed } from "../models/ISeed";
 import { Converter } from "../utils/converter";
 

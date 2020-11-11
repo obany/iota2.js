@@ -51,6 +51,7 @@
 * [IMilestonePayload](interfaces/imilestonepayload.md)
 * [IOutput](interfaces/ioutput.md)
 * [IPeer](interfaces/ipeer.md)
+* [IPowProvider](interfaces/ipowprovider.md)
 * [IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md)
 * [IResponse](interfaces/iresponse.md)
 * [ISeed](interfaces/iseed.md)
@@ -68,6 +69,7 @@
 
 ### Functions
 
+* [calculateInputs](README.md#calculateinputs)
 * [deserializeAddress](README.md#deserializeaddress)
 * [deserializeEd25519Address](README.md#deserializeed25519address)
 * [deserializeEd25519Signature](README.md#deserializeed25519signature)
@@ -140,6 +142,28 @@ which is an extension of https://github.com/golang/crypto/tree/master/ed25519
 which in a port of the “ref10” implementation of ed25519 from SUPERCOP
 
 ## Functions
+
+### calculateInputs
+
+▸ **calculateInputs**(`client`: [IClient](interfaces/iclient.md), `seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `outputs`: { address: string ; amount: number  }[], `startIndex?`: undefined \| number): Promise\<{ addressKeyPair: [IKeyPair](interfaces/ikeypair.md) ; input: [IUTXOInput](interfaces/iutxoinput.md)  }[]>
+
+Calculate the inputs from the seed and basePath.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`client` | [IClient](interfaces/iclient.md) | The client to send the transfer with. |
+`seed` | [ISeed](interfaces/iseed.md) | The seed to use for address generation. |
+`basePath` | [Bip32Path](classes/bip32path.md) | The base path to start looking for addresses. |
+`outputs` | { address: string ; amount: number  }[] | The outputs to send. |
+`startIndex?` | undefined \| number | The start index for the wallet count address, defaults to 0. |
+
+**Returns:** Promise\<{ addressKeyPair: [IKeyPair](interfaces/ikeypair.md) ; input: [IUTXOInput](interfaces/iutxoinput.md)  }[]>
+
+The id of the message created and the contructed message.
+
+___
 
 ### deserializeAddress
 
@@ -829,7 +853,7 @@ ___
 
 ### sendAdvanced
 
-▸ **sendAdvanced**(`client`: [IClient](interfaces/iclient.md), `seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `outputs`: { address: string ; amount: number  }[], `startIndex?`: undefined \| number, `indexationKey?`: undefined \| string, `indexationData?`: Uint8Array): Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+▸ **sendAdvanced**(`client`: [IClient](interfaces/iclient.md), `inputsAndSignatureKeyPairs`: { addressKeyPair: [IKeyPair](interfaces/ikeypair.md) ; input: [IUTXOInput](interfaces/iutxoinput.md)  }[], `outputs`: { address: string ; amount: number  }[], `indexationKey?`: undefined \| string, `indexationData?`: Uint8Array): Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
 
 Send a transfer from the balance on the seed.
 
@@ -838,10 +862,8 @@ Send a transfer from the balance on the seed.
 Name | Type | Description |
 ------ | ------ | ------ |
 `client` | [IClient](interfaces/iclient.md) | The client to send the transfer with. |
-`seed` | [ISeed](interfaces/iseed.md) | The seed to use for address generation. |
-`basePath` | [Bip32Path](classes/bip32path.md) | The base path to start looking for addresses. |
+`inputsAndSignatureKeyPairs` | { addressKeyPair: [IKeyPair](interfaces/ikeypair.md) ; input: [IUTXOInput](interfaces/iutxoinput.md)  }[] | The inputs with the signature key pairs needed to sign transfers. |
 `outputs` | { address: string ; amount: number  }[] | The outputs to send. |
-`startIndex?` | undefined \| number | Optional start index for the wallet count address, defaults to 0. |
 `indexationKey?` | undefined \| string | Optional indexation key. |
 `indexationData?` | Uint8Array | Optional index data. |
 

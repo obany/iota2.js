@@ -1,4 +1,4 @@
-import { IClient } from "../api/models/IClient";
+import { IClient } from "../models/IClient";
 import { IIndexationPayload } from "../models/IIndexationPayload";
 import { IMessage } from "../models/IMessage";
 import { Converter } from "../utils/converter";
@@ -14,6 +14,10 @@ export async function sendData(client: IClient, indexationKey: string, indexatio
     message: IMessage;
     messageId: string;
 }> {
+    if (!indexationKey || indexationKey.length === 0) {
+        throw new Error("indexationKey must not be empty");
+    }
+
     const indexationPayload: IIndexationPayload = {
         type: 2,
         index: indexationKey,
@@ -27,7 +31,7 @@ export async function sendData(client: IClient, indexationKey: string, indexatio
         parent1MessageId: tips.tip1MessageId,
         parent2MessageId: tips.tip2MessageId,
         payload: indexationPayload,
-        nonce: 0
+        nonce: "0"
     };
 
     const messageId = await client.messageSubmit(message);

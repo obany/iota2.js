@@ -36,8 +36,7 @@ export function deserializeMessage(readStream: ReadStream): IMessage {
 
     const unused = readStream.unused();
     if (unused !== 0) {
-        throw new Error(`Message data length ${readStream.length()
-            } has unused data ${unused}`);
+        throw new Error(`Message data length ${readStream.length()} has unused data ${unused}`);
     }
 
     return {
@@ -45,7 +44,7 @@ export function deserializeMessage(readStream: ReadStream): IMessage {
         payload,
         parent1MessageId,
         parent2MessageId,
-        nonce: Number(nonce)
+        nonce: nonce.toString(10)
     };
 }
 
@@ -54,8 +53,7 @@ export function deserializeMessage(readStream: ReadStream): IMessage {
  * @param writeStream The stream to write the data to.
  * @param object The object to serialize.
  */
-export function serializeMessage(writeStream: WriteStream,
-    object: IMessage): void {
+export function serializeMessage(writeStream: WriteStream, object: IMessage): void {
     writeStream.writeByte("message.version", object.version);
 
     writeStream.writeFixedHex("message.parent1MessageId",

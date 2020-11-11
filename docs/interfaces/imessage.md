@@ -24,7 +24,7 @@ Message layout.
 
 ### nonce
 
-• `Optional` **nonce**: undefined \| number
+• `Optional` **nonce**: undefined \| string
 
 The nonce for the message.
 

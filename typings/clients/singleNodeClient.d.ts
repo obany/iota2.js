@@ -1,24 +1,34 @@
-import { IAddress } from "../api/models/IAddress";
-import { IAddressOutputs } from "../api/models/IAddressOutputs";
-import { IChildren } from "../api/models/IChildren";
-import { IClient } from "../api/models/IClient";
-import { IInfo } from "../api/models/IInfo";
-import { IMessageMetadata } from "../api/models/IMessageMetadata";
-import { IMessages } from "../api/models/IMessages";
-import { IMilestone } from "../api/models/IMilestone";
-import { IOutput } from "../api/models/IOutput";
-import { IPeer } from "../api/models/IPeer";
-import { ITips } from "../api/models/ITips";
+import { IAddress } from "../models/api/IAddress";
+import { IAddressOutputs } from "../models/api/IAddressOutputs";
+import { IChildren } from "../models/api/IChildren";
+import { IInfo } from "../models/api/IInfo";
+import { IMessageMetadata } from "../models/api/IMessageMetadata";
+import { IMessages } from "../models/api/IMessages";
+import { IMilestone } from "../models/api/IMilestone";
+import { IOutput } from "../models/api/IOutput";
+import { IPeer } from "../models/api/IPeer";
+import { ITips } from "../models/api/ITips";
+import { IClient } from "../models/IClient";
 import { IMessage } from "../models/IMessage";
+import { IPowProvider } from "../models/IPowProvider";
 /**
  * Client for API communication.
  */
 export declare class SingleNodeClient implements IClient {
     /**
+     * A zero nonce.
+     */
+    private static readonly NONCE_ZERO;
+    /**
+     * Optional POW provider to be used for messages with nonce=0.
+     */
+    private readonly _powProvider?;
+    /**
      * Create a new instance of client.
      * @param endpoint The endpoint.
+     * @param powProvider Optional local POW provider.
      */
-    constructor(endpoint: string);
+    constructor(endpoint: string, powProvider?: IPowProvider);
     /**
      * Get the health of the node.
      * @returns True if the node is healthy.
