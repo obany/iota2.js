@@ -22,9 +22,10 @@ export default {
         compact: process.env.MINIFY,
         globals: {
             "node-fetch": "node-fetch",
-            "crypto": "crypto"
+            "crypto": "crypto",
+            "mqtt": "mqtt"
         }
     },
-    external: (process.env.BROWSER ? [] : ["crypto", "node-fetch"]),
+    external: (process.env.BROWSER ? ["mqtt"] : ["crypto", "node-fetch", "mqtt"]),
     plugins
 }

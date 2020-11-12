@@ -160,12 +160,7 @@
             consoleLog(`\tAddress ${newAddressPath.toString()}:`, newAddress);
             consoleLog();
 
-            const { messageId } = await Iota2.sendAdvanced(client, genesisSeed, new Iota2.Bip32Path(), [
-                {
-                    address: newAddress,
-                    amount: 100
-                }
-            ], 0, "foo", Iota2.Converter.asciiToBytes("bar"));
+            const { messageId } = await Iota2.send(client, genesisSeed, new Iota2.Bip32Path(), newAddress, 100);
 
             consoleLog("Created Message Id", messageId);
 

@@ -38,7 +38,7 @@ run()
 
 ## API Endpoints
 
-These API methods are implemented.
+These methods are implemented on the API client.
 
 * health()
 * info()
@@ -68,12 +68,27 @@ There are also high level operations which make use of the API level methods:
 * getUnspentAddresses - Given a seed, path, and start index find all the unspent addresses.
 * retrieveData - Given a message id return the index and data from it.
 * send - Given a seed, path, destination address and amount, make a single transfer.
-* sendAdvanced - Given a seed, path, list of destinations make multiple transfers, can also include index data.
+* sendAdvanced - Given a set of inputs with keypairs seed, path, list of destinations make multiple transfers, can also include index data.
 * sendData - Given index and data create a new data message.
+
+## MQTT Operations
+
+You can create a MQTT client which once connected can stream the following feeds.
+
+* milestonesLatest
+* milestonesSolid
+* messageMetadata - Metadata updates for a specified messageId
+* output - Output updates for a specified outputId
+* addressOutputs - Address output updates for a specified address
+* messagesRaw - All messages in binary form
+* messages - All messaged decoded to objects
+* indexRaw - All messages for a specified indexation key in binary form
+* index - All messages for a specified indexation key in object form
+* messagesData - All metadata updates
 
 ## Models
 
-You can see the model definitions for the request and receive objects in the [typings](./typings/api/models) folder.
+You can see the model definitions for all the objects in the [typings](./typings/models) folder.
 
 ## More Examples
 
@@ -83,6 +98,7 @@ Please find other examples in the [./examples](./examples) folder.
 * Data - Storing and retrieving data on the tangle.
 * Browser - Demonstrates direct inclusion and use of the library in an html page.
 * Peers - Demonstrates peer management.
+* Mqtt - Using mqtt to read streaming messages.
 
 ## Notes
 

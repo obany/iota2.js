@@ -22,6 +22,7 @@
 * [ExtendedGroupElement](classes/extendedgroupelement.md)
 * [FieldElement](classes/fieldelement.md)
 * [HmacSha512](classes/hmacsha512.md)
+* [MqttClient](classes/mqttclient.md)
 * [PreComputedGroupElement](classes/precomputedgroupelement.md)
 * [ProjectiveGroupElement](classes/projectivegroupelement.md)
 * [RandomHelper](classes/randomhelper.md)
@@ -30,6 +31,7 @@
 * [SingleNodeClient](classes/singlenodeclient.md)
 * [Slip0010](classes/slip0010.md)
 * [WriteStream](classes/writestream.md)
+* [ZeroPowProvider](classes/zeropowprovider.md)
 
 ### Interfaces
 
@@ -49,6 +51,8 @@
 * [IMessages](interfaces/imessages.md)
 * [IMilestone](interfaces/imilestone.md)
 * [IMilestonePayload](interfaces/imilestonepayload.md)
+* [IMqttClient](interfaces/imqttclient.md)
+* [IMqttStatus](interfaces/imqttstatus.md)
 * [IOutput](interfaces/ioutput.md)
 * [IPeer](interfaces/ipeer.md)
 * [IPowProvider](interfaces/ipowprovider.md)

@@ -1,4 +1,4 @@
-import { Bip32Path, Converter, Ed25519Address, Ed25519Seed, getBalance, getUnspentAddress, getUnspentAddresses, IKeyPair, ISeed, sendAdvanced, SingleNodeClient } from "@iota/iota2.js";
+import { Bip32Path, Converter, Ed25519Address, Ed25519Seed, getBalance, getUnspentAddress, getUnspentAddresses, IKeyPair, ISeed, send, SingleNodeClient } from "@iota/iota2.js";
 
 const API_ENDPOINT = "http://localhost:14265";
 
@@ -28,12 +28,7 @@ async function run() {
     console.log(`\tAddress ${newAddressPath.toString()}:`, newAddress);
     console.log();
 
-    const { messageId } = await sendAdvanced(client, genesisSeed, new Bip32Path(), [
-        {
-            address: newAddress,
-            amount: 100
-        }
-    ], 0, "foo", Converter.asciiToBytes("bar"));
+    const { messageId } = await send(client, genesisSeed, new Bip32Path(), newAddress, 100);
 
     console.log("Created Message Id", messageId);
 

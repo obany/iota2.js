@@ -63,5 +63,5 @@ export function serializeMessage(writeStream: WriteStream, object: IMessage): vo
 
     serializePayload(writeStream, object.payload);
 
-    writeStream.writeUInt64("message.nonce", BigInt(object.nonce));
+    writeStream.writeUInt64("message.nonce", BigInt(object.nonce ?? 0));
 }

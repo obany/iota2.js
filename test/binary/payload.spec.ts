@@ -57,21 +57,33 @@ describe("Binary Payload", () => {
     });
 
     test("Can succeed with valid milestone data", () => {
-        const buffer = Buffer.alloc(153);
-        buffer.writeUInt32LE(8, 0); // Payload length
+        const buffer = Buffer.alloc(346);
+        buffer.writeUInt32LE(342, 0); // Payload length
         buffer.writeUInt32LE(1, 4); // Payload type
-        buffer.writeBigUInt64LE(BigInt(123), 8); // Milestone index
-        buffer.writeBigUInt64LE(BigInt(456), 16); // Milestone timestamp
-        buffer.write("786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce", 24, "hex"); // Inclusion Merkle proof
-        buffer.writeUInt8(1, 88); // Signature count
-        buffer.write("2c59d43952bda7ca60d3c2288ebc00703b4b60c928d277382cad5f57b02a90825f2d3a8509d6594498e0488f086d8fa3f13d9636d20e759eb5806ffe663bac0d", 89, "hex"); // Signature
+        buffer.writeUInt32LE(1087, 8); // Milestone index
+        buffer.writeBigUInt64LE(BigInt(1605190003), 12); // Milestone timestamp
+        buffer.write("c0ab1d1f6886ba6317634da6b2d957e7c987a9699dd3707d1e2751fcf4b8efe3", 20, "hex"); // Parent 1
+        buffer.write("04ba147c9cc9bebd3b97310a23d385f33d8e67ac42868b69bc06f5468e3c0a02", 52, "hex"); // Parent 2
+        buffer.write("786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce", 84, "hex"); // Inclusion Merkle proof
+        buffer.writeUInt8(2, 148); // Public Key count
+        buffer.write("ed3c3f1a319ff4e909cf2771d79fece0ac9bd9fd2ee49ea6c0885c9cb3b1248c", 149, "hex"); // Public Key
+        buffer.write("f6752f5f46a53364e2ee9c4d662d762a81efd51010282a75cd6bd03f28ef349c", 181, "hex"); // Public Key
+        buffer.writeUInt8(2, 213); // Signature count
+        buffer.write("f7a99cd2e2e80dd1c4d8ee63567d0ff5be00c3881568d155cf06607a6a78e2972b5d3b1e10dc60da214ae42abb95538f8faa872c90f60636427a36cf4739ac01", 214, "hex"); // Signature
+        buffer.write("fc7c1c3174cc0d120c7d522adb3dda549a5f742e082fc2921c740b1b8723bde457498c047cdf6a7759bf7d94b22960d260a1de550e65abadb1a00404d619060c", 278, "hex"); // Signature
         const payload = deserializePayload(new ReadStream(buffer)) as IMilestonePayload;
         expect(payload.type).toEqual(1);
-        expect(payload.index).toEqual(123);
-        expect(payload.timestamp).toEqual(456);
+        expect(payload.index).toEqual(1087);
+        expect(payload.timestamp).toEqual(1605190003);
+        expect(payload.parent1).toEqual("c0ab1d1f6886ba6317634da6b2d957e7c987a9699dd3707d1e2751fcf4b8efe3");
+        expect(payload.parent2).toEqual("04ba147c9cc9bebd3b97310a23d385f33d8e67ac42868b69bc06f5468e3c0a02");
         expect(payload.inclusionMerkleProof).toEqual("786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce");
-        expect(payload.signatures.length).toEqual(1);
-        expect(payload.signatures[0]).toEqual("2c59d43952bda7ca60d3c2288ebc00703b4b60c928d277382cad5f57b02a90825f2d3a8509d6594498e0488f086d8fa3f13d9636d20e759eb5806ffe663bac0d");
+        expect(payload.publicKeys.length).toEqual(2);
+        expect(payload.publicKeys[0]).toEqual("ed3c3f1a319ff4e909cf2771d79fece0ac9bd9fd2ee49ea6c0885c9cb3b1248c");
+        expect(payload.publicKeys[1]).toEqual("f6752f5f46a53364e2ee9c4d662d762a81efd51010282a75cd6bd03f28ef349c");
+        expect(payload.signatures.length).toEqual(2);
+        expect(payload.signatures[0]).toEqual("f7a99cd2e2e80dd1c4d8ee63567d0ff5be00c3881568d155cf06607a6a78e2972b5d3b1e10dc60da214ae42abb95538f8faa872c90f60636427a36cf4739ac01");
+        expect(payload.signatures[1]).toEqual("fc7c1c3174cc0d120c7d522adb3dda549a5f742e082fc2921c740b1b8723bde457498c047cdf6a7759bf7d94b22960d260a1de550e65abadb1a00404d619060c");
     });
 
     test("Can serialize and deserialize indexation payload", () => {
@@ -94,22 +106,37 @@ describe("Binary Payload", () => {
     test("Can serialize and deserialize milestone payload", () => {
         const payload: IMilestonePayload = {
             type: 1,
-            index: 123,
-            timestamp: 456,
+            index: 1087,
+            timestamp: 1605190003,
+            parent1: "c0ab1d1f6886ba6317634da6b2d957e7c987a9699dd3707d1e2751fcf4b8efe3",
+            parent2: "04ba147c9cc9bebd3b97310a23d385f33d8e67ac42868b69bc06f5468e3c0a02",
             inclusionMerkleProof: "786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce",
-            signatures: ["8cba2c84d06b378736681305d3fcf11698c5d3cb45dd6146ea47e0d26bddca03887501858ab4c803d7db8c09f5c6f5bec87aade06b6f4de6c050c07fede4cb04"]
+            publicKeys: [
+                "ed3c3f1a319ff4e909cf2771d79fece0ac9bd9fd2ee49ea6c0885c9cb3b1248c",
+                "f6752f5f46a53364e2ee9c4d662d762a81efd51010282a75cd6bd03f28ef349c"
+            ],
+            signatures: [
+                "f7a99cd2e2e80dd1c4d8ee63567d0ff5be00c3881568d155cf06607a6a78e2972b5d3b1e10dc60da214ae42abb95538f8faa872c90f60636427a36cf4739ac01",
+                "fc7c1c3174cc0d120c7d522adb3dda549a5f742e082fc2921c740b1b8723bde457498c047cdf6a7759bf7d94b22960d260a1de550e65abadb1a00404d619060c"
+            ]
         };
 
         const serialized = new WriteStream();
         serializeMilestonePayload(serialized, payload);
         const hex = serialized.finalHex();
-        expect(hex).toEqual("010000007b00000000000000c801000000000000786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce018cba2c84d06b378736681305d3fcf11698c5d3cb45dd6146ea47e0d26bddca03887501858ab4c803d7db8c09f5c6f5bec87aade06b6f4de6c050c07fede4cb04");
+        expect(hex).toEqual("010000003f0400007341ad5f00000000c0ab1d1f6886ba6317634da6b2d957e7c987a9699dd3707d1e2751fcf4b8efe304ba147c9cc9bebd3b97310a23d385f33d8e67ac42868b69bc06f5468e3c0a02786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce02ed3c3f1a319ff4e909cf2771d79fece0ac9bd9fd2ee49ea6c0885c9cb3b1248cf6752f5f46a53364e2ee9c4d662d762a81efd51010282a75cd6bd03f28ef349c02f7a99cd2e2e80dd1c4d8ee63567d0ff5be00c3881568d155cf06607a6a78e2972b5d3b1e10dc60da214ae42abb95538f8faa872c90f60636427a36cf4739ac01fc7c1c3174cc0d120c7d522adb3dda549a5f742e082fc2921c740b1b8723bde457498c047cdf6a7759bf7d94b22960d260a1de550e65abadb1a00404d619060c");
         const deserialized = deserializeMilestonePayload(new ReadStream(Converter.hexToBytes(hex)));
         expect(deserialized.type).toEqual(1);
-        expect(deserialized.index).toEqual(123);
-        expect(deserialized.timestamp).toEqual(456);
+        expect(deserialized.index).toEqual(1087);
+        expect(deserialized.timestamp).toEqual(1605190003);
+        expect(deserialized.parent1).toEqual("c0ab1d1f6886ba6317634da6b2d957e7c987a9699dd3707d1e2751fcf4b8efe3");
+        expect(deserialized.parent2).toEqual("04ba147c9cc9bebd3b97310a23d385f33d8e67ac42868b69bc06f5468e3c0a02");
         expect(deserialized.inclusionMerkleProof).toEqual("786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce");
-        expect(deserialized.signatures.length).toEqual(1);
-        expect(deserialized.signatures[0]).toEqual("8cba2c84d06b378736681305d3fcf11698c5d3cb45dd6146ea47e0d26bddca03887501858ab4c803d7db8c09f5c6f5bec87aade06b6f4de6c050c07fede4cb04");
+        expect(deserialized.publicKeys.length).toEqual(2);
+        expect(deserialized.publicKeys[0]).toEqual("ed3c3f1a319ff4e909cf2771d79fece0ac9bd9fd2ee49ea6c0885c9cb3b1248c");
+        expect(deserialized.publicKeys[1]).toEqual("f6752f5f46a53364e2ee9c4d662d762a81efd51010282a75cd6bd03f28ef349c");
+        expect(deserialized.signatures.length).toEqual(2);
+        expect(deserialized.signatures[0]).toEqual("f7a99cd2e2e80dd1c4d8ee63567d0ff5be00c3881568d155cf06607a6a78e2972b5d3b1e10dc60da214ae42abb95538f8faa872c90f60636427a36cf4739ac01");
+        expect(deserialized.signatures[1]).toEqual("fc7c1c3174cc0d120c7d522adb3dda549a5f742e082fc2921c740b1b8723bde457498c047cdf6a7759bf7d94b22960d260a1de550e65abadb1a00404d619060c");
     });
 });

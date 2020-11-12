@@ -18,6 +18,9 @@ Milestone payload.
 
 * [inclusionMerkleProof](imilestonepayload.md#inclusionmerkleproof)
 * [index](imilestonepayload.md#index)
+* [parent1](imilestonepayload.md#parent1)
+* [parent2](imilestonepayload.md#parent2)
+* [publicKeys](imilestonepayload.md#publickeys)
 * [signatures](imilestonepayload.md#signatures)
 * [timestamp](imilestonepayload.md#timestamp)
 * [type](imilestonepayload.md#type)
@@ -37,6 +40,30 @@ ___
 •  **index**: number
 
 The index name.
+
+___
+
+### parent1
+
+•  **parent1**: string
+
+The 1st parent where this milestone attaches to.
+
+___
+
+### parent2
+
+•  **parent2**: string
+
+The 2nd parent where this milestone attaches to.
+
+___
+
+### publicKeys
+
+•  **publicKeys**: string[]
+
+The public keys.
 
 ___
 

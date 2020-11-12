@@ -25,7 +25,7 @@ export interface IMessageMetadata {
     /**
      * The ledger inclusion state.
      */
-    ledgerInclusionState?: string;
+    ledgerInclusionState?: "noTransaction" | "included" | "conflicting";
     /**
      * Should the message be promoted.
      */

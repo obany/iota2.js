@@ -14,6 +14,7 @@ import { ITips } from "../models/api/ITips";
 import { IClient } from "../models/IClient";
 import { IMessage } from "../models/IMessage";
 import { IPowProvider } from "../models/IPowProvider";
+import { ZeroPowProvider } from "../pow/zeroPowProvider";
 import { ArrayHelper } from "../utils/arrayHelper";
 import { Converter } from "../utils/converter";
 import { WriteStream } from "../utils/writeStream";
@@ -35,7 +36,7 @@ export class SingleNodeClient implements IClient {
     private readonly _endpoint: string;
 
     /**
-     * Optional POW provider to be used for messages with nonce=0.
+     * Optional POW provider to be used for messages with nonce=0/undefined.
      */
     private readonly _powProvider?: IPowProvider;
 
@@ -49,7 +50,7 @@ export class SingleNodeClient implements IClient {
             throw new Error("The endpoint is not in the correct format");
         }
         this._endpoint = endpoint.replace(/\/+$/, "");
-        this._powProvider = powProvider;
+        this._powProvider = powProvider ?? new ZeroPowProvider();
     }
 
     /**
@@ -118,7 +119,7 @@ export class SingleNodeClient implements IClient {
      */
     public async messageSubmit(message: IMessage): Promise<string> {
         if (this._powProvider &&
-            (!message.nonce || message.nonce.length === 0 || message.nonce === "0")) {
+            (!message.nonce || message.nonce.length === 0)) {
             const writeStream = new WriteStream();
             serializeMessage(writeStream, message);
             const messageBytes = writeStream.finalBytes();

@@ -144,8 +144,7 @@ export async function sendAdvanced(
         version: 1,
         parent1MessageId: tips.tip1MessageId,
         parent2MessageId: tips.tip2MessageId,
-        payload: transactionPayload,
-        nonce: "0"
+        payload: transactionPayload
     };
 
     const messageId = await client.messageSubmit(message);

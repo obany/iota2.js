@@ -30,8 +30,7 @@ export async function sendData(client: IClient, indexationKey: string, indexatio
         version: 1,
         parent1MessageId: tips.tip1MessageId,
         parent2MessageId: tips.tip2MessageId,
-        payload: indexationPayload,
-        nonce: "0"
+        payload: indexationPayload
     };
 
     const messageId = await client.messageSubmit(message);

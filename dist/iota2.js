@@ -1,11 +1,12 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('node-fetch'), require('crypto')) :
-	typeof define === 'function' && define.amd ? define(['node-fetch', 'crypto'], factory) :
-	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Iota2 = factory(global['node-fetch'], global.crypto));
-}(this, (function (require$$0$1, require$$0) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('node-fetch'), require('mqtt'), require('crypto')) :
+	typeof define === 'function' && define.amd ? define(['node-fetch', 'mqtt', 'crypto'], factory) :
+	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Iota2 = factory(global['node-fetch'], global.mqtt, global.crypto));
+}(this, (function (require$$0$2, require$$0$1, require$$0) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
+	var require$$0__default$2 = /*#__PURE__*/_interopDefaultLegacy(require$$0$2);
 	var require$$0__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$0$1);
 	var require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
 
@@ -415,7 +416,7 @@
 
 	var common = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.isHex = exports.ARRAY_LENGTH = exports.STRING_LENGTH = exports.SMALL_TYPE_LENGTH = exports.TYPE_LENGTH = exports.TRANSACTION_ID_LENGTH = exports.MESSAGE_ID_LENGTH = exports.UINT64_SIZE = exports.UINT32_SIZE = exports.UINT16_SIZE = exports.BYTE_SIZE = void 0;
+	exports.isHex = exports.ARRAY_LENGTH = exports.STRING_LENGTH = exports.SMALL_TYPE_LENGTH = exports.TYPE_LENGTH = exports.MERKLE_PROOF_LENGTH = exports.TRANSACTION_ID_LENGTH = exports.MESSAGE_ID_LENGTH = exports.UINT64_SIZE = exports.UINT32_SIZE = exports.UINT16_SIZE = exports.BYTE_SIZE = void 0;
 
 	exports.BYTE_SIZE = 1;
 	exports.UINT16_SIZE = 2;
@@ -423,6 +424,7 @@
 	exports.UINT64_SIZE = 8;
 	exports.MESSAGE_ID_LENGTH = blake2b.Blake2b.SIZE_256;
 	exports.TRANSACTION_ID_LENGTH = blake2b.Blake2b.SIZE_256;
+	exports.MERKLE_PROOF_LENGTH = 64;
 	exports.TYPE_LENGTH = exports.UINT32_SIZE;
 	exports.SMALL_TYPE_LENGTH = exports.BYTE_SIZE;
 	exports.STRING_LENGTH = exports.UINT16_SIZE;
@@ -615,159 +617,6 @@
 	    writeStream.writeUInt16("utxoInput.transactionOutputIndex", object.transactionOutputIndex);
 	}
 	exports.serializeUTXOInput = serializeUTXOInput;
-
-	});
-
-	var output = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.serializeSigLockedSingleOutput = exports.deserializeSigLockedSingleOutput = exports.serializeOutput = exports.deserializeOutput = exports.serializeOutputs = exports.deserializeOutputs = exports.MIN_SIG_LOCKED_OUTPUT_LENGTH = exports.MIN_OUTPUT_LENGTH = void 0;
-
-
-	exports.MIN_OUTPUT_LENGTH = common.SMALL_TYPE_LENGTH;
-	exports.MIN_SIG_LOCKED_OUTPUT_LENGTH = exports.MIN_OUTPUT_LENGTH + address.MIN_ADDRESS_LENGTH + address.MIN_ED25519_ADDRESS_LENGTH;
-	/**
-	 * Deserialize the outputs from binary.
-	 * @param readStream The stream to read the data from.
-	 * @returns The deserialized object.
-	 */
-	function deserializeOutputs(readStream) {
-	    var numOutputs = readStream.readUInt16("outputs.numOutputs");
-	    var inputs = [];
-	    for (var i = 0; i < numOutputs; i++) {
-	        inputs.push(deserializeOutput(readStream));
-	    }
-	    return inputs;
-	}
-	exports.deserializeOutputs = deserializeOutputs;
-	/**
-	 * Serialize the outputs to binary.
-	 * @param writeStream The stream to write the data to.
-	 * @param objects The objects to serialize.
-	 */
-	function serializeOutputs(writeStream, objects) {
-	    writeStream.writeUInt16("outputs.numOutputs", objects.length);
-	    for (var i = 0; i < objects.length; i++) {
-	        serializeOutput(writeStream, objects[i]);
-	    }
-	}
-	exports.serializeOutputs = serializeOutputs;
-	/**
-	 * Deserialize the output from binary.
-	 * @param readStream The stream to read the data from.
-	 * @returns The deserialized object.
-	 */
-	function deserializeOutput(readStream) {
-	    if (!readStream.hasRemaining(exports.MIN_OUTPUT_LENGTH)) {
-	        throw new Error("Output data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_OUTPUT_LENGTH);
-	    }
-	    var type = readStream.readByte("output.type", false);
-	    var input;
-	    if (type === 0) {
-	        input = deserializeSigLockedSingleOutput(readStream);
-	    }
-	    else {
-	        throw new Error("Unrecognized output type " + type);
-	    }
-	    return input;
-	}
-	exports.deserializeOutput = deserializeOutput;
-	/**
-	 * Serialize the output to binary.
-	 * @param writeStream The stream to write the data to.
-	 * @param object The object to serialize.
-	 */
-	function serializeOutput(writeStream, object) {
-	    if (object.type === 0) {
-	        serializeSigLockedSingleOutput(writeStream, object);
-	    }
-	    else {
-	        throw new Error("Unrecognized output type " + object.type);
-	    }
-	}
-	exports.serializeOutput = serializeOutput;
-	/**
-	 * Deserialize the signature locked single output from binary.
-	 * @param readStream The stream to read the data from.
-	 * @returns The deserialized object.
-	 */
-	function deserializeSigLockedSingleOutput(readStream) {
-	    if (!readStream.hasRemaining(exports.MIN_SIG_LOCKED_OUTPUT_LENGTH)) {
-	        throw new Error("Signature Locked Single Output data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_SIG_LOCKED_OUTPUT_LENGTH);
-	    }
-	    var type = readStream.readByte("sigLockedSingleOutput.type");
-	    if (type !== 0) {
-	        throw new Error("Type mismatch in sigLockedSingleOutput " + type);
-	    }
-	    var address$1 = address.deserializeAddress(readStream);
-	    var amount = readStream.readUInt64("sigLockedSingleOutput.amount");
-	    return {
-	        type: type,
-	        address: address$1,
-	        amount: Number(amount)
-	    };
-	}
-	exports.deserializeSigLockedSingleOutput = deserializeSigLockedSingleOutput;
-	/**
-	 * Serialize the signature locked single output to binary.
-	 * @param writeStream The stream to write the data to.
-	 * @param object The object to serialize.
-	 */
-	function serializeSigLockedSingleOutput(writeStream, object) {
-	    writeStream.writeByte("sigLockedSingleOutput.type", object.type);
-	    address.serializeAddress(writeStream, object.address);
-	    writeStream.writeUInt64("sigLockedSingleOutput.amount", BigInt(object.amount));
-	}
-	exports.serializeSigLockedSingleOutput = serializeSigLockedSingleOutput;
-
-	});
-
-	var transaction = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.serializeTransactionEssence = exports.deserializeTransactionEssence = exports.MIN_TRANSACTION_ESSENCE_LENGTH = void 0;
-
-
-
-
-	exports.MIN_TRANSACTION_ESSENCE_LENGTH = common.SMALL_TYPE_LENGTH + (2 * common.ARRAY_LENGTH) + common.UINT32_SIZE;
-	/**
-	 * Deserialize the transaction essence from binary.
-	 * @param readStream The stream to read the data from.
-	 * @returns The deserialized object.
-	 */
-	function deserializeTransactionEssence(readStream) {
-	    if (!readStream.hasRemaining(exports.MIN_TRANSACTION_ESSENCE_LENGTH)) {
-	        throw new Error("Transaction essence data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_TRANSACTION_ESSENCE_LENGTH);
-	    }
-	    var type = readStream.readByte("transactionEssence.type");
-	    if (type !== 0) {
-	        throw new Error("Type mismatch in transactionEssence " + type);
-	    }
-	    var inputs = input.deserializeInputs(readStream);
-	    var outputs = output.deserializeOutputs(readStream);
-	    var payload$1 = payload.deserializePayload(readStream);
-	    if (payload$1 && payload$1.type !== 2) {
-	        throw new Error("Transaction essence can only contain embedded Indexation Payload");
-	    }
-	    return {
-	        type: type,
-	        inputs: inputs,
-	        outputs: outputs,
-	        payload: payload$1
-	    };
-	}
-	exports.deserializeTransactionEssence = deserializeTransactionEssence;
-	/**
-	 * Serialize the transaction essence to binary.
-	 * @param writeStream The stream to write the data to.
-	 * @param object The object to serialize.
-	 */
-	function serializeTransactionEssence(writeStream, object) {
-	    writeStream.writeByte("transactionEssence.type", object.type);
-	    input.serializeInputs(writeStream, object.inputs);
-	    output.serializeOutputs(writeStream, object.outputs);
-	    payload.serializePayload(writeStream, object.payload);
-	}
-	exports.serializeTransactionEssence = serializeTransactionEssence;
 
 	});
 
@@ -4075,6 +3924,159 @@
 
 	});
 
+	var output = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.serializeSigLockedSingleOutput = exports.deserializeSigLockedSingleOutput = exports.serializeOutput = exports.deserializeOutput = exports.serializeOutputs = exports.deserializeOutputs = exports.MIN_SIG_LOCKED_OUTPUT_LENGTH = exports.MIN_OUTPUT_LENGTH = void 0;
+
+
+	exports.MIN_OUTPUT_LENGTH = common.SMALL_TYPE_LENGTH;
+	exports.MIN_SIG_LOCKED_OUTPUT_LENGTH = exports.MIN_OUTPUT_LENGTH + address.MIN_ADDRESS_LENGTH + address.MIN_ED25519_ADDRESS_LENGTH;
+	/**
+	 * Deserialize the outputs from binary.
+	 * @param readStream The stream to read the data from.
+	 * @returns The deserialized object.
+	 */
+	function deserializeOutputs(readStream) {
+	    var numOutputs = readStream.readUInt16("outputs.numOutputs");
+	    var inputs = [];
+	    for (var i = 0; i < numOutputs; i++) {
+	        inputs.push(deserializeOutput(readStream));
+	    }
+	    return inputs;
+	}
+	exports.deserializeOutputs = deserializeOutputs;
+	/**
+	 * Serialize the outputs to binary.
+	 * @param writeStream The stream to write the data to.
+	 * @param objects The objects to serialize.
+	 */
+	function serializeOutputs(writeStream, objects) {
+	    writeStream.writeUInt16("outputs.numOutputs", objects.length);
+	    for (var i = 0; i < objects.length; i++) {
+	        serializeOutput(writeStream, objects[i]);
+	    }
+	}
+	exports.serializeOutputs = serializeOutputs;
+	/**
+	 * Deserialize the output from binary.
+	 * @param readStream The stream to read the data from.
+	 * @returns The deserialized object.
+	 */
+	function deserializeOutput(readStream) {
+	    if (!readStream.hasRemaining(exports.MIN_OUTPUT_LENGTH)) {
+	        throw new Error("Output data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_OUTPUT_LENGTH);
+	    }
+	    var type = readStream.readByte("output.type", false);
+	    var input;
+	    if (type === 0) {
+	        input = deserializeSigLockedSingleOutput(readStream);
+	    }
+	    else {
+	        throw new Error("Unrecognized output type " + type);
+	    }
+	    return input;
+	}
+	exports.deserializeOutput = deserializeOutput;
+	/**
+	 * Serialize the output to binary.
+	 * @param writeStream The stream to write the data to.
+	 * @param object The object to serialize.
+	 */
+	function serializeOutput(writeStream, object) {
+	    if (object.type === 0) {
+	        serializeSigLockedSingleOutput(writeStream, object);
+	    }
+	    else {
+	        throw new Error("Unrecognized output type " + object.type);
+	    }
+	}
+	exports.serializeOutput = serializeOutput;
+	/**
+	 * Deserialize the signature locked single output from binary.
+	 * @param readStream The stream to read the data from.
+	 * @returns The deserialized object.
+	 */
+	function deserializeSigLockedSingleOutput(readStream) {
+	    if (!readStream.hasRemaining(exports.MIN_SIG_LOCKED_OUTPUT_LENGTH)) {
+	        throw new Error("Signature Locked Single Output data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_SIG_LOCKED_OUTPUT_LENGTH);
+	    }
+	    var type = readStream.readByte("sigLockedSingleOutput.type");
+	    if (type !== 0) {
+	        throw new Error("Type mismatch in sigLockedSingleOutput " + type);
+	    }
+	    var address$1 = address.deserializeAddress(readStream);
+	    var amount = readStream.readUInt64("sigLockedSingleOutput.amount");
+	    return {
+	        type: type,
+	        address: address$1,
+	        amount: Number(amount)
+	    };
+	}
+	exports.deserializeSigLockedSingleOutput = deserializeSigLockedSingleOutput;
+	/**
+	 * Serialize the signature locked single output to binary.
+	 * @param writeStream The stream to write the data to.
+	 * @param object The object to serialize.
+	 */
+	function serializeSigLockedSingleOutput(writeStream, object) {
+	    writeStream.writeByte("sigLockedSingleOutput.type", object.type);
+	    address.serializeAddress(writeStream, object.address);
+	    writeStream.writeUInt64("sigLockedSingleOutput.amount", BigInt(object.amount));
+	}
+	exports.serializeSigLockedSingleOutput = serializeSigLockedSingleOutput;
+
+	});
+
+	var transaction = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.serializeTransactionEssence = exports.deserializeTransactionEssence = exports.MIN_TRANSACTION_ESSENCE_LENGTH = void 0;
+
+
+
+
+	exports.MIN_TRANSACTION_ESSENCE_LENGTH = common.SMALL_TYPE_LENGTH + (2 * common.ARRAY_LENGTH) + common.UINT32_SIZE;
+	/**
+	 * Deserialize the transaction essence from binary.
+	 * @param readStream The stream to read the data from.
+	 * @returns The deserialized object.
+	 */
+	function deserializeTransactionEssence(readStream) {
+	    if (!readStream.hasRemaining(exports.MIN_TRANSACTION_ESSENCE_LENGTH)) {
+	        throw new Error("Transaction essence data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_TRANSACTION_ESSENCE_LENGTH);
+	    }
+	    var type = readStream.readByte("transactionEssence.type");
+	    if (type !== 0) {
+	        throw new Error("Type mismatch in transactionEssence " + type);
+	    }
+	    var inputs = input.deserializeInputs(readStream);
+	    var outputs = output.deserializeOutputs(readStream);
+	    var payload$1 = payload.deserializePayload(readStream);
+	    if (payload$1 && payload$1.type !== 2) {
+	        throw new Error("Transaction essence can only contain embedded Indexation Payload");
+	    }
+	    return {
+	        type: type,
+	        inputs: inputs,
+	        outputs: outputs,
+	        payload: payload$1
+	    };
+	}
+	exports.deserializeTransactionEssence = deserializeTransactionEssence;
+	/**
+	 * Serialize the transaction essence to binary.
+	 * @param writeStream The stream to write the data to.
+	 * @param object The object to serialize.
+	 */
+	function serializeTransactionEssence(writeStream, object) {
+	    writeStream.writeByte("transactionEssence.type", object.type);
+	    input.serializeInputs(writeStream, object.inputs);
+	    output.serializeOutputs(writeStream, object.outputs);
+	    payload.serializePayload(writeStream, object.payload);
+	}
+	exports.serializeTransactionEssence = serializeTransactionEssence;
+
+	});
+
 	var signature = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.serializeEd25519Signature = exports.deserializeEd25519Signature = exports.serializeSignature = exports.deserializeSignature = exports.MIN_ED25519_SIGNATURE_LENGTH = exports.MIN_SIGNATURE_LENGTH = void 0;
@@ -4295,8 +4297,12 @@
 
 
 
+
 	exports.MIN_PAYLOAD_LENGTH = common.TYPE_LENGTH;
-	exports.MIN_MILESTONE_PAYLOAD_LENGTH = exports.MIN_PAYLOAD_LENGTH + (2 * common.UINT64_SIZE) + 64 + common.BYTE_SIZE;
+	exports.MIN_MILESTONE_PAYLOAD_LENGTH = exports.MIN_PAYLOAD_LENGTH + common.UINT32_SIZE + common.UINT64_SIZE +
+	    common.MESSAGE_ID_LENGTH + common.MESSAGE_ID_LENGTH + common.MERKLE_PROOF_LENGTH +
+	    common.BYTE_SIZE + ed25519.Ed25519.PUBLIC_KEY_SIZE +
+	    common.BYTE_SIZE + ed25519.Ed25519.SIGNATURE_SIZE;
 	exports.MIN_INDEXATION_PAYLOAD_LENGTH = exports.MIN_PAYLOAD_LENGTH + common.STRING_LENGTH + common.STRING_LENGTH;
 	exports.MIN_TRANSACTION_PAYLOAD_LENGTH = exports.MIN_PAYLOAD_LENGTH + common.UINT32_SIZE;
 	/**
@@ -4419,19 +4425,29 @@
 	    if (type !== 1) {
 	        throw new Error("Type mismatch in payloadMilestone " + type);
 	    }
-	    var index = readStream.readUInt64("payloadMilestone.index");
+	    var index = readStream.readUInt32("payloadMilestone.index");
 	    var timestamp = readStream.readUInt64("payloadMilestone.timestamp");
-	    var inclusionMerkleProof = readStream.readFixedHex("payloadMilestone.inclusionMerkleProof", 64);
+	    var parent1 = readStream.readFixedHex("payloadMilestone.parent1", common.MESSAGE_ID_LENGTH);
+	    var parent2 = readStream.readFixedHex("payloadMilestone.parent2", common.MESSAGE_ID_LENGTH);
+	    var inclusionMerkleProof = readStream.readFixedHex("payloadMilestone.inclusionMerkleProof", common.MERKLE_PROOF_LENGTH);
+	    var publicKeysCount = readStream.readByte("payloadMilestone.publicKeysCount");
+	    var publicKeys = [];
+	    for (var i = 0; i < publicKeysCount; i++) {
+	        publicKeys.push(readStream.readFixedHex("payloadMilestone.publicKey", ed25519.Ed25519.PUBLIC_KEY_SIZE));
+	    }
 	    var signaturesCount = readStream.readByte("payloadMilestone.signaturesCount");
 	    var signatures = [];
 	    for (var i = 0; i < signaturesCount; i++) {
-	        signatures.push(readStream.readFixedHex("payloadMilestone.signature", 64));
+	        signatures.push(readStream.readFixedHex("payloadMilestone.signature", ed25519.Ed25519.SIGNATURE_SIZE));
 	    }
 	    return {
 	        type: type,
-	        index: Number(index),
+	        index: index,
 	        timestamp: Number(timestamp),
+	        parent1: parent1,
+	        parent2: parent2,
 	        inclusionMerkleProof: inclusionMerkleProof,
+	        publicKeys: publicKeys,
 	        signatures: signatures
 	    };
 	}
@@ -4443,12 +4459,18 @@
 	 */
 	function serializeMilestonePayload(writeStream, object) {
 	    writeStream.writeUInt32("payloadMilestone.type", object.type);
-	    writeStream.writeUInt64("payloadMilestone.index", BigInt(object.index));
+	    writeStream.writeUInt32("payloadMilestone.index", object.index);
 	    writeStream.writeUInt64("payloadMilestone.timestamp", BigInt(object.timestamp));
-	    writeStream.writeFixedHex("payloadMilestone.inclusionMerkleProof", 64, object.inclusionMerkleProof);
+	    writeStream.writeFixedHex("payloadMilestone.parent1", common.MESSAGE_ID_LENGTH, object.parent1);
+	    writeStream.writeFixedHex("payloadMilestone.parent2", common.MESSAGE_ID_LENGTH, object.parent2);
+	    writeStream.writeFixedHex("payloadMilestone.inclusionMerkleProof", common.MERKLE_PROOF_LENGTH, object.inclusionMerkleProof);
+	    writeStream.writeByte("payloadMilestone.publicKeysCount", object.publicKeys.length);
+	    for (var i = 0; i < object.publicKeys.length; i++) {
+	        writeStream.writeFixedHex("payloadMilestone.publicKey", ed25519.Ed25519.PUBLIC_KEY_SIZE, object.publicKeys[i]);
+	    }
 	    writeStream.writeByte("payloadMilestone.signaturesCount", object.signatures.length);
 	    for (var i = 0; i < object.signatures.length; i++) {
-	        writeStream.writeFixedHex("payloadMilestone.signature", 64, object.signatures[i]);
+	        writeStream.writeFixedHex("payloadMilestone.signature", ed25519.Ed25519.SIGNATURE_SIZE, object.signatures[i]);
 	    }
 	}
 	exports.serializeMilestonePayload = serializeMilestonePayload;
@@ -4536,12 +4558,12 @@
 	 * @param object The object to serialize.
 	 */
 	function serializeMessage(writeStream, object) {
-	    var _a, _b;
+	    var _a, _b, _c;
 	    writeStream.writeByte("message.version", object.version);
 	    writeStream.writeFixedHex("message.parent1MessageId", common.MESSAGE_ID_LENGTH, (_a = object.parent1MessageId) !== null && _a !== void 0 ? _a : EMPTY_MESSAGE_ID_HEX);
 	    writeStream.writeFixedHex("message.parent2MessageId", common.MESSAGE_ID_LENGTH, (_b = object.parent2MessageId) !== null && _b !== void 0 ? _b : EMPTY_MESSAGE_ID_HEX);
 	    payload.serializePayload(writeStream, object.payload);
-	    writeStream.writeUInt64("message.nonce", BigInt(object.nonce));
+	    writeStream.writeUInt64("message.nonce", BigInt((_c = object.nonce) !== null && _c !== void 0 ? _c : 0));
 	}
 	exports.serializeMessage = serializeMessage;
 
@@ -4720,6 +4742,717 @@
 	    return Converter;
 	}());
 	exports.Converter = Converter;
+
+	});
+
+	var randomHelper = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.RandomHelper = void 0;
+	/**
+	 * Class to help with random generation.
+	 */
+	var RandomHelper = /** @class */ (function () {
+	    function RandomHelper() {
+	    }
+	    /**
+	     * Generate a new random array.
+	     * @param length The length of buffer to create.
+	     * @returns The random array.
+	     */
+	    RandomHelper.generate = function (length) {
+	        var _a;
+	        var randomBytes;
+	        if ((_a = globalThis.crypto) === null || _a === void 0 ? void 0 : _a.getRandomValues) {
+	            randomBytes = new Uint8Array(length);
+	            globalThis.crypto.getRandomValues(randomBytes);
+	        }
+	        else if (typeof commonjsRequire !== "undefined") {
+	            // eslint-disable-next-line @typescript-eslint/no-var-requires,@typescript-eslint/no-require-imports
+	            var crypto_1 = require$$0__default['default'];
+	            randomBytes = crypto_1.randomBytes(length);
+	        }
+	        else {
+	            throw new TypeError("No random method available");
+	        }
+	        return randomBytes;
+	    };
+	    return RandomHelper;
+	}());
+	exports.RandomHelper = RandomHelper;
+
+	});
+
+	var readStream = createCommonjsModule(function (module, exports) {
+	/* eslint-disable no-bitwise */
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.ReadStream = void 0;
+
+	/**
+	 * Keep track of the read index within a stream.
+	 */
+	var ReadStream = /** @class */ (function () {
+	    /**
+	     * Create a new instance of ReadStream.
+	     * @param storage The data to access.
+	     * @param readStartIndex The index to start the reading from.
+	     */
+	    function ReadStream(storage, readStartIndex) {
+	        if (readStartIndex === void 0) { readStartIndex = 0; }
+	        this._storage = new Uint8Array(storage);
+	        this._readIndex = readStartIndex;
+	    }
+	    /**
+	     * Get the length of the storage.
+	     * @returns The storage length.
+	     */
+	    ReadStream.prototype.length = function () {
+	        return this._storage.byteLength;
+	    };
+	    /**
+	     * Does the storage have enough data remaining.
+	     * @param remaining The amount of space needed.
+	     * @returns True if it has enough data.
+	     */
+	    ReadStream.prototype.hasRemaining = function (remaining) {
+	        return this._readIndex + remaining <= this._storage.byteLength;
+	    };
+	    /**
+	     * How much unused data is there.
+	     * @returns The amount of unused data.
+	     */
+	    ReadStream.prototype.unused = function () {
+	        return this._storage.byteLength - this._readIndex;
+	    };
+	    /**
+	     * Read fixed length as hex.
+	     * @param name The name of the data we are trying to read.
+	     * @param length The length of the data to read.
+	     * @param moveIndex Move the index pointer on.
+	     * @returns The hex formatted data.
+	     */
+	    ReadStream.prototype.readFixedHex = function (name, length, moveIndex) {
+	        if (moveIndex === void 0) { moveIndex = true; }
+	        if (!this.hasRemaining(length)) {
+	            throw new Error(name + " length " + length + " exceeds the remaining data " + this.unused());
+	        }
+	        var hex = converter.Converter.bytesToHex(this._storage, this._readIndex, length);
+	        if (moveIndex) {
+	            this._readIndex += length;
+	        }
+	        return hex;
+	    };
+	    /**
+	     * Read an array of byte from the stream.
+	     * @param name The name of the data we are trying to read.
+	     * @param length The length of the array to read.
+	     * @param moveIndex Move the index pointer on.
+	     * @returns The value.
+	     */
+	    ReadStream.prototype.readBytes = function (name, length, moveIndex) {
+	        if (moveIndex === void 0) { moveIndex = true; }
+	        if (!this.hasRemaining(length)) {
+	            throw new Error(name + " length " + length + " exceeds the remaining data " + this.unused());
+	        }
+	        var val = this._storage.slice(this._readIndex, this._readIndex + length);
+	        if (moveIndex) {
+	            this._readIndex += length;
+	        }
+	        return val;
+	    };
+	    /**
+	     * Read a byte from the stream.
+	     * @param name The name of the data we are trying to read.
+	     * @param moveIndex Move the index pointer on.
+	     * @returns The value.
+	     */
+	    ReadStream.prototype.readByte = function (name, moveIndex) {
+	        if (moveIndex === void 0) { moveIndex = true; }
+	        if (!this.hasRemaining(1)) {
+	            throw new Error(name + " length " + 1 + " exceeds the remaining data " + this.unused());
+	        }
+	        var val = this._storage[this._readIndex];
+	        if (moveIndex) {
+	            this._readIndex += 1;
+	        }
+	        return val;
+	    };
+	    /**
+	     * Read a UInt16 from the stream.
+	     * @param name The name of the data we are trying to read.
+	     * @param moveIndex Move the index pointer on.
+	     * @returns The value.
+	     */
+	    ReadStream.prototype.readUInt16 = function (name, moveIndex) {
+	        if (moveIndex === void 0) { moveIndex = true; }
+	        if (!this.hasRemaining(2)) {
+	            throw new Error(name + " length " + 2 + " exceeds the remaining data " + this.unused());
+	        }
+	        var val = this._storage[this._readIndex] |
+	            (this._storage[this._readIndex + 1] << 8);
+	        if (moveIndex) {
+	            this._readIndex += 2;
+	        }
+	        return val;
+	    };
+	    /**
+	     * Read a UInt32 from the stream.
+	     * @param name The name of the data we are trying to read.
+	     * @param moveIndex Move the index pointer on.
+	     * @returns The value.
+	     */
+	    ReadStream.prototype.readUInt32 = function (name, moveIndex) {
+	        if (moveIndex === void 0) { moveIndex = true; }
+	        if (!this.hasRemaining(4)) {
+	            throw new Error(name + " length " + 4 + " exceeds the remaining data " + this.unused());
+	        }
+	        var val = (this._storage[this._readIndex]) |
+	            (this._storage[this._readIndex + 1] * 0x100) |
+	            (this._storage[this._readIndex + 2] * 0x10000) +
+	                (this._storage[this._readIndex + 3] * 0x1000000);
+	        if (moveIndex) {
+	            this._readIndex += 4;
+	        }
+	        return val;
+	    };
+	    /**
+	     * Read a UInt64 from the stream.
+	     * @param name The name of the data we are trying to read.
+	     * @param moveIndex Move the index pointer on.
+	     * @returns The value.
+	     */
+	    ReadStream.prototype.readUInt64 = function (name, moveIndex) {
+	        if (moveIndex === void 0) { moveIndex = true; }
+	        if (!this.hasRemaining(8)) {
+	            throw new Error(name + " length " + 8 + " exceeds the remaining data " + this.unused());
+	        }
+	        // We reverse the string conversion as this is LE
+	        var val = BigInt("0x" + converter.Converter.bytesToHex(this._storage, this._readIndex, 8, true));
+	        if (moveIndex) {
+	            this._readIndex += 8;
+	        }
+	        return val;
+	    };
+	    /**
+	     * Read a string from the stream.
+	     * @param name The name of the data we are trying to read.
+	     * @param moveIndex Move the index pointer on.
+	     * @returns The string.
+	     */
+	    ReadStream.prototype.readString = function (name, moveIndex) {
+	        if (moveIndex === void 0) { moveIndex = true; }
+	        var stringLength = this.readUInt16(name);
+	        if (!this.hasRemaining(stringLength)) {
+	            throw new Error(name + " length " + stringLength + " exceeds the remaining data " + this.unused());
+	        }
+	        var val = converter.Converter.bytesToAscii(this._storage, this._readIndex, stringLength);
+	        if (moveIndex) {
+	            this._readIndex += stringLength;
+	        }
+	        return val;
+	    };
+	    return ReadStream;
+	}());
+	exports.ReadStream = ReadStream;
+
+	});
+
+	var mqttClient = createCommonjsModule(function (module, exports) {
+	var __createBinding = (commonjsGlobal && commonjsGlobal.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+	    if (k2 === undefined) k2 = k;
+	    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+	}) : (function(o, m, k, k2) {
+	    if (k2 === undefined) k2 = k;
+	    o[k2] = m[k];
+	}));
+	var __setModuleDefault = (commonjsGlobal && commonjsGlobal.__setModuleDefault) || (Object.create ? (function(o, v) {
+	    Object.defineProperty(o, "default", { enumerable: true, value: v });
+	}) : function(o, v) {
+	    o["default"] = v;
+	});
+	var __importStar = (commonjsGlobal && commonjsGlobal.__importStar) || function (mod) {
+	    if (mod && mod.__esModule) return mod;
+	    var result = {};
+	    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+	    __setModuleDefault(result, mod);
+	    return result;
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.MqttClient = void 0;
+	var mqtt = __importStar(require$$0__default$1['default']);
+
+
+
+
+
+	/**
+	 * MQTT Client implementation for pub/sub communication.
+	 */
+	var MqttClient = /** @class */ (function () {
+	    /**
+	     * Create a new instace of MqttClient.
+	     * @param endpoint The endpoint to connect to.
+	     * @param keepAliveTimeoutSeconds Timeout to reconnect if no messages received.
+	     */
+	    function MqttClient(endpoint, keepAliveTimeoutSeconds) {
+	        if (keepAliveTimeoutSeconds === void 0) { keepAliveTimeoutSeconds = 30; }
+	        this._endpoint = endpoint;
+	        this._subscriptions = {};
+	        this._statusSubscriptions = {};
+	        this._lastMessageTime = -1;
+	        this._keepAliveTimeoutSeconds = keepAliveTimeoutSeconds;
+	    }
+	    /**
+	     * Subscribe to the latest milestone updates.
+	     * @param callback The callback which is called when new data arrives.
+	     * @returns A subscription Id which can be used to unsubscribe.
+	     */
+	    MqttClient.prototype.milestonesLatest = function (callback) {
+	        return this.internalSubscribe("milestones/latest", true, callback);
+	    };
+	    /**
+	     * Subscribe to the latest solid milestone updates.
+	     * @param callback The callback which is called when new data arrives.
+	     * @returns A subscription Id which can be used to unsubscribe.
+	     */
+	    MqttClient.prototype.milestonesSolid = function (callback) {
+	        return this.internalSubscribe("milestones/solid", true, callback);
+	    };
+	    /**
+	     * Subscribe to metadata updates for a specific message.
+	     * @param messageId The message to monitor.
+	     * @param callback The callback which is called when new data arrives.
+	     * @returns A subscription Id which can be used to unsubscribe.
+	     */
+	    MqttClient.prototype.messageMetadata = function (messageId, callback) {
+	        return this.internalSubscribe("messages/" + messageId + "/metadata", true, callback);
+	    };
+	    /**
+	     * Subscribe to updates for a specific output.
+	     * @param outputId The output to monitor.
+	     * @param callback The callback which is called when new data arrives.
+	     * @returns A subscription Id which can be used to unsubscribe.
+	     */
+	    MqttClient.prototype.output = function (outputId, callback) {
+	        return this.internalSubscribe("outputs/" + outputId, true, callback);
+	    };
+	    /**
+	     * Subscribe to the address for output updates.
+	     * @param address The address to monitor.
+	     * @param callback The callback which is called when new data arrives.
+	     * @returns A subscription Id which can be used to unsubscribe.
+	     */
+	    MqttClient.prototype.addressOutputs = function (address, callback) {
+	        return this.internalSubscribe("addresses/" + address + "/outputs", true, callback);
+	    };
+	    /**
+	     * Subscribe to get all messages in binary form.
+	     * @param callback The callback which is called when new data arrives.
+	     * @returns A subscription Id which can be used to unsubscribe.
+	     */
+	    MqttClient.prototype.messagesRaw = function (callback) {
+	        return this.internalSubscribe("messages", false, function (topic, raw) {
+	            callback(topic, converter.Converter.bytesToHex(blake2b.Blake2b.sum256(raw)), raw);
+	        });
+	    };
+	    /**
+	     * Subscribe to get all messages in object form.
+	     * @param callback The callback which is called when new data arrives.
+	     * @returns A subscription Id which can be used to unsubscribe.
+	     */
+	    MqttClient.prototype.messages = function (callback) {
+	        return this.internalSubscribe("messages", false, function (topic, raw) {
+	            callback(topic, converter.Converter.bytesToHex(blake2b.Blake2b.sum256(raw)), message.deserializeMessage(new readStream.ReadStream(raw)), raw);
+	        });
+	    };
+	    /**
+	     * Subscribe to get all messages for the specified index in binary form.
+	     * @param index The index to monitor.
+	     * @param callback The callback which is called when new data arrives.
+	     * @returns A subscription Id which can be used to unsubscribe.
+	     */
+	    MqttClient.prototype.indexRaw = function (index, callback) {
+	        return this.internalSubscribe("messages/indexation/" + index, false, function (topic, raw) {
+	            callback(topic, converter.Converter.bytesToHex(blake2b.Blake2b.sum256(raw)), raw);
+	        });
+	    };
+	    /**
+	     * Subscribe to get all messages for the specified index in object form.
+	     * @param index The index to monitor.
+	     * @param callback The callback which is called when new data arrives.
+	     * @returns A subscription Id which can be used to unsubscribe.
+	     */
+	    MqttClient.prototype.index = function (index, callback) {
+	        return this.internalSubscribe("messages/indexation/" + index, false, function (topic, raw) {
+	            callback(topic, converter.Converter.bytesToHex(blake2b.Blake2b.sum256(raw)), message.deserializeMessage(new readStream.ReadStream(raw)), raw);
+	        });
+	    };
+	    /**
+	     * Subscribe to get the metadata for all the messages.
+	     * @param callback The callback which is called when new data arrives.
+	     * @returns A subscription Id which can be used to unsubscribe.
+	     */
+	    MqttClient.prototype.messagesMetadata = function (callback) {
+	        return this.internalSubscribe("messages/referenced", true, callback);
+	    };
+	    /**
+	     * Subscribe to another type of message as raw data.
+	     * @param customTopic The topic to subscribe to.
+	     * @param callback The callback which is called when new data arrives.
+	     * @returns A subscription Id which can be used to unsubscribe.
+	     */
+	    MqttClient.prototype.subscribeRaw = function (customTopic, callback) {
+	        return this.internalSubscribe(customTopic, false, callback);
+	    };
+	    /**
+	     * Subscribe to another type of message as json.
+	     * @param customTopic The topic to subscribe to.
+	     * @param callback The callback which is called when new data arrives.
+	     * @returns A subscription Id which can be used to unsubscribe.
+	     */
+	    MqttClient.prototype.subscribeJson = function (customTopic, callback) {
+	        return this.internalSubscribe(customTopic, true, callback);
+	    };
+	    /**
+	     * Remove a subscription.
+	     * @param subscriptionId The subscription to remove.
+	     */
+	    MqttClient.prototype.unsubscribe = function (subscriptionId) {
+	        this.triggerStatusCallbacks({
+	            type: "subscription-remove",
+	            message: subscriptionId,
+	            isConnected: this._client !== undefined
+	        });
+	        if (this._statusSubscriptions[subscriptionId]) {
+	            delete this._statusSubscriptions[subscriptionId];
+	        }
+	        else {
+	            var topics = Object.keys(this._subscriptions);
+	            for (var i = 0; i < topics.length; i++) {
+	                var topic = topics[i];
+	                for (var j = 0; j < this._subscriptions[topic].subscriptionCallbacks.length; j++) {
+	                    if (this._subscriptions[topic].subscriptionCallbacks[j].subscriptionId === subscriptionId) {
+	                        this._subscriptions[topic].subscriptionCallbacks.splice(j, 1);
+	                        if (this._subscriptions[topic].subscriptionCallbacks.length === 0) {
+	                            delete this._subscriptions[topic];
+	                            // This is the last subscriber to this topic
+	                            // so unsubscribe from the actual client.
+	                            this.mqttUnsubscribe(topic);
+	                        }
+	                        return;
+	                    }
+	                }
+	            }
+	        }
+	    };
+	    /**
+	     * Subscribe to changes in the client state.
+	     * @param callback Callback called when the state has changed.
+	     * @returns A subscription Id which can be used to unsubscribe.
+	     */
+	    MqttClient.prototype.statusChanged = function (callback) {
+	        var subscriptionId = converter.Converter.bytesToHex(randomHelper.RandomHelper.generate(32));
+	        this._statusSubscriptions[subscriptionId] = callback;
+	        return subscriptionId;
+	    };
+	    /**
+	     * Subscribe to another type of message.
+	     * @param customTopic The topic to subscribe to.
+	     * @param isJson Should we deserialize the data as JSON.
+	     * @param callback The callback which is called when new data arrives.
+	     * @returns A subscription Id which can be used to unsubscribe.
+	     * @private
+	     */
+	    MqttClient.prototype.internalSubscribe = function (customTopic, isJson, callback) {
+	        var isNewTopic = false;
+	        if (!this._subscriptions[customTopic]) {
+	            this._subscriptions[customTopic] = {
+	                isJson: isJson,
+	                subscriptionCallbacks: []
+	            };
+	            isNewTopic = true;
+	        }
+	        var subscriptionId = converter.Converter.bytesToHex(randomHelper.RandomHelper.generate(32));
+	        this._subscriptions[customTopic].subscriptionCallbacks.push({
+	            subscriptionId: subscriptionId,
+	            callback: callback
+	        });
+	        this.triggerStatusCallbacks({
+	            type: "subscription-add",
+	            message: subscriptionId,
+	            isConnected: this._client !== undefined
+	        });
+	        if (isNewTopic) {
+	            this.mqttSubscribe(customTopic);
+	        }
+	        return subscriptionId;
+	    };
+	    /**
+	     * Subscribe to a new topic on the client.
+	     * @param topic The topic to subscribe to.
+	     * @private
+	     */
+	    MqttClient.prototype.mqttSubscribe = function (topic) {
+	        if (!this._client) {
+	            // There is no client so we need to connect,
+	            // the new topic is already in the subscriptions so
+	            // it will automatically get subscribed to.
+	            this.mqttConnect();
+	        }
+	        else {
+	            // There is already a client so just subscribe to the new topic.
+	            try {
+	                this._client.subscribe(topic);
+	            }
+	            catch (err) {
+	                this.triggerStatusCallbacks({
+	                    type: "error",
+	                    message: "Subscribe to topic " + topic + " failed on " + this._endpoint,
+	                    isConnected: this._client !== undefined,
+	                    error: err
+	                });
+	            }
+	        }
+	    };
+	    /**
+	     * Unsubscribe from a topic on the client.
+	     * @param topic The topic to unsubscribe from.
+	     * @private
+	     */
+	    MqttClient.prototype.mqttUnsubscribe = function (topic) {
+	        if (this._client) {
+	            try {
+	                this._client.unsubscribe(topic);
+	            }
+	            catch (err) {
+	                this.triggerStatusCallbacks({
+	                    type: "error",
+	                    message: "Unsubscribe from topic " + topic + " failed on " + this._endpoint,
+	                    isConnected: this._client !== undefined,
+	                    error: err
+	                });
+	            }
+	        }
+	    };
+	    /**
+	     * Connect the client.
+	     * @private
+	     */
+	    MqttClient.prototype.mqttConnect = function () {
+	        var _this = this;
+	        if (!this._client) {
+	            try {
+	                this._client = mqtt.connect(this._endpoint);
+	                this._client.on("connect", function () {
+	                    // On a successful connection we want to subscribe to
+	                    // all the subscription topics.
+	                    try {
+	                        if (_this._client) {
+	                            _this._client.subscribe(Object.keys(_this._subscriptions));
+	                            _this.startKeepAlive();
+	                            _this.triggerStatusCallbacks({
+	                                type: "connect",
+	                                message: "Connection complete " + _this._endpoint,
+	                                isConnected: true
+	                            });
+	                        }
+	                    }
+	                    catch (err) {
+	                        _this.triggerStatusCallbacks({
+	                            type: "error",
+	                            message: "Subscribe to topics failed on " + _this._endpoint,
+	                            isConnected: _this._client !== undefined,
+	                            error: err
+	                        });
+	                    }
+	                });
+	                this._client.on("message", function (topic, message) {
+	                    _this._lastMessageTime = Date.now();
+	                    _this.triggerCallbacks(topic, message);
+	                });
+	                this._client.on("error", function (err) {
+	                    _this.triggerStatusCallbacks({
+	                        type: "error",
+	                        message: "Error on " + _this._endpoint,
+	                        isConnected: _this._client !== undefined,
+	                        error: err
+	                    });
+	                });
+	            }
+	            catch (err) {
+	                this.triggerStatusCallbacks({
+	                    type: "connect",
+	                    message: "Connection failed to " + this._endpoint,
+	                    isConnected: false,
+	                    error: err
+	                });
+	            }
+	        }
+	    };
+	    /**
+	     * Disconnect the client.
+	     * @private
+	     */
+	    MqttClient.prototype.mqttDisconnect = function () {
+	        this.stopKeepAlive();
+	        if (this._client) {
+	            var localClient = this._client;
+	            this._client = undefined;
+	            try {
+	                localClient.unsubscribe(Object.keys(this._subscriptions));
+	                localClient.end();
+	            }
+	            catch (_a) { }
+	            this.triggerStatusCallbacks({
+	                type: "disconnect",
+	                message: "Disconnect complete " + this._endpoint,
+	                isConnected: true
+	            });
+	        }
+	    };
+	    /**
+	     * Trigger the callbacks for the specified topic.
+	     * @param topic The topic to call the callbacks for.
+	     * @param data The data to send to the callbacks.
+	     * @private
+	     */
+	    MqttClient.prototype.triggerCallbacks = function (topic, data) {
+	        if (this._subscriptions[topic]) {
+	            var decodedData = data;
+	            if (this._subscriptions[topic].isJson) {
+	                try {
+	                    decodedData = JSON.parse(data.toString());
+	                }
+	                catch (err) {
+	                    this.triggerStatusCallbacks({
+	                        type: "error",
+	                        message: "Error decoding JSON for topic " + topic,
+	                        isConnected: this._client !== undefined,
+	                        error: err
+	                    });
+	                }
+	            }
+	            for (var i = 0; i < this._subscriptions[topic].subscriptionCallbacks.length; i++) {
+	                try {
+	                    this._subscriptions[topic].subscriptionCallbacks[i].callback(topic, decodedData);
+	                }
+	                catch (err) {
+	                    this.triggerStatusCallbacks({
+	                        type: "error",
+	                        message: "Triggering callback failed for topic " + topic + " on subscription " + this._subscriptions[topic].subscriptionCallbacks[i].subscriptionId,
+	                        isConnected: this._client !== undefined,
+	                        error: err
+	                    });
+	                }
+	            }
+	        }
+	    };
+	    /**
+	     * Trigger the callbacks for the status.
+	     * @param status The status to send to the callbacks.
+	     * @private
+	     */
+	    MqttClient.prototype.triggerStatusCallbacks = function (status) {
+	        var subscriptionIds = Object.keys(this._statusSubscriptions);
+	        for (var i = 0; i < subscriptionIds.length; i++) {
+	            this._statusSubscriptions[subscriptionIds[i]](status);
+	        }
+	    };
+	    /**
+	     * Start the keep alive timer.
+	     * @private
+	     */
+	    MqttClient.prototype.startKeepAlive = function () {
+	        var _this = this;
+	        this.stopKeepAlive();
+	        this._lastMessageTime = Date.now();
+	        this._timerId = setInterval(function () { return _this.keepAlive(); }, ((this._keepAliveTimeoutSeconds / 2) * 1000));
+	    };
+	    /**
+	     * Stop the keep alive timer.
+	     * @private
+	     */
+	    MqttClient.prototype.stopKeepAlive = function () {
+	        if (this._timerId !== undefined) {
+	            clearInterval(this._timerId);
+	            this._timerId = undefined;
+	        }
+	    };
+	    /**
+	     * Keep the connection alive.
+	     * @private
+	     */
+	    MqttClient.prototype.keepAlive = function () {
+	        if (Date.now() - this._lastMessageTime > (this._keepAliveTimeoutSeconds * 1000)) {
+	            this.mqttDisconnect();
+	            this.mqttConnect();
+	        }
+	    };
+	    return MqttClient;
+	}());
+	exports.MqttClient = MqttClient;
+
+	});
+
+	var zeroPowProvider = createCommonjsModule(function (module, exports) {
+	var __awaiter = (commonjsGlobal && commonjsGlobal.__awaiter) || function (thisArg, _arguments, P, generator) {
+	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+	    return new (P || (P = Promise))(function (resolve, reject) {
+	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+	        step((generator = generator.apply(thisArg, _arguments || [])).next());
+	    });
+	};
+	var __generator = (commonjsGlobal && commonjsGlobal.__generator) || function (thisArg, body) {
+	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+	    function verb(n) { return function (v) { return step([n, v]); }; }
+	    function step(op) {
+	        if (f) throw new TypeError("Generator is already executing.");
+	        while (_) try {
+	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+	            if (y = 0, t) op = [op[0] & 2, t.value];
+	            switch (op[0]) {
+	                case 0: case 1: t = op; break;
+	                case 4: _.label++; return { value: op[1], done: false };
+	                case 5: _.label++; y = op[1]; op = [0]; continue;
+	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+	                default:
+	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+	                    if (t[2]) _.ops.pop();
+	                    _.trys.pop(); continue;
+	            }
+	            op = body.call(thisArg, _);
+	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+	    }
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.ZeroPowProvider = void 0;
+	/**
+	 * Zero POW Provider which does nothing.
+	 */
+	var ZeroPowProvider = /** @class */ (function () {
+	    function ZeroPowProvider() {
+	    }
+	    /**
+	     * Perform pow on the message and return the nonce.
+	     * @param message The message to process.
+	     * @returns The nonce.
+	     */
+	    ZeroPowProvider.prototype.doPow = function (message) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, BigInt(0)];
+	            });
+	        });
+	    };
+	    return ZeroPowProvider;
+	}());
+	exports.ZeroPowProvider = ZeroPowProvider;
 
 	});
 
@@ -4933,6 +5666,7 @@
 
 
 
+
 	/**
 	 * Client for API communication.
 	 */
@@ -4947,7 +5681,7 @@
 	            throw new Error("The endpoint is not in the correct format");
 	        }
 	        this._endpoint = endpoint.replace(/\/+$/, "");
-	        this._powProvider = powProvider;
+	        this._powProvider = powProvider !== null && powProvider !== void 0 ? powProvider : new zeroPowProvider.ZeroPowProvider();
 	    }
 	    /**
 	     * Get the health of the node.
@@ -5042,7 +5776,7 @@
 	                switch (_b.label) {
 	                    case 0:
 	                        if (!(this._powProvider &&
-	                            (!message$1.nonce || message$1.nonce.length === 0 || message$1.nonce === "0"))) return [3 /*break*/, 2];
+	                            (!message$1.nonce || message$1.nonce.length === 0))) return [3 /*break*/, 2];
 	                        writeStream$1 = new writeStream.WriteStream();
 	                        message.serializeMessage(writeStream$1, message$1);
 	                        messageBytes = writeStream$1.finalBytes();
@@ -5617,43 +6351,6 @@
 	    return Bip32Path;
 	}());
 	exports.Bip32Path = Bip32Path;
-
-	});
-
-	var randomHelper = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.RandomHelper = void 0;
-	/**
-	 * Class to help with random generation.
-	 */
-	var RandomHelper = /** @class */ (function () {
-	    function RandomHelper() {
-	    }
-	    /**
-	     * Generate a new random array.
-	     * @param length The length of buffer to create.
-	     * @returns The random array.
-	     */
-	    RandomHelper.generate = function (length) {
-	        var _a;
-	        var randomBytes;
-	        if ((_a = globalThis.crypto) === null || _a === void 0 ? void 0 : _a.getRandomValues) {
-	            randomBytes = new Uint8Array(length);
-	            globalThis.crypto.getRandomValues(randomBytes);
-	        }
-	        else if (typeof commonjsRequire !== "undefined") {
-	            // eslint-disable-next-line @typescript-eslint/no-var-requires,@typescript-eslint/no-require-imports
-	            var crypto_1 = require$$0__default['default'];
-	            randomBytes = crypto_1.randomBytes(length);
-	        }
-	        else {
-	            throw new TypeError("No random method available");
-	        }
-	        return randomBytes;
-	    };
-	    return RandomHelper;
-	}());
-	exports.RandomHelper = RandomHelper;
 
 	});
 
@@ -6414,8 +7111,7 @@
 	                        version: 1,
 	                        parent1MessageId: tips.tip1MessageId,
 	                        parent2MessageId: tips.tip2MessageId,
-	                        payload: transactionPayload,
-	                        nonce: "0"
+	                        payload: transactionPayload
 	                    };
 	                    return [4 /*yield*/, client.messageSubmit(message)];
 	                case 2:
@@ -6667,8 +7363,7 @@
 	                        version: 1,
 	                        parent1MessageId: tips.tip1MessageId,
 	                        parent2MessageId: tips.tip2MessageId,
-	                        payload: indexationPayload,
-	                        nonce: "0"
+	                        payload: indexationPayload
 	                    };
 	                    return [4 /*yield*/, client.messageSubmit(message)];
 	                case 2:
@@ -6781,6 +7476,16 @@
 	});
 
 	var IMilestonePayload = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IMqttClient = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IMqttStatus = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
@@ -7062,180 +7767,6 @@
 
 	});
 
-	var readStream = createCommonjsModule(function (module, exports) {
-	/* eslint-disable no-bitwise */
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.ReadStream = void 0;
-
-	/**
-	 * Keep track of the read index within a stream.
-	 */
-	var ReadStream = /** @class */ (function () {
-	    /**
-	     * Create a new instance of ReadStream.
-	     * @param storage The data to access.
-	     * @param readStartIndex The index to start the reading from.
-	     */
-	    function ReadStream(storage, readStartIndex) {
-	        if (readStartIndex === void 0) { readStartIndex = 0; }
-	        this._storage = new Uint8Array(storage);
-	        this._readIndex = readStartIndex;
-	    }
-	    /**
-	     * Get the length of the storage.
-	     * @returns The storage length.
-	     */
-	    ReadStream.prototype.length = function () {
-	        return this._storage.byteLength;
-	    };
-	    /**
-	     * Does the storage have enough data remaining.
-	     * @param remaining The amount of space needed.
-	     * @returns True if it has enough data.
-	     */
-	    ReadStream.prototype.hasRemaining = function (remaining) {
-	        return this._readIndex + remaining <= this._storage.byteLength;
-	    };
-	    /**
-	     * How much unused data is there.
-	     * @returns The amount of unused data.
-	     */
-	    ReadStream.prototype.unused = function () {
-	        return this._storage.byteLength - this._readIndex;
-	    };
-	    /**
-	     * Read fixed length as hex.
-	     * @param name The name of the data we are trying to read.
-	     * @param length The length of the data to read.
-	     * @param moveIndex Move the index pointer on.
-	     * @returns The hex formatted data.
-	     */
-	    ReadStream.prototype.readFixedHex = function (name, length, moveIndex) {
-	        if (moveIndex === void 0) { moveIndex = true; }
-	        if (!this.hasRemaining(length)) {
-	            throw new Error(name + " length " + length + " exceeds the remaining data " + this.unused());
-	        }
-	        var hex = converter.Converter.bytesToHex(this._storage, this._readIndex, length);
-	        if (moveIndex) {
-	            this._readIndex += length;
-	        }
-	        return hex;
-	    };
-	    /**
-	     * Read an array of byte from the stream.
-	     * @param name The name of the data we are trying to read.
-	     * @param length The length of the array to read.
-	     * @param moveIndex Move the index pointer on.
-	     * @returns The value.
-	     */
-	    ReadStream.prototype.readBytes = function (name, length, moveIndex) {
-	        if (moveIndex === void 0) { moveIndex = true; }
-	        if (!this.hasRemaining(length)) {
-	            throw new Error(name + " length " + length + " exceeds the remaining data " + this.unused());
-	        }
-	        var val = this._storage.slice(this._readIndex, this._readIndex + length);
-	        if (moveIndex) {
-	            this._readIndex += length;
-	        }
-	        return val;
-	    };
-	    /**
-	     * Read a byte from the stream.
-	     * @param name The name of the data we are trying to read.
-	     * @param moveIndex Move the index pointer on.
-	     * @returns The value.
-	     */
-	    ReadStream.prototype.readByte = function (name, moveIndex) {
-	        if (moveIndex === void 0) { moveIndex = true; }
-	        if (!this.hasRemaining(1)) {
-	            throw new Error(name + " length " + 1 + " exceeds the remaining data " + this.unused());
-	        }
-	        var val = this._storage[this._readIndex];
-	        if (moveIndex) {
-	            this._readIndex += 1;
-	        }
-	        return val;
-	    };
-	    /**
-	     * Read a UInt16 from the stream.
-	     * @param name The name of the data we are trying to read.
-	     * @param moveIndex Move the index pointer on.
-	     * @returns The value.
-	     */
-	    ReadStream.prototype.readUInt16 = function (name, moveIndex) {
-	        if (moveIndex === void 0) { moveIndex = true; }
-	        if (!this.hasRemaining(2)) {
-	            throw new Error(name + " length " + 2 + " exceeds the remaining data " + this.unused());
-	        }
-	        var val = this._storage[this._readIndex] |
-	            (this._storage[this._readIndex + 1] << 8);
-	        if (moveIndex) {
-	            this._readIndex += 2;
-	        }
-	        return val;
-	    };
-	    /**
-	     * Read a UInt32 from the stream.
-	     * @param name The name of the data we are trying to read.
-	     * @param moveIndex Move the index pointer on.
-	     * @returns The value.
-	     */
-	    ReadStream.prototype.readUInt32 = function (name, moveIndex) {
-	        if (moveIndex === void 0) { moveIndex = true; }
-	        if (!this.hasRemaining(4)) {
-	            throw new Error(name + " length " + 4 + " exceeds the remaining data " + this.unused());
-	        }
-	        var val = (this._storage[this._readIndex]) |
-	            (this._storage[this._readIndex + 1] * 0x100) |
-	            (this._storage[this._readIndex + 2] * 0x10000) +
-	                (this._storage[this._readIndex + 3] * 0x1000000);
-	        if (moveIndex) {
-	            this._readIndex += 4;
-	        }
-	        return val;
-	    };
-	    /**
-	     * Read a UInt64 from the stream.
-	     * @param name The name of the data we are trying to read.
-	     * @param moveIndex Move the index pointer on.
-	     * @returns The value.
-	     */
-	    ReadStream.prototype.readUInt64 = function (name, moveIndex) {
-	        if (moveIndex === void 0) { moveIndex = true; }
-	        if (!this.hasRemaining(8)) {
-	            throw new Error(name + " length " + 8 + " exceeds the remaining data " + this.unused());
-	        }
-	        // We reverse the string conversion as this is LE
-	        var val = BigInt("0x" + converter.Converter.bytesToHex(this._storage, this._readIndex, 8, true));
-	        if (moveIndex) {
-	            this._readIndex += 8;
-	        }
-	        return val;
-	    };
-	    /**
-	     * Read a string from the stream.
-	     * @param name The name of the data we are trying to read.
-	     * @param moveIndex Move the index pointer on.
-	     * @returns The string.
-	     */
-	    ReadStream.prototype.readString = function (name, moveIndex) {
-	        if (moveIndex === void 0) { moveIndex = true; }
-	        var stringLength = this.readUInt16(name);
-	        if (!this.hasRemaining(stringLength)) {
-	            throw new Error(name + " length " + stringLength + " exceeds the remaining data " + this.unused());
-	        }
-	        var val = converter.Converter.bytesToAscii(this._storage, this._readIndex, stringLength);
-	        if (moveIndex) {
-	            this._readIndex += stringLength;
-	        }
-	        return val;
-	    };
-	    return ReadStream;
-	}());
-	exports.ReadStream = ReadStream;
-
-	});
-
 	var es = createCommonjsModule(function (module, exports) {
 	var __createBinding = (commonjsGlobal && commonjsGlobal.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 	    if (k2 === undefined) k2 = k;
@@ -7258,6 +7789,7 @@
 	__exportStar(transaction, exports);
 	__exportStar(unlockBlock, exports);
 	__exportStar(clientError, exports);
+	__exportStar(mqttClient, exports);
 	__exportStar(singleNodeClient, exports);
 	__exportStar(bech32, exports);
 	__exportStar(bip32Path, exports);
@@ -7296,6 +7828,8 @@
 	__exportStar(IKeyPair, exports);
 	__exportStar(IMessage, exports);
 	__exportStar(IMilestonePayload, exports);
+	__exportStar(IMqttClient, exports);
+	__exportStar(IMqttStatus, exports);
 	__exportStar(IReferenceUnlockBlock, exports);
 	__exportStar(ISeed, exports);
 	__exportStar(ISigLockedSingleOutput, exports);
@@ -7304,6 +7838,7 @@
 	__exportStar(ITransactionPayload, exports);
 	__exportStar(ITypeBase, exports);
 	__exportStar(IUTXOInput, exports);
+	__exportStar(zeroPowProvider, exports);
 	__exportStar(arrayHelper, exports);
 	__exportStar(bech32Helper, exports);
 	__exportStar(converter, exports);
@@ -7329,7 +7864,7 @@
 	    return (mod && mod.__esModule) ? mod : { "default": mod };
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var node_fetch_1 = __importDefault(require$$0__default$1['default']);
+	var node_fetch_1 = __importDefault(require$$0__default$2['default']);
 	if (!globalThis.fetch) {
 	    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 	    globalThis.fetch = node_fetch_1.default;

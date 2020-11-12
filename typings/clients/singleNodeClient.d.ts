@@ -20,7 +20,7 @@ export declare class SingleNodeClient implements IClient {
      */
     private static readonly NONCE_ZERO;
     /**
-     * Optional POW provider to be used for messages with nonce=0.
+     * Optional POW provider to be used for messages with nonce=0/undefined.
      */
     private readonly _powProvider?;
     /**

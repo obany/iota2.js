@@ -35,7 +35,7 @@ ___
 
 ### ledgerInclusionState
 
-• `Optional` **ledgerInclusionState**: undefined \| string
+• `Optional` **ledgerInclusionState**: \"noTransaction\" \| \"included\" \| \"conflicting\"
 
 The ledger inclusion state.
 

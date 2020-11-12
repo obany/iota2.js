@@ -1,15 +1,19 @@
+import { Ed25519 } from "../crypto/ed25519";
 import { IIndexationPayload } from "../models/IIndexationPayload";
 import { IMilestonePayload } from "../models/IMilestonePayload";
 import { ITransactionPayload } from "../models/ITransactionPayload";
 import { ITypeBase } from "../models/ITypeBase";
 import { ReadStream } from "../utils/readStream";
 import { WriteStream } from "../utils/writeStream";
-import { BYTE_SIZE, STRING_LENGTH, TYPE_LENGTH, UINT32_SIZE, UINT64_SIZE } from "./common";
+import { BYTE_SIZE, MERKLE_PROOF_LENGTH, MESSAGE_ID_LENGTH, STRING_LENGTH, TYPE_LENGTH, UINT32_SIZE, UINT64_SIZE } from "./common";
 import { deserializeTransactionEssence, serializeTransactionEssence } from "./transaction";
 import { deserializeUnlockBlocks, serializeUnlockBlocks } from "./unlockBlock";
 
 export const MIN_PAYLOAD_LENGTH: number = TYPE_LENGTH;
-export const MIN_MILESTONE_PAYLOAD_LENGTH: number = MIN_PAYLOAD_LENGTH + (2 * UINT64_SIZE) + 64 + BYTE_SIZE;
+export const MIN_MILESTONE_PAYLOAD_LENGTH: number = MIN_PAYLOAD_LENGTH + UINT32_SIZE + UINT64_SIZE +
+    MESSAGE_ID_LENGTH + MESSAGE_ID_LENGTH + MERKLE_PROOF_LENGTH +
+    BYTE_SIZE + Ed25519.PUBLIC_KEY_SIZE +
+    BYTE_SIZE + Ed25519.SIGNATURE_SIZE;
 export const MIN_INDEXATION_PAYLOAD_LENGTH: number = MIN_PAYLOAD_LENGTH + STRING_LENGTH + STRING_LENGTH;
 export const MIN_TRANSACTION_PAYLOAD_LENGTH: number = MIN_PAYLOAD_LENGTH + UINT32_SIZE;
 
@@ -147,20 +151,30 @@ export function deserializeMilestonePayload(readStream: ReadStream): IMilestoneP
     if (type !== 1) {
         throw new Error(`Type mismatch in payloadMilestone ${type}`);
     }
-    const index = readStream.readUInt64("payloadMilestone.index");
+    const index = readStream.readUInt32("payloadMilestone.index");
     const timestamp = readStream.readUInt64("payloadMilestone.timestamp");
-    const inclusionMerkleProof = readStream.readFixedHex("payloadMilestone.inclusionMerkleProof", 64);
+    const parent1 = readStream.readFixedHex("payloadMilestone.parent1", MESSAGE_ID_LENGTH);
+    const parent2 = readStream.readFixedHex("payloadMilestone.parent2", MESSAGE_ID_LENGTH);
+    const inclusionMerkleProof = readStream.readFixedHex("payloadMilestone.inclusionMerkleProof", MERKLE_PROOF_LENGTH);
+    const publicKeysCount = readStream.readByte("payloadMilestone.publicKeysCount");
+    const publicKeys = [];
+    for (let i = 0; i < publicKeysCount; i++) {
+        publicKeys.push(readStream.readFixedHex("payloadMilestone.publicKey", Ed25519.PUBLIC_KEY_SIZE));
+    }
     const signaturesCount = readStream.readByte("payloadMilestone.signaturesCount");
     const signatures = [];
     for (let i = 0; i < signaturesCount; i++) {
-        signatures.push(readStream.readFixedHex("payloadMilestone.signature", 64));
+        signatures.push(readStream.readFixedHex("payloadMilestone.signature", Ed25519.SIGNATURE_SIZE));
     }
 
     return {
         type,
-        index: Number(index),
+        index,
         timestamp: Number(timestamp),
+        parent1,
+        parent2,
         inclusionMerkleProof,
+        publicKeys,
         signatures
     };
 }
@@ -173,12 +187,19 @@ export function deserializeMilestonePayload(readStream: ReadStream): IMilestoneP
 export function serializeMilestonePayload(writeStream: WriteStream,
     object: IMilestonePayload): void {
     writeStream.writeUInt32("payloadMilestone.type", object.type);
-    writeStream.writeUInt64("payloadMilestone.index", BigInt(object.index));
+    writeStream.writeUInt32("payloadMilestone.index", object.index);
     writeStream.writeUInt64("payloadMilestone.timestamp", BigInt(object.timestamp));
-    writeStream.writeFixedHex("payloadMilestone.inclusionMerkleProof", 64, object.inclusionMerkleProof);
+    writeStream.writeFixedHex("payloadMilestone.parent1", MESSAGE_ID_LENGTH, object.parent1);
+    writeStream.writeFixedHex("payloadMilestone.parent2", MESSAGE_ID_LENGTH, object.parent2);
+    writeStream.writeFixedHex("payloadMilestone.inclusionMerkleProof",
+        MERKLE_PROOF_LENGTH, object.inclusionMerkleProof);
+    writeStream.writeByte("payloadMilestone.publicKeysCount", object.publicKeys.length);
+    for (let i = 0; i < object.publicKeys.length; i++) {
+        writeStream.writeFixedHex("payloadMilestone.publicKey", Ed25519.PUBLIC_KEY_SIZE, object.publicKeys[i]);
+    }
     writeStream.writeByte("payloadMilestone.signaturesCount", object.signatures.length);
     for (let i = 0; i < object.signatures.length; i++) {
-        writeStream.writeFixedHex("payloadMilestone.signature", 64, object.signatures[i]);
+        writeStream.writeFixedHex("payloadMilestone.signature", Ed25519.SIGNATURE_SIZE, object.signatures[i]);
     }
 }
 
