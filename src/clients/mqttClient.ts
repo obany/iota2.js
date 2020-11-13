@@ -1,6 +1,5 @@
 import * as mqtt from "mqtt";
 import { deserializeMessage } from "../binary/message";
-import { Blake2b } from "../crypto/blake2b";
 import { IAddressOutputs } from "../models/api/IAddressOutputs";
 import { IMessageMetadata } from "../models/api/IMessageMetadata";
 import { IMilestone } from "../models/api/IMilestone";
@@ -147,12 +146,11 @@ export class MqttClient implements IMqttClient {
      * @returns A subscription Id which can be used to unsubscribe.
      */
     public messagesRaw(
-        callback: (topic: string, messageId: string, data: Uint8Array) => void): string {
+        callback: (topic: string, data: Uint8Array) => void): string {
         return this.internalSubscribe<Uint8Array>("messages", false,
             (topic, raw) => {
                 callback(
                     topic,
-                    Converter.bytesToHex(Blake2b.sum256(raw)),
                     raw
                 );
             });
@@ -164,12 +162,11 @@ export class MqttClient implements IMqttClient {
      * @returns A subscription Id which can be used to unsubscribe.
      */
     public messages(
-        callback: (topic: string, messageId: string, data: IMessage, raw: Uint8Array) => void): string {
+        callback: (topic: string, data: IMessage, raw: Uint8Array) => void): string {
         return this.internalSubscribe<Uint8Array>("messages", false,
             (topic, raw) => {
                 callback(
                     topic,
-                    Converter.bytesToHex(Blake2b.sum256(raw)),
                     deserializeMessage(new ReadStream(raw)),
                     raw
                 );
@@ -183,12 +180,11 @@ export class MqttClient implements IMqttClient {
      * @returns A subscription Id which can be used to unsubscribe.
      */
     public indexRaw(index: string,
-        callback: (topic: string, messageId: string, data: Uint8Array) => void): string {
+        callback: (topic: string, data: Uint8Array) => void): string {
         return this.internalSubscribe<Uint8Array>(`messages/indexation/${index}`, false,
             (topic, raw) => {
                 callback(
                     topic,
-                    Converter.bytesToHex(Blake2b.sum256(raw)),
                     raw
                 );
             });
@@ -201,12 +197,11 @@ export class MqttClient implements IMqttClient {
      * @returns A subscription Id which can be used to unsubscribe.
      */
     public index(index: string,
-        callback: (topic: string, messageId: string, data: IMessage, raw: Uint8Array) => void): string {
+        callback: (topic: string, data: IMessage, raw: Uint8Array) => void): string {
         return this.internalSubscribe<Uint8Array>(`messages/indexation/${index}`, false,
             (topic, raw) => {
                 callback(
                     topic,
-                    Converter.bytesToHex(Blake2b.sum256(raw)),
                     deserializeMessage(new ReadStream(raw)),
                     raw
                 );

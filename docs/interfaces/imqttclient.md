@@ -56,7 +56,7 @@ ___
 
 ### index
 
-▸ **index**(`index`: string, `callback`: (topic: string, messageId: string, data: [IMessage](imessage.md), raw: Uint8Array) => void): string
+▸ **index**(`index`: string, `callback`: (topic: string, data: [IMessage](imessage.md), raw: Uint8Array) => void): string
 
 Subscribe to get all messages for the specified index in object form.
 
@@ -65,7 +65,7 @@ Subscribe to get all messages for the specified index in object form.
 Name | Type | Description |
 ------ | ------ | ------ |
 `index` | string | The index to monitor. |
-`callback` | (topic: string, messageId: string, data: [IMessage](imessage.md), raw: Uint8Array) => void | The callback which is called when new data arrives. |
+`callback` | (topic: string, data: [IMessage](imessage.md), raw: Uint8Array) => void | The callback which is called when new data arrives. |
 
 **Returns:** string
 
@@ -75,7 +75,7 @@ ___
 
 ### indexRaw
 
-▸ **indexRaw**(`index`: string, `callback`: (topic: string, messageId: string, data: Uint8Array) => void): string
+▸ **indexRaw**(`index`: string, `callback`: (topic: string, data: Uint8Array) => void): string
 
 Subscribe to get all messages for the specified index in binary form.
 
@@ -84,7 +84,7 @@ Subscribe to get all messages for the specified index in binary form.
 Name | Type | Description |
 ------ | ------ | ------ |
 `index` | string | The index to monitor. |
-`callback` | (topic: string, messageId: string, data: Uint8Array) => void | The callback which is called when new data arrives. |
+`callback` | (topic: string, data: Uint8Array) => void | The callback which is called when new data arrives. |
 
 **Returns:** string
 
@@ -113,7 +113,7 @@ ___
 
 ### messages
 
-▸ **messages**(`callback`: (topic: string, messageId: string, data: [IMessage](imessage.md), raw: Uint8Array) => void): string
+▸ **messages**(`callback`: (topic: string, data: [IMessage](imessage.md), raw: Uint8Array) => void): string
 
 Subscribe to get all messages in object form.
 
@@ -121,7 +121,7 @@ Subscribe to get all messages in object form.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`callback` | (topic: string, messageId: string, data: [IMessage](imessage.md), raw: Uint8Array) => void | The callback which is called when new data arrives. |
+`callback` | (topic: string, data: [IMessage](imessage.md), raw: Uint8Array) => void | The callback which is called when new data arrives. |
 
 **Returns:** string
 
@@ -149,7 +149,7 @@ ___
 
 ### messagesRaw
 
-▸ **messagesRaw**(`callback`: (topic: string, messageId: string, data: Uint8Array) => void): string
+▸ **messagesRaw**(`callback`: (topic: string, data: Uint8Array) => void): string
 
 Subscribe to get all messages in binary form.
 
@@ -157,7 +157,7 @@ Subscribe to get all messages in binary form.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`callback` | (topic: string, messageId: string, data: Uint8Array) => void | The callback which is called when new data arrives. |
+`callback` | (topic: string, data: Uint8Array) => void | The callback which is called when new data arrives. |
 
 **Returns:** string
 

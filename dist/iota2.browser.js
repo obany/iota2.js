@@ -4982,7 +4982,6 @@
 
 
 
-
 	/**
 	 * MQTT Client implementation for pub/sub communication.
 	 */
@@ -5050,7 +5049,7 @@
 	     */
 	    MqttClient.prototype.messagesRaw = function (callback) {
 	        return this.internalSubscribe("messages", false, function (topic, raw) {
-	            callback(topic, converter.Converter.bytesToHex(blake2b.Blake2b.sum256(raw)), raw);
+	            callback(topic, raw);
 	        });
 	    };
 	    /**
@@ -5060,7 +5059,7 @@
 	     */
 	    MqttClient.prototype.messages = function (callback) {
 	        return this.internalSubscribe("messages", false, function (topic, raw) {
-	            callback(topic, converter.Converter.bytesToHex(blake2b.Blake2b.sum256(raw)), message.deserializeMessage(new readStream.ReadStream(raw)), raw);
+	            callback(topic, message.deserializeMessage(new readStream.ReadStream(raw)), raw);
 	        });
 	    };
 	    /**
@@ -5071,7 +5070,7 @@
 	     */
 	    MqttClient.prototype.indexRaw = function (index, callback) {
 	        return this.internalSubscribe("messages/indexation/" + index, false, function (topic, raw) {
-	            callback(topic, converter.Converter.bytesToHex(blake2b.Blake2b.sum256(raw)), raw);
+	            callback(topic, raw);
 	        });
 	    };
 	    /**
@@ -5082,7 +5081,7 @@
 	     */
 	    MqttClient.prototype.index = function (index, callback) {
 	        return this.internalSubscribe("messages/indexation/" + index, false, function (topic, raw) {
-	            callback(topic, converter.Converter.bytesToHex(blake2b.Blake2b.sum256(raw)), message.deserializeMessage(new readStream.ReadStream(raw)), raw);
+	            callback(topic, message.deserializeMessage(new readStream.ReadStream(raw)), raw);
 	        });
 	    };
 	    /**

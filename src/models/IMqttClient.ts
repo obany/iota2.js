@@ -58,7 +58,7 @@ export interface IMqttClient {
      * @returns A subscription Id which can be used to unsubscribe.
      */
     messagesRaw(
-        callback: (topic: string, messageId: string, data: Uint8Array) => void): string;
+        callback: (topic: string, data: Uint8Array) => void): string;
 
     /**
      * Subscribe to get all messages in object form.
@@ -66,7 +66,7 @@ export interface IMqttClient {
      * @returns A subscription Id which can be used to unsubscribe.
      */
     messages(
-        callback: (topic: string, messageId: string, data: IMessage, raw: Uint8Array) => void): string;
+        callback: (topic: string, data: IMessage, raw: Uint8Array) => void): string;
 
     /**
      * Subscribe to get all messages for the specified index in binary form.
@@ -75,7 +75,7 @@ export interface IMqttClient {
      * @returns A subscription Id which can be used to unsubscribe.
      */
     indexRaw(index: string,
-        callback: (topic: string, messageId: string, data: Uint8Array) => void): string;
+        callback: (topic: string, data: Uint8Array) => void): string;
 
     /**
      * Subscribe to get all messages for the specified index in object form.
@@ -84,7 +84,7 @@ export interface IMqttClient {
      * @returns A subscription Id which can be used to unsubscribe.
      */
     index(index: string,
-        callback: (topic: string, messageId: string, data: IMessage, raw: Uint8Array) => void): string;
+        callback: (topic: string, data: IMessage, raw: Uint8Array) => void): string;
 
     /**
      * Subscribe to get the metadata for all the messages.

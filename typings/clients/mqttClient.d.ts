@@ -81,27 +81,27 @@ export declare class MqttClient implements IMqttClient {
      * @param callback The callback which is called when new data arrives.
      * @returns A subscription Id which can be used to unsubscribe.
      */
-    messagesRaw(callback: (topic: string, messageId: string, data: Uint8Array) => void): string;
+    messagesRaw(callback: (topic: string, data: Uint8Array) => void): string;
     /**
      * Subscribe to get all messages in object form.
      * @param callback The callback which is called when new data arrives.
      * @returns A subscription Id which can be used to unsubscribe.
      */
-    messages(callback: (topic: string, messageId: string, data: IMessage, raw: Uint8Array) => void): string;
+    messages(callback: (topic: string, data: IMessage, raw: Uint8Array) => void): string;
     /**
      * Subscribe to get all messages for the specified index in binary form.
      * @param index The index to monitor.
      * @param callback The callback which is called when new data arrives.
      * @returns A subscription Id which can be used to unsubscribe.
      */
-    indexRaw(index: string, callback: (topic: string, messageId: string, data: Uint8Array) => void): string;
+    indexRaw(index: string, callback: (topic: string, data: Uint8Array) => void): string;
     /**
      * Subscribe to get all messages for the specified index in object form.
      * @param index The index to monitor.
      * @param callback The callback which is called when new data arrives.
      * @returns A subscription Id which can be used to unsubscribe.
      */
-    index(index: string, callback: (topic: string, messageId: string, data: IMessage, raw: Uint8Array) => void): string;
+    index(index: string, callback: (topic: string, data: IMessage, raw: Uint8Array) => void): string;
     /**
      * Subscribe to get the metadata for all the messages.
      * @param callback The callback which is called when new data arrives.
