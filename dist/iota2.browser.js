@@ -5239,7 +5239,9 @@
 	        var _this = this;
 	        if (!this._client) {
 	            try {
-	                this._client = mqtt.connect(this._endpoint);
+	                this._client = mqtt.connect(this._endpoint, {
+	                    keepalive: this._keepAliveTimeoutSeconds
+	                });
 	                this._client.on("connect", function () {
 	                    // On a successful connection we want to subscribe to
 	                    // all the subscription topics.

@@ -382,7 +382,9 @@ export class MqttClient implements IMqttClient {
     private mqttConnect(): void {
         if (!this._client) {
             try {
-                this._client = mqtt.connect(this._endpoint);
+                this._client = mqtt.connect(this._endpoint, {
+                    keepalive: this._keepAliveTimeoutSeconds
+                });
 
                 this._client.on("connect", () => {
                     // On a successful connection we want to subscribe to
