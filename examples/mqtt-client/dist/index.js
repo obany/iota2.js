@@ -19,7 +19,7 @@ function run() {
         mqttClient.milestonesSolid((topic, data) => console.log(topic, data));
         mqttClient.messageMetadata("ec7c73e61295aba1c6ae82b06fb34964e22a8b719c008d42f8c9807fd4c8df2d", (topic, data) => console.log(topic, data));
         mqttClient.output("0".repeat(68), (topic, data) => console.log(topic, data));
-        mqttClient.addressOutputs("625d17d4a4b21cd5edeb57544b9d2d66ce22985fb61f17d1d7cae958d0068618", (topic, data) => console.log(topic, data));
+        mqttClient.addressOutputs("6920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92", (topic, data) => console.log(topic, data));
         mqttClient.messagesRaw((topic, messageId, data) => console.log(topic, messageId, data));
         mqttClient.messages((topic, messageId, data, raw) => console.log(topic, messageId, data));
         mqttClient.index("MY-DATA-INDEX", (topic, messageId, data, raw) => console.log(topic, messageId, data));

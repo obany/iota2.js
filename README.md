@@ -84,7 +84,7 @@ You can create a MQTT client which once connected can stream the following feeds
 * messages - All messaged decoded to objects
 * indexRaw - All messages for a specified indexation key in binary form
 * index - All messages for a specified indexation key in object form
-* messagesData - All metadata updates
+* messagesMetadata - All metadata updates
 
 ## Models
 
@@ -100,8 +100,3 @@ Please find other examples in the [./examples](./examples) folder.
 * Peers - Demonstrates peer management.
 * Mqtt - Using mqtt to read streaming messages.
 
-## Notes
-
-We are using Seed + Bip32 indexing for addresses, so the default address for a seed is calculated from path `m/0`, this is different from the default genesis balance address in Hornet, so it will not currently work when trying to transfer funds away from the genesis seed.
-
-To remedy this in Hornet modify the `create_snapshot_alphanet.sh` script and change `6920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92` to `625d17d4a4b21cd5edeb57544b9d2d66ce22985fb61f17d1d7cae958d0068618`, you will then need to clean the DB and bootstrap the hornet node again. The Genesis tokens will now be stored on the new address and can be transferred using the seed/keys demonstrated in the examples.

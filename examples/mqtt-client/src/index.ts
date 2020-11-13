@@ -15,7 +15,7 @@ async function run() {
 
     mqttClient.output("0".repeat(68), (topic, data) => console.log(topic, data))
 
-    mqttClient.addressOutputs("625d17d4a4b21cd5edeb57544b9d2d66ce22985fb61f17d1d7cae958d0068618", (topic, data) => console.log(topic, data))
+    mqttClient.addressOutputs("6920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92", (topic, data) => console.log(topic, data))
 
     mqttClient.messagesRaw((topic, messageId, data) => console.log(topic, messageId, data))
 

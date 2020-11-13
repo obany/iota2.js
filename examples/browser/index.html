@@ -11,7 +11,7 @@
     <script>
         function consoleLog(message, obj) {
             const con = document.getElementById("console");
-            con.innerHTML += (message || "").replace("\t", "&nbsp;&nbsp;&nbsp;") + " " + (obj ?? "") + "<br/>";
+            con.innerHTML += (message || "").replace("\t", "&nbsp;&nbsp;&nbsp;") + " " + (obj ? JSON.stringify(obj) : "") + "<br/>";
         }
         function consoleLink(lnk) {
             const con = document.getElementById("console");
@@ -137,41 +137,92 @@
             consoleLog("\tOutput Ids:", addressOutputs.outputIds);
             consoleLog();
 
-            const genesisSeed = Iota2.Ed25519Seed.fromBytes(Iota2.Converter.hexToBytes("256a818b2aac458941f7274985a410e57fb750f3a3a67969ece5bd9ae7eef5b2"));
+            await doTransfer(client);
+        }
+
+        async function doTransfer(client) {
+            // These are the default values from the Hornet alphanet configuration
+            const privateKey = "256a818b2aac458941f7274985a410e57fb750f3a3a67969ece5bd9ae7eef5b2f7868ab6bb55800b77b8b74191ad8285a9bf428ace579d541fda47661803ff44";
+            const publicKey = "f7868ab6bb55800b77b8b74191ad8285a9bf428ace579d541fda47661803ff44";
+
             consoleLog("Genesis");
-            consoleLog("\tSeed:", Iota2.Converter.bytesToHex(genesisSeed.toBytes()));
+            consoleLog("\tPrivate Key:", privateKey);
+            consoleLog("\tPublic Key:", publicKey);
 
-            const genesisSeedKeyPair = genesisSeed.keyPair();
-            consoleLog("\tPrivate Key:", Iota2.Converter.bytesToHex(genesisSeedKeyPair.privateKey));
-            consoleLog("\tPublic Key:", Iota2.Converter.bytesToHex(genesisSeedKeyPair.publicKey));
+            const genesisSeedKeyPair = {
+                privateKey: Iota2.Converter.hexToBytes(privateKey),
+                publicKey: Iota2.Converter.hexToBytes(publicKey)
+            };
 
-            const genesisAddressPath = new Iota2.Bip32Path("m/0");
-            const firstAddressSeed = genesisSeed.generateSeedFromPath(genesisAddressPath);
-            consoleLog(`\tAddress for ${genesisAddressPath.toString()}:`, Iota2.Converter.bytesToHex(Iota2.Ed25519Address.publicKeyToAddress(firstAddressSeed.keyPair().publicKey)));
+            const genesisAddress = Iota2.Ed25519Address.publicKeyToAddress(genesisSeedKeyPair.publicKey);
+            const genesisAddressHex = Iota2.Converter.bytesToHex(genesisAddress);
+            consoleLog("\tAddress:", genesisAddressHex);
+
+            // Create a new seed for the wallet
+            const walletSeed = Iota2.Ed25519Seed.fromBytes(Iota2.Converter.hexToBytes("e57fb750f3a3a67969ece5bd9ae7eef5b2256a818b2aac458941f7274985a410"));
+
+            // Use the new seed like a wallet with Bip32 Paths
+            const walletPath = new Iota2.Bip32Path("m/0");
+            const walletAddressSeed = walletSeed.generateSeedFromPath(walletPath);
+            const newAddress = Iota2.Converter.bytesToHex(Iota2.Ed25519Address.publicKeyToAddress(walletAddressSeed.keyPair().publicKey));
+
+            consoleLog("Wallet 1");
+            consoleLog("\tSeed:", Iota2.Converter.bytesToHex(walletSeed.toBytes()));
+            consoleLog("\tPath:", walletPath.toString());
+            consoleLog(`\tAddress ${walletPath.toString()}:`, newAddress);
             consoleLog();
 
-            const newSeed = Iota2.Ed25519Seed.fromBytes(Iota2.Converter.hexToBytes("e57fb750f3a3a67969ece5bd9ae7eef5b2256a818b2aac458941f7274985a410"));
+            // Because we are using the genesis address we must use send advanced as the input address is
+            // not calculated from a Bip32 path, if you were doing a wallet to wallet transfer you can just use send
+            // which calculates all the inputs/outputs for you
+            const genesisAddressOutputs = await client.addressOutputs(genesisAddressHex);
 
-            const newAddressPath = new Iota2.Bip32Path("m/0");
-            const newAddressSeed = newSeed.generateSeedFromPath(newAddressPath);
-            const newAddress = Iota2.Converter.bytesToHex(Iota2.Ed25519Address.publicKeyToAddress(newAddressSeed.keyPair().publicKey));
-            consoleLog("New");
-            consoleLog("\tSeed:", Iota2.Converter.bytesToHex(newSeed.toBytes()));
-            consoleLog(`\tAddress ${newAddressPath.toString()}:`, newAddress);
-            consoleLog();
+            const inputsWithKeyPairs = [];
 
-            const { messageId } = await Iota2.send(client, genesisSeed, new Iota2.Bip32Path(), newAddress, 100);
+            let totalGenesis = 0;
+
+            for (let i = 0; i < genesisAddressOutputs.outputIds.length; i++) {
+                const output = await client.output(genesisAddressOutputs.outputIds[i]);
+                if (!output.isSpent) {
+                    inputsWithKeyPairs.push({
+                        input: {
+                            type: 0,
+                            transactionId: output.transactionId,
+                            transactionOutputIndex: output.outputIndex
+                        },
+                        addressKeyPair: genesisSeedKeyPair
+                    });
+                    totalGenesis += output.output.amount;
+                }
+            }
+
+            const amountToSend = 1000;
+
+            const outputs = [
+                    // This is the transfer to the new address
+                    {
+                        address: newAddress,
+                        amount: amountToSend
+                    },
+                    // Sending remainder back to genesis
+                    {
+                        address: genesisAddressHex,
+                        amount: totalGenesis - amountToSend
+                    }
+                ];
+
+            const { messageId } = await Iota2.sendAdvanced(client, inputsWithKeyPairs, outputs, "WALLET", Iota2.Converter.asciiToBytes("Not trinity"));
 
             consoleLog("Created Message Id", messageId);
 
-            const newAddressBalance = await Iota2.getBalance(client, newSeed, new Iota2.Bip32Path());
-            consoleLog("New Address Balance", newAddressBalance);
+            const newAddressBalance = await Iota2.getBalance(client, walletSeed, new Iota2.Bip32Path());
+            consoleLog("Wallet 1 Address Balance", newAddressBalance);
 
-            const unspentAddress = await Iota2.getUnspentAddress(client, newSeed, new Iota2.Bip32Path());
-            consoleLog("First Unspent Address", JSON.stringify(unspentAddress));
+            const unspentAddress = await Iota2.getUnspentAddress(client, walletSeed, new Iota2.Bip32Path());
+            consoleLog("Wallet 1 First Unspent Address", unspentAddress);
 
-            const allUspentAddresses = await Iota2.getUnspentAddresses(client, newSeed, new Iota2.Bip32Path());
-            consoleLog("Unspent Addresses", JSON.stringify(allUspentAddresses));
+            const allUspentAddresses = await Iota2.getUnspentAddresses(client, walletSeed, new Iota2.Bip32Path());
+            consoleLog("Wallet 1 Unspent Addresses", allUspentAddresses);
         }
 
         run()
