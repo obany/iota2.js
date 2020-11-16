@@ -22,7 +22,7 @@ TypeScript conversion from https://github.com/dcposch/blakejs
 
 ### sum256
 
-▸ `Static`**sum256**(`data`: Uint8Array): Uint8Array
+▸ `Static`**sum256**(`data`: Uint8Array, `key?`: Uint8Array): Uint8Array
 
 Perform Sum 256 on the data.
 
@@ -31,6 +31,7 @@ Perform Sum 256 on the data.
 Name | Type | Description |
 ------ | ------ | ------ |
 `data` | Uint8Array | The data to operate on. |
+`key?` | Uint8Array | Optional key for the hash. |
 
 **Returns:** Uint8Array
 
@@ -40,7 +41,7 @@ ___
 
 ### sum512
 
-▸ `Static`**sum512**(`data`: Uint8Array): Uint8Array
+▸ `Static`**sum512**(`data`: Uint8Array, `key?`: Uint8Array): Uint8Array
 
 Perform Sum 512 on the data.
 
@@ -49,6 +50,7 @@ Perform Sum 512 on the data.
 Name | Type | Description |
 ------ | ------ | ------ |
 `data` | Uint8Array | The data to operate on. |
+`key?` | Uint8Array | Optional key for the hash. |
 
 **Returns:** Uint8Array
 

@@ -82,22 +82,24 @@
 	    /**
 	     * Perform Sum 256 on the data.
 	     * @param data The data to operate on.
+	     * @param key Optional key for the hash.
 	     * @returns The sum 256 of the data.
 	     */
-	    Blake2b.sum256 = function (data) {
+	    Blake2b.sum256 = function (data, key) {
 	        var b2b = new Blake2b();
-	        var ctx = b2b.init(Blake2b.SIZE_256);
+	        var ctx = b2b.init(Blake2b.SIZE_256, key);
 	        b2b.update(ctx, data);
 	        return b2b.final(ctx);
 	    };
 	    /**
 	     * Perform Sum 512 on the data.
 	     * @param data The data to operate on.
+	     * @param key Optional key for the hash.
 	     * @returns The sum 512 of the data.
 	     */
-	    Blake2b.sum512 = function (data) {
+	    Blake2b.sum512 = function (data, key) {
 	        var b2b = new Blake2b();
-	        var ctx = b2b.init(Blake2b.SIZE_512);
+	        var ctx = b2b.init(Blake2b.SIZE_512, key);
 	        b2b.update(ctx, data);
 	        return b2b.final(ctx);
 	    };
@@ -5241,7 +5243,7 @@
 	            try {
 	                this._client = mqtt.connect(this._endpoint, {
 	                    keepalive: 0,
-	                    reconnectPeriod: this._keepAliveTimeoutSeconds
+	                    reconnectPeriod: this._keepAliveTimeoutSeconds * 1000
 	                });
 	                this._client.on("connect", function () {
 	                    // On a successful connection we want to subscribe to

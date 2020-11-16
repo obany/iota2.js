@@ -78,11 +78,12 @@ export class Blake2b {
     /**
      * Perform Sum 256 on the data.
      * @param data The data to operate on.
+     * @param key Optional key for the hash.
      * @returns The sum 256 of the data.
      */
-    public static sum256(data: Uint8Array): Uint8Array {
+    public static sum256(data: Uint8Array, key?: Uint8Array): Uint8Array {
         const b2b = new Blake2b();
-        const ctx = b2b.init(Blake2b.SIZE_256);
+        const ctx = b2b.init(Blake2b.SIZE_256, key);
         b2b.update(ctx, data);
         return b2b.final(ctx);
     }
@@ -90,11 +91,12 @@ export class Blake2b {
     /**
      * Perform Sum 512 on the data.
      * @param data The data to operate on.
+     * @param key Optional key for the hash.
      * @returns The sum 512 of the data.
      */
-    public static sum512(data: Uint8Array): Uint8Array {
+    public static sum512(data: Uint8Array, key?: Uint8Array): Uint8Array {
         const b2b = new Blake2b();
-        const ctx = b2b.init(Blake2b.SIZE_512);
+        const ctx = b2b.init(Blake2b.SIZE_512, key);
         b2b.update(ctx, data);
         return b2b.final(ctx);
     }

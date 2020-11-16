@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 import { Blake2b } from "../../src/crypto/blake2b";
 import { Converter } from "../../src/utils/converter";
+import testData from "./blake2b.json";
 
 describe("Blake2b", () => {
     test("Can perform a sum512 on short ascii", () => {
@@ -16,5 +17,19 @@ describe("Blake2b", () => {
     test("Can perform a sum512 on sentence", () => {
         const sum = Blake2b.sum512(Converter.asciiToBytes("The quick brown fox jumps over the lazy dog"));
         expect(Converter.bytesToHex(sum)).toEqual("a8add4bdddfd93e4877d2746e62817b116364a1fa7bc148d95090bc7333b3673f82401cf7aa2e4cb1ecd90296e3f14cb5413f8ed77be73045b13914cdcd6a918");
+    });
+
+    test("Can validate test vectors", () => {
+        for (const test of testData) {
+            if (test.hash === "blake2b") {
+                if (test.key === "") {
+                    const sum = Blake2b.sum512(Converter.hexToBytes(test.in));
+                    expect(Converter.bytesToHex(sum)).toEqual(test.out);
+                } else {
+                    const sum = Blake2b.sum512(Converter.hexToBytes(test.in), Converter.hexToBytes(test.key));
+                    expect(Converter.bytesToHex(sum)).toEqual(test.out);
+                }
+            }
+        }
     });
 });

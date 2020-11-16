@@ -384,7 +384,7 @@ export class MqttClient implements IMqttClient {
             try {
                 this._client = mqtt.connect(this._endpoint, {
                     keepalive: 0,
-                    reconnectPeriod: this._keepAliveTimeoutSeconds
+                    reconnectPeriod: this._keepAliveTimeoutSeconds * 1000
                 });
 
                 this._client.on("connect", () => {
