@@ -66,6 +66,9 @@ There are also high level operations which make use of the API level methods:
 * getBalance - Given a seed, path calculate the total balance available on it's addresses.
 * getUnspentAddress - Given a seed, path, and start index find the next unspent address.
 * getUnspentAddresses - Given a seed, path, and start index find all the unspent addresses.
+* promote - Promote a message by attaching an empty message to it.
+* reattach - Reattach a message using the message id.
+* retry - Looks at the metadata for a message and promotes or retries if it should.
 * retrieveData - Given a message id return the index and data from it.
 * send - Given a seed, path, destination address and amount, make a single transfer.
 * sendAdvanced - Given a set of inputs with keypairs seed, path, list of destinations make multiple transfers, can also include index data.

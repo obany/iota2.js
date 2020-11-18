@@ -107,7 +107,10 @@
 * [logSignature](README.md#logsignature)
 * [logUnlockBlock](README.md#logunlockblock)
 * [logger](README.md#logger)
+* [promote](README.md#promote)
+* [reattach](README.md#reattach)
 * [retrieveData](README.md#retrievedata)
+* [retry](README.md#retry)
 * [scalarMinimal](README.md#scalarminimal)
 * [scalarMulAdd](README.md#scalarmuladd)
 * [scalarReduce](README.md#scalarreduce)
@@ -771,6 +774,44 @@ Nothing.
 
 ___
 
+### promote
+
+▸ **promote**(`client`: [IClient](interfaces/iclient.md), `messageId`: string): Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+
+Promote an existing message.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`client` | [IClient](interfaces/iclient.md) | The client to perform the promote with. |
+`messageId` | string | The message to promote. |
+
+**Returns:** Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+
+The id and message that were promoted.
+
+___
+
+### reattach
+
+▸ **reattach**(`client`: [IClient](interfaces/iclient.md), `messageId`: string): Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+
+Reattach an existing message.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`client` | [IClient](interfaces/iclient.md) | The client to perform the reattach with. |
+`messageId` | string | The message to reattach. |
+
+**Returns:** Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+
+The id and message that were reattached.
+
+___
+
 ### retrieveData
 
 ▸ **retrieveData**(`client`: [IClient](interfaces/iclient.md), `messageId`: string): Promise\<{ data: Uint8Array ; index: string  } \| undefined>
@@ -787,6 +828,25 @@ Name | Type | Description |
 **Returns:** Promise\<{ data: Uint8Array ; index: string  } \| undefined>
 
 The message index and data.
+
+___
+
+### retry
+
+▸ **retry**(`client`: [IClient](interfaces/iclient.md), `messageId`: string): Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+
+Retry an existing message either by promoting or reattaching.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`client` | [IClient](interfaces/iclient.md) | The client to perform the retry with. |
+`messageId` | string | The message to retry. |
+
+**Returns:** Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+
+The id and message that were retried.
 
 ___
 
