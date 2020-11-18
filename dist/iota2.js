@@ -4519,7 +4519,7 @@
 	exports.serializeMessage = exports.deserializeMessage = void 0;
 
 
-	var MIN_MESSAGE_LENGTH = common.BYTE_SIZE +
+	var MIN_MESSAGE_LENGTH = common.UINT64_SIZE +
 	    (2 * common.MESSAGE_ID_LENGTH) +
 	    payload.MIN_PAYLOAD_LENGTH +
 	    common.UINT64_SIZE;
@@ -4533,10 +4533,7 @@
 	    if (!readStream.hasRemaining(MIN_MESSAGE_LENGTH)) {
 	        throw new Error("Message data is " + readStream.length() + " in length which is less than the minimimum size required of " + MIN_MESSAGE_LENGTH);
 	    }
-	    var version = readStream.readByte("message.version");
-	    if (version !== 1) {
-	        throw new Error("Unsupported message version number: " + version);
-	    }
+	    var networkId = readStream.readUInt64("message.networkId");
 	    var parent1MessageId = readStream.readFixedHex("message.parent1MessageId", common.MESSAGE_ID_LENGTH);
 	    var parent2MessageId = readStream.readFixedHex("message.parent2MessageId", common.MESSAGE_ID_LENGTH);
 	    var payload$1 = payload.deserializePayload(readStream);
@@ -4546,7 +4543,7 @@
 	        throw new Error("Message data length " + readStream.length() + " has unused data " + unused);
 	    }
 	    return {
-	        version: version,
+	        networkId: networkId.toString(10),
 	        payload: payload$1,
 	        parent1MessageId: parent1MessageId,
 	        parent2MessageId: parent2MessageId,
@@ -4560,12 +4557,12 @@
 	 * @param object The object to serialize.
 	 */
 	function serializeMessage(writeStream, object) {
-	    var _a, _b, _c;
-	    writeStream.writeByte("message.version", object.version);
-	    writeStream.writeFixedHex("message.parent1MessageId", common.MESSAGE_ID_LENGTH, (_a = object.parent1MessageId) !== null && _a !== void 0 ? _a : EMPTY_MESSAGE_ID_HEX);
-	    writeStream.writeFixedHex("message.parent2MessageId", common.MESSAGE_ID_LENGTH, (_b = object.parent2MessageId) !== null && _b !== void 0 ? _b : EMPTY_MESSAGE_ID_HEX);
+	    var _a, _b, _c, _d;
+	    writeStream.writeUInt64("message.networkId", BigInt((_a = object.networkId) !== null && _a !== void 0 ? _a : 0));
+	    writeStream.writeFixedHex("message.parent1MessageId", common.MESSAGE_ID_LENGTH, (_b = object.parent1MessageId) !== null && _b !== void 0 ? _b : EMPTY_MESSAGE_ID_HEX);
+	    writeStream.writeFixedHex("message.parent2MessageId", common.MESSAGE_ID_LENGTH, (_c = object.parent2MessageId) !== null && _c !== void 0 ? _c : EMPTY_MESSAGE_ID_HEX);
 	    payload.serializePayload(writeStream, object.payload);
-	    writeStream.writeUInt64("message.nonce", BigInt((_c = object.nonce) !== null && _c !== void 0 ? _c : 0));
+	    writeStream.writeUInt64("message.nonce", BigInt((_d = object.nonce) !== null && _d !== void 0 ? _d : 0));
 	}
 	exports.serializeMessage = serializeMessage;
 
@@ -7009,7 +7006,7 @@
 	    }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.sendAdvanced = void 0;
+	exports.buildTransactionPayload = exports.sendAdvanced = void 0;
 
 
 
@@ -7027,99 +7024,22 @@
 	 */
 	function sendAdvanced(client, inputsAndSignatureKeyPairs, outputs, indexationKey, indexationData) {
 	    return __awaiter(this, void 0, void 0, function () {
-	        var outputsWithSerialization, _i, outputs_1, output$1, sigLockedOutput, writeStream$1, inputsAndSignatureKeyPairsSerialized, sortedInputs, sortedOutputs, transactionEssence, binaryEssence, essenceFinal, unlockBlocks, addressToUnlockBlock, _a, sortedInputs_1, input$1, hexInputAddressPublic, transactionPayload, tips, message, messageId;
-	        return __generator(this, function (_b) {
-	            switch (_b.label) {
+	        var transactionPayload, tips, message, messageId;
+	        return __generator(this, function (_a) {
+	            switch (_a.label) {
 	                case 0:
-	                    if (!inputsAndSignatureKeyPairs || inputsAndSignatureKeyPairs.length === 0) {
-	                        throw new Error("You must specify some inputs");
-	                    }
-	                    if (!outputs || outputs.length === 0) {
-	                        throw new Error("You must specify some outputs");
-	                    }
-	                    outputsWithSerialization = [];
-	                    for (_i = 0, outputs_1 = outputs; _i < outputs_1.length; _i++) {
-	                        output$1 = outputs_1[_i];
-	                        sigLockedOutput = {
-	                            type: 0,
-	                            address: {
-	                                type: 1,
-	                                address: output$1.address
-	                            },
-	                            amount: output$1.amount
-	                        };
-	                        writeStream$1 = new writeStream.WriteStream();
-	                        output.serializeOutput(writeStream$1, sigLockedOutput);
-	                        outputsWithSerialization.push({
-	                            output: sigLockedOutput,
-	                            serialized: writeStream$1.finalHex()
-	                        });
-	                    }
-	                    inputsAndSignatureKeyPairsSerialized = inputsAndSignatureKeyPairs.map(function (i) {
-	                        var writeStream$1 = new writeStream.WriteStream();
-	                        input.serializeInput(writeStream$1, i.input);
-	                        return __assign(__assign({}, i), { serialized: writeStream$1.finalHex() });
-	                    });
-	                    sortedInputs = inputsAndSignatureKeyPairsSerialized.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
-	                    sortedOutputs = outputsWithSerialization.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
-	                    transactionEssence = {
-	                        type: 0,
-	                        inputs: sortedInputs.map(function (i) { return i.input; }),
-	                        outputs: sortedOutputs.map(function (o) { return o.output; }),
-	                        payload: indexationKey && indexationData
-	                            ? {
-	                                type: 2,
-	                                index: indexationKey,
-	                                data: converter.Converter.bytesToHex(indexationData)
-	                            }
-	                            : undefined
-	                    };
-	                    binaryEssence = new writeStream.WriteStream();
-	                    transaction.serializeTransactionEssence(binaryEssence, transactionEssence);
-	                    essenceFinal = binaryEssence.finalBytes();
-	                    unlockBlocks = [];
-	                    addressToUnlockBlock = {};
-	                    for (_a = 0, sortedInputs_1 = sortedInputs; _a < sortedInputs_1.length; _a++) {
-	                        input$1 = sortedInputs_1[_a];
-	                        hexInputAddressPublic = converter.Converter.bytesToHex(input$1.addressKeyPair.publicKey);
-	                        if (addressToUnlockBlock[hexInputAddressPublic]) {
-	                            unlockBlocks.push({
-	                                type: 1,
-	                                reference: addressToUnlockBlock[hexInputAddressPublic].unlockIndex
-	                            });
-	                        }
-	                        else {
-	                            unlockBlocks.push({
-	                                type: 0,
-	                                signature: {
-	                                    type: 1,
-	                                    publicKey: hexInputAddressPublic,
-	                                    signature: converter.Converter.bytesToHex(ed25519.Ed25519.sign(input$1.addressKeyPair.privateKey, essenceFinal))
-	                                }
-	                            });
-	                            addressToUnlockBlock[hexInputAddressPublic] = {
-	                                keyPair: input$1.addressKeyPair,
-	                                unlockIndex: unlockBlocks.length - 1
-	                            };
-	                        }
-	                    }
-	                    transactionPayload = {
-	                        type: 0,
-	                        essence: transactionEssence,
-	                        unlockBlocks: unlockBlocks
-	                    };
+	                    transactionPayload = buildTransactionPayload(inputsAndSignatureKeyPairs, outputs, indexationKey, indexationData);
 	                    return [4 /*yield*/, client.tips()];
 	                case 1:
-	                    tips = _b.sent();
+	                    tips = _a.sent();
 	                    message = {
-	                        version: 1,
 	                        parent1MessageId: tips.tip1MessageId,
 	                        parent2MessageId: tips.tip2MessageId,
 	                        payload: transactionPayload
 	                    };
 	                    return [4 /*yield*/, client.messageSubmit(message)];
 	                case 2:
-	                    messageId = _b.sent();
+	                    messageId = _a.sent();
 	                    return [2 /*return*/, {
 	                            messageId: messageId,
 	                            message: message
@@ -7129,6 +7049,97 @@
 	    });
 	}
 	exports.sendAdvanced = sendAdvanced;
+	/**
+	 * Build a transaction payload.
+	 * @param inputsAndSignatureKeyPairs The inputs with the signature key pairs needed to sign transfers.
+	 * @param outputs The outputs to send.
+	 * @param indexationKey Optional indexation key.
+	 * @param indexationData Optional index data.
+	 * @returns The transaction payload.
+	 */
+	function buildTransactionPayload(inputsAndSignatureKeyPairs, outputs, indexationKey, indexationData) {
+	    if (!inputsAndSignatureKeyPairs || inputsAndSignatureKeyPairs.length === 0) {
+	        throw new Error("You must specify some inputs");
+	    }
+	    if (!outputs || outputs.length === 0) {
+	        throw new Error("You must specify some outputs");
+	    }
+	    var outputsWithSerialization = [];
+	    for (var _i = 0, outputs_1 = outputs; _i < outputs_1.length; _i++) {
+	        var output$1 = outputs_1[_i];
+	        var sigLockedOutput = {
+	            type: 0,
+	            address: {
+	                type: 1,
+	                address: output$1.address
+	            },
+	            amount: output$1.amount
+	        };
+	        var writeStream$1 = new writeStream.WriteStream();
+	        output.serializeOutput(writeStream$1, sigLockedOutput);
+	        outputsWithSerialization.push({
+	            output: sigLockedOutput,
+	            serialized: writeStream$1.finalHex()
+	        });
+	    }
+	    var inputsAndSignatureKeyPairsSerialized = inputsAndSignatureKeyPairs.map(function (i) {
+	        var writeStream$1 = new writeStream.WriteStream();
+	        input.serializeInput(writeStream$1, i.input);
+	        return __assign(__assign({}, i), { serialized: writeStream$1.finalHex() });
+	    });
+	    // Lexigraphically sort the inputs and outputs
+	    var sortedInputs = inputsAndSignatureKeyPairsSerialized.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
+	    var sortedOutputs = outputsWithSerialization.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
+	    var transactionEssence = {
+	        type: 0,
+	        inputs: sortedInputs.map(function (i) { return i.input; }),
+	        outputs: sortedOutputs.map(function (o) { return o.output; }),
+	        payload: indexationKey && indexationData
+	            ? {
+	                type: 2,
+	                index: indexationKey,
+	                data: converter.Converter.bytesToHex(indexationData)
+	            }
+	            : undefined
+	    };
+	    var binaryEssence = new writeStream.WriteStream();
+	    transaction.serializeTransactionEssence(binaryEssence, transactionEssence);
+	    var essenceFinal = binaryEssence.finalBytes();
+	    // Create the unlock blocks
+	    var unlockBlocks = [];
+	    var addressToUnlockBlock = {};
+	    for (var _a = 0, sortedInputs_1 = sortedInputs; _a < sortedInputs_1.length; _a++) {
+	        var input$1 = sortedInputs_1[_a];
+	        var hexInputAddressPublic = converter.Converter.bytesToHex(input$1.addressKeyPair.publicKey);
+	        if (addressToUnlockBlock[hexInputAddressPublic]) {
+	            unlockBlocks.push({
+	                type: 1,
+	                reference: addressToUnlockBlock[hexInputAddressPublic].unlockIndex
+	            });
+	        }
+	        else {
+	            unlockBlocks.push({
+	                type: 0,
+	                signature: {
+	                    type: 1,
+	                    publicKey: hexInputAddressPublic,
+	                    signature: converter.Converter.bytesToHex(ed25519.Ed25519.sign(input$1.addressKeyPair.privateKey, essenceFinal))
+	                }
+	            });
+	            addressToUnlockBlock[hexInputAddressPublic] = {
+	                keyPair: input$1.addressKeyPair,
+	                unlockIndex: unlockBlocks.length - 1
+	            };
+	        }
+	    }
+	    var transactionPayload = {
+	        type: 0,
+	        essence: transactionEssence,
+	        unlockBlocks: unlockBlocks
+	    };
+	    return transactionPayload;
+	}
+	exports.buildTransactionPayload = buildTransactionPayload;
 
 	});
 
@@ -7364,7 +7375,6 @@
 	                case 1:
 	                    tips = _a.sent();
 	                    message = {
-	                        version: 1,
 	                        parent1MessageId: tips.tip1MessageId,
 	                        parent2MessageId: tips.tip2MessageId,
 	                        payload: indexationPayload
@@ -7624,7 +7634,7 @@
 	 * @param message The message to log.
 	 */
 	function logMessage(prefix, message) {
-	    logger(prefix + "\tVersion:", message.version);
+	    logger(prefix + "\tNetwork Id:", message.networkId);
 	    logger(prefix + "\tParent 1 Message Id:", message.parent1MessageId);
 	    logger(prefix + "\tParent 2 Message Id:", message.parent2MessageId);
 	    logPayload(prefix + "\t", message.payload);

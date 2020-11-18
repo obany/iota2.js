@@ -15,9 +15,7 @@ async function run() {
     console.log("\tVersion:", info.version);
     console.log("\tNetwork Id:", info.networkId);
     console.log("\tIs Healthy:", info.isHealthy);
-    console.log("\tLatest Milestone Id:", info.latestMilestoneId);
     console.log("\tLatest Milestone Index:", info.latestMilestoneIndex);
-    console.log("\tSolid Milestone Id:", info.solidMilestoneId);
     console.log("\tSolid Milestone Index:", info.solidMilestoneIndex);
     console.log("\tPruning Index:", info.pruningIndex);
     console.log("\tFeatures:", info.features);
@@ -30,7 +28,6 @@ async function run() {
     console.log();
 
     const submitMessage: IMessage = {
-        version: 1,
         parent1MessageId: tips.tip1MessageId,
         parent2MessageId: tips.tip2MessageId,
         payload: {
@@ -90,7 +87,7 @@ async function run() {
     const milestone = await client.milestone(info.latestMilestoneIndex);
     console.log("Milestone");
     console.log("\tMilestone Index:", milestone.milestoneIndex);
-    console.log("\tMilestone Id:", milestone.milestoneId);
+    console.log("\tMessage Id:", milestone.messageId);
     console.log("\tTimestamp:", milestone.timestamp);
     console.log();
 

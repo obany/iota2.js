@@ -73,6 +73,7 @@
 
 ### Functions
 
+* [buildTransactionPayload](README.md#buildtransactionpayload)
 * [calculateInputs](README.md#calculateinputs)
 * [deserializeAddress](README.md#deserializeaddress)
 * [deserializeEd25519Address](README.md#deserializeed25519address)
@@ -146,6 +147,27 @@ which is an extension of https://github.com/golang/crypto/tree/master/ed25519
 which in a port of the “ref10” implementation of ed25519 from SUPERCOP
 
 ## Functions
+
+### buildTransactionPayload
+
+▸ **buildTransactionPayload**(`inputsAndSignatureKeyPairs`: { addressKeyPair: [IKeyPair](interfaces/ikeypair.md) ; input: [IUTXOInput](interfaces/iutxoinput.md)  }[], `outputs`: { address: string ; amount: number  }[], `indexationKey?`: undefined \| string, `indexationData?`: Uint8Array): [ITransactionPayload](interfaces/itransactionpayload.md)
+
+Build a transaction payload.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`inputsAndSignatureKeyPairs` | { addressKeyPair: [IKeyPair](interfaces/ikeypair.md) ; input: [IUTXOInput](interfaces/iutxoinput.md)  }[] | The inputs with the signature key pairs needed to sign transfers. |
+`outputs` | { address: string ; amount: number  }[] | The outputs to send. |
+`indexationKey?` | undefined \| string | Optional indexation key. |
+`indexationData?` | Uint8Array | Optional index data. |
+
+**Returns:** [ITransactionPayload](interfaces/itransactionpayload.md)
+
+The transaction payload.
+
+___
 
 ### calculateInputs
 

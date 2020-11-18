@@ -7,9 +7,9 @@ import { ITransactionPayload } from "./ITransactionPayload";
  */
 export interface IMessage {
     /**
-     * The version of the message.
+     * The network id of the message.
      */
-    version: number;
+    networkId?: string;
 
     /**
      * The parent 1 message id.

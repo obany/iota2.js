@@ -27,7 +27,6 @@ export async function sendData(client: IClient, indexationKey: string, indexatio
     const tips = await client.tips();
 
     const message: IMessage = {
-        version: 1,
         parent1MessageId: tips.tip1MessageId,
         parent2MessageId: tips.tip2MessageId,
         payload: indexationPayload

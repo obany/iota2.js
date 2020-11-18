@@ -35,6 +35,41 @@ export async function sendAdvanced(
         messageId: string;
         message: IMessage;
     }> {
+    const transactionPayload = buildTransactionPayload(
+        inputsAndSignatureKeyPairs, outputs, indexationKey, indexationData);
+
+    const tips = await client.tips();
+
+    const message: IMessage = {
+        parent1MessageId: tips.tip1MessageId,
+        parent2MessageId: tips.tip2MessageId,
+        payload: transactionPayload
+    };
+
+    const messageId = await client.messageSubmit(message);
+
+    return {
+        messageId,
+        message
+    };
+}
+
+/**
+ * Build a transaction payload.
+ * @param inputsAndSignatureKeyPairs The inputs with the signature key pairs needed to sign transfers.
+ * @param outputs The outputs to send.
+ * @param indexationKey Optional indexation key.
+ * @param indexationData Optional index data.
+ * @returns The transaction payload.
+ */
+export function buildTransactionPayload(
+    inputsAndSignatureKeyPairs: {
+        input: IUTXOInput;
+        addressKeyPair: IKeyPair;
+    }[],
+    outputs: { address: string; amount: number }[],
+    indexationKey?: string,
+    indexationData?: Uint8Array): ITransactionPayload {
     if (!inputsAndSignatureKeyPairs || inputsAndSignatureKeyPairs.length === 0) {
         throw new Error("You must specify some inputs");
     }
@@ -138,19 +173,5 @@ export async function sendAdvanced(
         unlockBlocks
     };
 
-    const tips = await client.tips();
-
-    const message: IMessage = {
-        version: 1,
-        parent1MessageId: tips.tip1MessageId,
-        parent2MessageId: tips.tip2MessageId,
-        payload: transactionPayload
-    };
-
-    const messageId = await client.messageSubmit(message);
-
-    return {
-        messageId,
-        message
-    };
+    return transactionPayload;
 }

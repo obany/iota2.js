@@ -47,7 +47,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendAdvanced = void 0;
+exports.buildTransactionPayload = exports.sendAdvanced = void 0;
 var input_1 = require("../binary/input");
 var output_1 = require("../binary/output");
 var transaction_1 = require("../binary/transaction");
@@ -65,99 +65,22 @@ var writeStream_1 = require("../utils/writeStream");
  */
 function sendAdvanced(client, inputsAndSignatureKeyPairs, outputs, indexationKey, indexationData) {
     return __awaiter(this, void 0, void 0, function () {
-        var outputsWithSerialization, _i, outputs_1, output, sigLockedOutput, writeStream, inputsAndSignatureKeyPairsSerialized, sortedInputs, sortedOutputs, transactionEssence, binaryEssence, essenceFinal, unlockBlocks, addressToUnlockBlock, _a, sortedInputs_1, input, hexInputAddressPublic, transactionPayload, tips, message, messageId;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var transactionPayload, tips, message, messageId;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
-                    if (!inputsAndSignatureKeyPairs || inputsAndSignatureKeyPairs.length === 0) {
-                        throw new Error("You must specify some inputs");
-                    }
-                    if (!outputs || outputs.length === 0) {
-                        throw new Error("You must specify some outputs");
-                    }
-                    outputsWithSerialization = [];
-                    for (_i = 0, outputs_1 = outputs; _i < outputs_1.length; _i++) {
-                        output = outputs_1[_i];
-                        sigLockedOutput = {
-                            type: 0,
-                            address: {
-                                type: 1,
-                                address: output.address
-                            },
-                            amount: output.amount
-                        };
-                        writeStream = new writeStream_1.WriteStream();
-                        output_1.serializeOutput(writeStream, sigLockedOutput);
-                        outputsWithSerialization.push({
-                            output: sigLockedOutput,
-                            serialized: writeStream.finalHex()
-                        });
-                    }
-                    inputsAndSignatureKeyPairsSerialized = inputsAndSignatureKeyPairs.map(function (i) {
-                        var writeStream = new writeStream_1.WriteStream();
-                        input_1.serializeInput(writeStream, i.input);
-                        return __assign(__assign({}, i), { serialized: writeStream.finalHex() });
-                    });
-                    sortedInputs = inputsAndSignatureKeyPairsSerialized.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
-                    sortedOutputs = outputsWithSerialization.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
-                    transactionEssence = {
-                        type: 0,
-                        inputs: sortedInputs.map(function (i) { return i.input; }),
-                        outputs: sortedOutputs.map(function (o) { return o.output; }),
-                        payload: indexationKey && indexationData
-                            ? {
-                                type: 2,
-                                index: indexationKey,
-                                data: converter_1.Converter.bytesToHex(indexationData)
-                            }
-                            : undefined
-                    };
-                    binaryEssence = new writeStream_1.WriteStream();
-                    transaction_1.serializeTransactionEssence(binaryEssence, transactionEssence);
-                    essenceFinal = binaryEssence.finalBytes();
-                    unlockBlocks = [];
-                    addressToUnlockBlock = {};
-                    for (_a = 0, sortedInputs_1 = sortedInputs; _a < sortedInputs_1.length; _a++) {
-                        input = sortedInputs_1[_a];
-                        hexInputAddressPublic = converter_1.Converter.bytesToHex(input.addressKeyPair.publicKey);
-                        if (addressToUnlockBlock[hexInputAddressPublic]) {
-                            unlockBlocks.push({
-                                type: 1,
-                                reference: addressToUnlockBlock[hexInputAddressPublic].unlockIndex
-                            });
-                        }
-                        else {
-                            unlockBlocks.push({
-                                type: 0,
-                                signature: {
-                                    type: 1,
-                                    publicKey: hexInputAddressPublic,
-                                    signature: converter_1.Converter.bytesToHex(ed25519_1.Ed25519.sign(input.addressKeyPair.privateKey, essenceFinal))
-                                }
-                            });
-                            addressToUnlockBlock[hexInputAddressPublic] = {
-                                keyPair: input.addressKeyPair,
-                                unlockIndex: unlockBlocks.length - 1
-                            };
-                        }
-                    }
-                    transactionPayload = {
-                        type: 0,
-                        essence: transactionEssence,
-                        unlockBlocks: unlockBlocks
-                    };
+                    transactionPayload = buildTransactionPayload(inputsAndSignatureKeyPairs, outputs, indexationKey, indexationData);
                     return [4 /*yield*/, client.tips()];
                 case 1:
-                    tips = _b.sent();
+                    tips = _a.sent();
                     message = {
-                        version: 1,
                         parent1MessageId: tips.tip1MessageId,
                         parent2MessageId: tips.tip2MessageId,
                         payload: transactionPayload
                     };
                     return [4 /*yield*/, client.messageSubmit(message)];
                 case 2:
-                    messageId = _b.sent();
+                    messageId = _a.sent();
                     return [2 /*return*/, {
                             messageId: messageId,
                             message: message
@@ -167,4 +90,95 @@ function sendAdvanced(client, inputsAndSignatureKeyPairs, outputs, indexationKey
     });
 }
 exports.sendAdvanced = sendAdvanced;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2VuZEFkdmFuY2VkLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL2hpZ2hMZXZlbC9zZW5kQWR2YW5jZWQudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSx5Q0FBaUQ7QUFDakQsMkNBQW1EO0FBQ25ELHFEQUFvRTtBQUNwRSw2Q0FBNEM7QUFVNUMsZ0RBQStDO0FBQy9DLG9EQUFtRDtBQUVuRDs7Ozs7Ozs7R0FRRztBQUNILFNBQXNCLFlBQVksQ0FDOUIsTUFBZSxFQUNmLDBCQUdHLEVBQ0gsT0FBOEMsRUFDOUMsYUFBc0IsRUFDdEIsY0FBMkI7Ozs7OztvQkFJM0IsSUFBSSxDQUFDLDBCQUEwQixJQUFJLDBCQUEwQixDQUFDLE1BQU0sS0FBSyxDQUFDLEVBQUU7d0JBQ3hFLE1BQU0sSUFBSSxLQUFLLENBQUMsOEJBQThCLENBQUMsQ0FBQztxQkFDbkQ7b0JBQ0QsSUFBSSxDQUFDLE9BQU8sSUFBSSxPQUFPLENBQUMsTUFBTSxLQUFLLENBQUMsRUFBRTt3QkFDbEMsTUFBTSxJQUFJLEtBQUssQ0FBQywrQkFBK0IsQ0FBQyxDQUFDO3FCQUNwRDtvQkFFSyx3QkFBd0IsR0FHeEIsRUFBRSxDQUFDO29CQUVULFdBQTRCLEVBQVAsbUJBQU8sRUFBUCxxQkFBTyxFQUFQLElBQU8sRUFBRTt3QkFBbkIsTUFBTTt3QkFDUCxlQUFlLEdBQTJCOzRCQUM1QyxJQUFJLEVBQUUsQ0FBQzs0QkFDUCxPQUFPLEVBQUU7Z0NBQ0wsSUFBSSxFQUFFLENBQUM7Z0NBQ1AsT0FBTyxFQUFFLE1BQU0sQ0FBQyxPQUFPOzZCQUMxQjs0QkFDRCxNQUFNLEVBQUUsTUFBTSxDQUFDLE1BQU07eUJBQ3hCLENBQUM7d0JBQ0ksV0FBVyxHQUFHLElBQUkseUJBQVcsRUFBRSxDQUFDO3dCQUN0Qyx3QkFBZSxDQUFDLFdBQVcsRUFBRSxlQUFlLENBQUMsQ0FBQzt3QkFD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
+/**
+ * Build a transaction payload.
+ * @param inputsAndSignatureKeyPairs The inputs with the signature key pairs needed to sign transfers.
+ * @param outputs The outputs to send.
+ * @param indexationKey Optional indexation key.
+ * @param indexationData Optional index data.
+ * @returns The transaction payload.
+ */
+function buildTransactionPayload(inputsAndSignatureKeyPairs, outputs, indexationKey, indexationData) {
+    if (!inputsAndSignatureKeyPairs || inputsAndSignatureKeyPairs.length === 0) {
+        throw new Error("You must specify some inputs");
+    }
+    if (!outputs || outputs.length === 0) {
+        throw new Error("You must specify some outputs");
+    }
+    var outputsWithSerialization = [];
+    for (var _i = 0, outputs_1 = outputs; _i < outputs_1.length; _i++) {
+        var output = outputs_1[_i];
+        var sigLockedOutput = {
+            type: 0,
+            address: {
+                type: 1,
+                address: output.address
+            },
+            amount: output.amount
+        };
+        var writeStream = new writeStream_1.WriteStream();
+        output_1.serializeOutput(writeStream, sigLockedOutput);
+        outputsWithSerialization.push({
+            output: sigLockedOutput,
+            serialized: writeStream.finalHex()
+        });
+    }
+    var inputsAndSignatureKeyPairsSerialized = inputsAndSignatureKeyPairs.map(function (i) {
+        var writeStream = new writeStream_1.WriteStream();
+        input_1.serializeInput(writeStream, i.input);
+        return __assign(__assign({}, i), { serialized: writeStream.finalHex() });
+    });
+    // Lexigraphically sort the inputs and outputs
+    var sortedInputs = inputsAndSignatureKeyPairsSerialized.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
+    var sortedOutputs = outputsWithSerialization.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
+    var transactionEssence = {
+        type: 0,
+        inputs: sortedInputs.map(function (i) { return i.input; }),
+        outputs: sortedOutputs.map(function (o) { return o.output; }),
+        payload: indexationKey && indexationData
+            ? {
+                type: 2,
+                index: indexationKey,
+                data: converter_1.Converter.bytesToHex(indexationData)
+            }
+            : undefined
+    };
+    var binaryEssence = new writeStream_1.WriteStream();
+    transaction_1.serializeTransactionEssence(binaryEssence, transactionEssence);
+    var essenceFinal = binaryEssence.finalBytes();
+    // Create the unlock blocks
+    var unlockBlocks = [];
+    var addressToUnlockBlock = {};
+    for (var _a = 0, sortedInputs_1 = sortedInputs; _a < sortedInputs_1.length; _a++) {
+        var input = sortedInputs_1[_a];
+        var hexInputAddressPublic = converter_1.Converter.bytesToHex(input.addressKeyPair.publicKey);
+        if (addressToUnlockBlock[hexInputAddressPublic]) {
+            unlockBlocks.push({
+                type: 1,
+                reference: addressToUnlockBlock[hexInputAddressPublic].unlockIndex
+            });
+        }
+        else {
+            unlockBlocks.push({
+                type: 0,
+                signature: {
+                    type: 1,
+                    publicKey: hexInputAddressPublic,
+                    signature: converter_1.Converter.bytesToHex(ed25519_1.Ed25519.sign(input.addressKeyPair.privateKey, essenceFinal))
+                }
+            });
+            addressToUnlockBlock[hexInputAddressPublic] = {
+                keyPair: input.addressKeyPair,
+                unlockIndex: unlockBlocks.length - 1
+            };
+        }
+    }
+    var transactionPayload = {
+        type: 0,
+        essence: transactionEssence,
+        unlockBlocks: unlockBlocks
+    };
+    return transactionPayload;
+}
+exports.buildTransactionPayload = buildTransactionPayload;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2VuZEFkdmFuY2VkLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL2hpZ2hMZXZlbC9zZW5kQWR2YW5jZWQudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSx5Q0FBaUQ7QUFDakQsMkNBQW1EO0FBQ25ELHFEQUFvRTtBQUNwRSw2Q0FBNEM7QUFVNUMsZ0RBQStDO0FBQy9DLG9EQUFtRDtBQUVuRDs7Ozs7Ozs7R0FRRztBQUNILFNBQXNCLFlBQVksQ0FDOUIsTUFBZSxFQUNmLDBCQUdHLEVBQ0gsT0FBOEMsRUFDOUMsYUFBc0IsRUFDdEIsY0FBMkI7Ozs7OztvQkFJckIsa0JBQWtCLEdBQUcsdUJBQXVCLENBQzlDLDBCQUEwQixFQUFFLE9BQU8sRUFBRSxhQUFhLEVBQUUsY0FBYyxDQUFDLENBQUM7b0JBRTNELHFCQUFNLE1BQU0sQ0FBQyxJQUFJLEVBQUUsRUFBQTs7b0JBQTFCLElBQUksR0FBRyxTQUFtQjtvQkFFMUIsT0FBTyxHQUFhO3dCQUN0QixnQkFBZ0IsRUFBRSxJQUFJLENBQUMsYUFBYTt3QkFDcEMsZ0JBQWdCLEVBQUUsSUFBSSxDQUFDLGFBQWE7d0JBQ3BDLE9BQU8sRUFBRSxrQkFBa0I7cUJBQzlCLENBQUM7b0JBRWdCLHFCQUFNLE1BQU0sQ0FBQyxhQUFhLENBQUMsT0FBTyxDQUFDLEVBQUE7O29CQUEvQyxTQUFTLEdBQUcsU0FBbUM7b0JBRXJELHNCQUFPOzRCQUNILFNBQVMsV0FBQTs0QkFDVCxPQUFPLFNBQUE7eUJBQ1YsRUFBQzs7OztDQUNMO0FBN0JELG9DQTZCQztBQUVEOzs7Ozs7O0dBT0c7QUFDSCxTQUFnQix1QkFBdUIsQ0FDbkMsMEJBR0csRUFDSCxPQUE4QyxFQUM5QyxhQUFzQixFQUN0QixjQUEyQjtJQUMzQixJQUFJLENBQUMsMEJBQTBCLElBQUksMEJBQTBCLENBQUMsTUFBTSxLQUFLLENBQUMsRUFB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

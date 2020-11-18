@@ -34,7 +34,7 @@ export function setLogger(log: (message: string, data?: unknown) => void): void 
  * @param message The message to log.
  */
 export function logMessage(prefix: string, message: IMessage): void {
-    logger(`${prefix}\tVersion:`, message.version);
+    logger(`${prefix}\tNetwork Id:`, message.networkId);
     logger(`${prefix}\tParent 1 Message Id:`, message.parent1MessageId);
     logger(`${prefix}\tParent 2 Message Id:`, message.parent2MessageId);
     logPayload(`${prefix}\t`, message.payload);

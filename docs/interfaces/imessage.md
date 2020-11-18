@@ -14,13 +14,21 @@ Message layout.
 
 ### Properties
 
+* [networkId](imessage.md#networkid)
 * [nonce](imessage.md#nonce)
 * [parent1MessageId](imessage.md#parent1messageid)
 * [parent2MessageId](imessage.md#parent2messageid)
 * [payload](imessage.md#payload)
-* [version](imessage.md#version)
 
 ## Properties
+
+### networkId
+
+• `Optional` **networkId**: undefined \| string
+
+The network id of the message.
+
+___
 
 ### nonce
 
@@ -51,11 +59,3 @@ ___
 • `Optional` **payload**: [IIndexationPayload](iindexationpayload.md) \| [IMilestonePayload](imilestonepayload.md) \| [ITransactionPayload](itransactionpayload.md)
 
 The payload contents.
-
-___
-
-### version
-
-•  **version**: number
-
-The version of the message.

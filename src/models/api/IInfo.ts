@@ -23,19 +23,9 @@ export interface IInfo {
     networkId: number;
 
     /**
-     * The latest milestone Id.
-     */
-    latestMilestoneId: string;
-
-    /**
      * The latest milestone message index;
      */
     latestMilestoneIndex: number;
-
-    /**
-     * The latest solid milestone Id.
-     */
-    solidMilestoneId: string;
 
     /**
      * The latest solid milestone message index;

@@ -99,4 +99,5 @@ Please find other examples in the [./examples](./examples) folder.
 * Browser - Demonstrates direct inclusion and use of the library in an html page.
 * Peers - Demonstrates peer management.
 * Mqtt - Using mqtt to read streaming messages.
+* Browser Mqtt - Using mqtt to read streaming messages in the browser.
 

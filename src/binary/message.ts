@@ -1,10 +1,10 @@
 import { IMessage } from "../models/IMessage";
 import { ReadStream } from "../utils/readStream";
 import { WriteStream } from "../utils/writeStream";
-import { BYTE_SIZE, MESSAGE_ID_LENGTH, UINT64_SIZE } from "./common";
+import { MESSAGE_ID_LENGTH, UINT64_SIZE } from "./common";
 import { deserializePayload, MIN_PAYLOAD_LENGTH, serializePayload } from "./payload";
 
-const MIN_MESSAGE_LENGTH: number = BYTE_SIZE +
+const MIN_MESSAGE_LENGTH: number = UINT64_SIZE +
     (2 * MESSAGE_ID_LENGTH) +
     MIN_PAYLOAD_LENGTH +
     UINT64_SIZE;
@@ -22,10 +22,7 @@ export function deserializeMessage(readStream: ReadStream): IMessage {
             } in length which is less than the minimimum size required of ${MIN_MESSAGE_LENGTH}`);
     }
 
-    const version = readStream.readByte("message.version");
-    if (version !== 1) {
-        throw new Error(`Unsupported message version number: ${version}`);
-    }
+    const networkId = readStream.readUInt64("message.networkId");
 
     const parent1MessageId = readStream.readFixedHex("message.parent1MessageId", MESSAGE_ID_LENGTH);
     const parent2MessageId = readStream.readFixedHex("message.parent2MessageId", MESSAGE_ID_LENGTH);
@@ -40,7 +37,7 @@ export function deserializeMessage(readStream: ReadStream): IMessage {
     }
 
     return {
-        version,
+        networkId: networkId.toString(10),
         payload,
         parent1MessageId,
         parent2MessageId,
@@ -54,7 +51,7 @@ export function deserializeMessage(readStream: ReadStream): IMessage {
  * @param object The object to serialize.
  */
 export function serializeMessage(writeStream: WriteStream, object: IMessage): void {
-    writeStream.writeByte("message.version", object.version);
+    writeStream.writeUInt64("message.networkId", BigInt(object.networkId ?? 0));
 
     writeStream.writeFixedHex("message.parent1MessageId",
         MESSAGE_ID_LENGTH, object.parent1MessageId ?? EMPTY_MESSAGE_ID_HEX);

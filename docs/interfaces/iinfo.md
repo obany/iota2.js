@@ -16,12 +16,10 @@ Response from the /info endpoint.
 
 * [features](iinfo.md#features)
 * [isHealthy](iinfo.md#ishealthy)
-* [latestMilestoneId](iinfo.md#latestmilestoneid)
 * [latestMilestoneIndex](iinfo.md#latestmilestoneindex)
 * [name](iinfo.md#name)
 * [networkId](iinfo.md#networkid)
 * [pruningIndex](iinfo.md#pruningindex)
-* [solidMilestoneId](iinfo.md#solidmilestoneid)
 * [solidMilestoneIndex](iinfo.md#solidmilestoneindex)
 * [version](iinfo.md#version)
 
@@ -40,14 +38,6 @@ ___
 •  **isHealthy**: boolean
 
 Is the node healthy.
-
-___
-
-### latestMilestoneId
-
-•  **latestMilestoneId**: string
-
-The latest milestone Id.
 
 ___
 
@@ -80,14 +70,6 @@ ___
 •  **pruningIndex**: number
 
 The pruning index;
-
-___
-
-### solidMilestoneId
-
-•  **solidMilestoneId**: string
-
-The latest solid milestone Id.
 
 ___
 

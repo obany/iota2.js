@@ -32,9 +32,7 @@
             consoleLog("\tVersion:", info.version);
             consoleLog("\tIs Healthy:", info.isHealthy);
             consoleLog("\tNetwork Id:", info.networkId);
-            consoleLog("\tLatest Milestone Id:", info.latestMilestoneId);
             consoleLog("\tLatest Milestone Index:", info.latestMilestoneIndex);
-            consoleLog("\tSolid Milestone Id:", info.solidMilestoneId);
             consoleLog("\tSolid Milestone Index:", info.solidMilestoneIndex);
             consoleLog("\tPruning Index:", info.pruningIndex);
             consoleLog("\tFeatures:", info.features);
@@ -108,7 +106,7 @@
             const milestone = await client.milestone(info.latestMilestoneIndex);
             consoleLog("Milestone");
             consoleLog("\tMilestone Index:", milestone.milestoneIndex);
-            consoleLog("\tMilestone Id:", milestone.milestoneId);
+            consoleLog("\tMessage Id:", milestone.messageId);
             consoleLog("\tTimestamp:", milestone.timestamp);
             consoleLog();
 
