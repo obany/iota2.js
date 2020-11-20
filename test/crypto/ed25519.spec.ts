@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 import { Ed25519 } from "../../src/crypto/ed25519";
 import { Converter } from "../../src/utils/converter";
+import testData from "./ed25519.json";
 
 describe("Ed25519", () => {
     test("Can generate a key pair from a seed", () => {
@@ -46,6 +47,24 @@ describe("Ed25519", () => {
         const verified = Ed25519.verify(keyPair.publicKey, data, sig);
 
         expect(verified).toEqual(true);
+    });
+
+    test("Can validate test data", () => {
+        for (const test of testData) {
+            const bPrivateKey = Converter.hexToBytes(test.privateKey);
+            const bPublicKey = Converter.hexToBytes(test.publicKey);
+            const calcPubKey = Ed25519.publicKeyFromPrivateKey(bPrivateKey);
+
+            expect(test.publicKey).toEqual(Converter.bytesToHex(calcPubKey));
+
+            const bData = Converter.hexToBytes(test.data);
+
+            const calcSignature = Ed25519.sign(bPrivateKey, bData);
+            expect(test.signature).toEqual(Converter.bytesToHex(calcSignature) + test.data);
+
+            const verified = Ed25519.verify(bPublicKey, bData, calcSignature);
+            expect(verified).toEqual(true);
+        }
     });
 });
 
