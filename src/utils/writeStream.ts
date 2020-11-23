@@ -1,5 +1,6 @@
 /* eslint-disable no-bitwise */
 import { isHex } from "../binary/common";
+import { BigIntHelper } from "./bigIntHelper";
 import { Converter } from "./converter";
 
 /**
@@ -160,9 +161,7 @@ export class WriteStream {
     public writeUInt64(name: string, val: bigint): void {
         this.expand(8);
 
-        const hex = val.toString(16).padStart(16, "0");
-        const arr = Converter.hexToBytes(hex, true);
-        this._storage.set(arr, this._writeIndex);
+        BigIntHelper.write8(val, this._storage, this._writeIndex);
 
         this._writeIndex += 8;
     }

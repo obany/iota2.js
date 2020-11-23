@@ -1,13 +1,13 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('mqtt'), require('crypto')) :
-	typeof define === 'function' && define.amd ? define(['mqtt', 'crypto'], factory) :
-	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Iota2 = factory(global.mqtt, global.crypto));
-}(this, (function (require$$0$1, require$$0) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('crypto'), require('mqtt')) :
+	typeof define === 'function' && define.amd ? define(['crypto', 'mqtt'], factory) :
+	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Iota2 = factory(global.crypto, global.mqtt));
+}(this, (function (require$$0, require$$0$1) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-	var require$$0__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$0$1);
 	var require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
+	var require$$0__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$0$1);
 
 	var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -1261,6 +1261,131 @@
 
 	});
 
+	var randomHelper = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.RandomHelper = void 0;
+	/**
+	 * Class to help with random generation.
+	 */
+	var RandomHelper = /** @class */ (function () {
+	    function RandomHelper() {
+	    }
+	    /**
+	     * Generate a new random array.
+	     * @param length The length of buffer to create.
+	     * @returns The random array.
+	     */
+	    RandomHelper.generate = function (length) {
+	        var _a;
+	        var randomBytes;
+	        if ((_a = globalThis.crypto) === null || _a === void 0 ? void 0 : _a.getRandomValues) {
+	            randomBytes = new Uint8Array(length);
+	            globalThis.crypto.getRandomValues(randomBytes);
+	        }
+	        else if (typeof commonjsRequire !== "undefined") {
+	            // eslint-disable-next-line @typescript-eslint/no-var-requires,@typescript-eslint/no-require-imports
+	            var crypto_1 = require$$0__default['default'];
+	            randomBytes = crypto_1.randomBytes(length);
+	        }
+	        else {
+	            throw new TypeError("No random method available");
+	        }
+	        return randomBytes;
+	    };
+	    return RandomHelper;
+	}());
+	exports.RandomHelper = RandomHelper;
+
+	});
+
+	var bigIntHelper = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.BigIntHelper = void 0;
+	/* eslint-disable no-bitwise */
+
+	/**
+	 * Helper methods for bigints.
+	 */
+	var BigIntHelper = /** @class */ (function () {
+	    function BigIntHelper() {
+	    }
+	    /**
+	     * Load 3 bytes from array as bigint.
+	     * @param data The input array.
+	     * @param byteOffset The start index to read from.
+	     * @returns The bigint.
+	     */
+	    BigIntHelper.read3 = function (data, byteOffset) {
+	        var v0 = (data[byteOffset + 0] +
+	            (data[byteOffset + 1] << 8) +
+	            (data[byteOffset + 2] << 16)) >>> 0;
+	        return BigInt(v0);
+	    };
+	    /**
+	     * Load 4 bytes from array as bigint.
+	     * @param data The input array.
+	     * @param byteOffset The start index to read from.
+	     * @returns The bigint.
+	     */
+	    BigIntHelper.read4 = function (data, byteOffset) {
+	        var v0 = (data[byteOffset + 0] +
+	            (data[byteOffset + 1] << 8) +
+	            (data[byteOffset + 2] << 16) +
+	            (data[byteOffset + 3] << 24)) >>> 0;
+	        return BigInt(v0);
+	    };
+	    /**
+	     * Load 8 bytes from array as bigint.
+	     * @param data The data to read from.
+	     * @param byteOffset The start index to read from.
+	     * @returns The bigint.
+	     */
+	    BigIntHelper.read8 = function (data, byteOffset) {
+	        var v0 = (data[byteOffset + 0] +
+	            (data[byteOffset + 1] << 8) +
+	            (data[byteOffset + 2] << 16) +
+	            (data[byteOffset + 3] << 24)) >>> 0;
+	        var v1 = (data[byteOffset + 4] +
+	            (data[byteOffset + 5] << 8) +
+	            (data[byteOffset + 6] << 16) +
+	            (data[byteOffset + 7] << 24)) >>> 0;
+	        return (BigInt(v1) << BigIntHelper.BIG_32) | BigInt(v0);
+	    };
+	    /**
+	     * Convert a big int to bytes.
+	     * @param value The bigint.
+	     * @param data The buffer to write into.
+	     * @param byteOffset The start index to write from.
+	     */
+	    BigIntHelper.write8 = function (value, data, byteOffset) {
+	        var v0 = Number(value & BigIntHelper.BIG_32_MASK);
+	        var v1 = Number((value >> BigIntHelper.BIG_32) & BigIntHelper.BIG_32_MASK);
+	        data[byteOffset] = v0 & 0xFF;
+	        data[byteOffset + 1] = (v0 >> 8) & 0xFF;
+	        data[byteOffset + 2] = (v0 >> 16) & 0xFF;
+	        data[byteOffset + 3] = (v0 >> 24) & 0xFF;
+	        data[byteOffset + 4] = v1 & 0xFF;
+	        data[byteOffset + 5] = (v1 >> 8) & 0xFF;
+	        data[byteOffset + 6] = (v1 >> 16) & 0xFF;
+	        data[byteOffset + 7] = (v1 >> 24) & 0xFF;
+	    };
+	    /**
+	     * Generate a random bigint.
+	     * @returns The bitint.
+	     */
+	    BigIntHelper.random = function () {
+	        return BigIntHelper.read8(randomHelper.RandomHelper.generate(8), 0);
+	    };
+	    /* @internal */
+	    BigIntHelper.BIG_32 = BigInt(32);
+	    /* @internal */
+	    BigIntHelper.BIG_32_MASK = BigInt(0xFFFFFFFF);
+	    return BigIntHelper;
+	}());
+	exports.BigIntHelper = BigIntHelper;
+
+	});
+
 	var bigIntCommon = createCommonjsModule(function (module, exports) {
 	/* eslint-disable no-bitwise */
 	/**
@@ -1269,7 +1394,7 @@
 	 * which in a port of the “ref10” implementation of ed25519 from SUPERCOP
 	 */
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.bigIntLoad8 = exports.bigIntLoad4 = exports.bigIntLoad3 = exports.BIG_8388607 = exports.BIG_2097151 = exports.BIG_683901 = exports.BIG_136657 = exports.BIG_997805 = exports.BIG_654183 = exports.BIG_470296 = exports.BIG_666643 = exports.BIG_38 = exports.BIG_32 = exports.BIG_ARR = exports.BIG_1_SHIFTL_25 = exports.BIG_1_SHIFTL_24 = exports.BIG_1_SHIFTL_20 = void 0;
+	exports.BIG_8388607 = exports.BIG_2097151 = exports.BIG_683901 = exports.BIG_136657 = exports.BIG_997805 = exports.BIG_654183 = exports.BIG_470296 = exports.BIG_666643 = exports.BIG_38 = exports.BIG_ARR = exports.BIG_1_SHIFTL_25 = exports.BIG_1_SHIFTL_24 = exports.BIG_1_SHIFTL_20 = void 0;
 	/* @internal */
 	exports.BIG_1_SHIFTL_20 = BigInt(1) << BigInt(20);
 	/* @internal */
@@ -1284,8 +1409,6 @@
 	    BigInt(18), BigInt(19), BigInt(20), BigInt(21), BigInt(22), BigInt(23),
 	    BigInt(24), BigInt(25), BigInt(26)
 	];
-	/* @internal */
-	exports.BIG_32 = BigInt(32);
 	/* @internal */
 	exports.BIG_38 = BigInt(38);
 	/* @internal */
@@ -1304,54 +1427,6 @@
 	exports.BIG_2097151 = BigInt(2097151);
 	/* @internal */
 	exports.BIG_8388607 = BigInt(8388607);
-	/**
-	 * Load 3 bytes from array as bigint.
-	 * @param data The input array.
-	 * @param byteOffset The start index to read from.
-	 * @returns The bigint.
-	 * @internal
-	 */
-	function bigIntLoad3(data, byteOffset) {
-	    var v0 = (data[byteOffset + 0] +
-	        (data[byteOffset + 1] << 8) +
-	        (data[byteOffset + 2] << 16)) >>> 0;
-	    return BigInt(v0);
-	}
-	exports.bigIntLoad3 = bigIntLoad3;
-	/**
-	 * Load 4 bytes from array as bigint.
-	 * @param data The input array.
-	 * @param byteOffset The start index to read from.
-	 * @returns The bigint.
-	 * @internal
-	 */
-	function bigIntLoad4(data, byteOffset) {
-	    var v0 = (data[byteOffset + 0] +
-	        (data[byteOffset + 1] << 8) +
-	        (data[byteOffset + 2] << 16) +
-	        (data[byteOffset + 3] << 24)) >>> 0;
-	    return BigInt(v0);
-	}
-	exports.bigIntLoad4 = bigIntLoad4;
-	/**
-	 * Load 8 bytes from array as bigint.
-	 * @param data The data to read from.
-	 * @param byteOffset The start index to read from.
-	 * @returns The bigint.
-	 * @internal
-	 */
-	function bigIntLoad8(data, byteOffset) {
-	    var v0 = (data[byteOffset + 0] +
-	        (data[byteOffset + 1] << 8) +
-	        (data[byteOffset + 2] << 16) +
-	        (data[byteOffset + 3] << 24)) >>> 0;
-	    var v1 = (data[byteOffset + 4] +
-	        (data[byteOffset + 5] << 8) +
-	        (data[byteOffset + 6] << 16) +
-	        (data[byteOffset + 7] << 24)) >>> 0;
-	    return (BigInt(v1) << exports.BIG_32) | BigInt(v0);
-	}
-	exports.bigIntLoad8 = bigIntLoad8;
 
 	});
 
@@ -1365,6 +1440,7 @@
 	 * which is an extension of https://github.com/golang/crypto/tree/master/ed25519
 	 * which in a port of the “ref10” implementation of ed25519 from SUPERCOP
 	 */
+
 
 	/**
 	 * Class for field element operations.
@@ -1683,16 +1759,16 @@
 	     * @param bytes The bytes to populate from.
 	     */
 	    FieldElement.prototype.fromBytes = function (bytes) {
-	        var h0 = bigIntCommon.bigIntLoad4(bytes, 0);
-	        var h1 = bigIntCommon.bigIntLoad3(bytes, 4) << bigIntCommon.BIG_ARR[6];
-	        var h2 = bigIntCommon.bigIntLoad3(bytes, 7) << bigIntCommon.BIG_ARR[5];
-	        var h3 = bigIntCommon.bigIntLoad3(bytes, 10) << bigIntCommon.BIG_ARR[3];
-	        var h4 = bigIntCommon.bigIntLoad3(bytes, 13) << bigIntCommon.BIG_ARR[2];
-	        var h5 = bigIntCommon.bigIntLoad4(bytes, 16);
-	        var h6 = bigIntCommon.bigIntLoad3(bytes, 20) << bigIntCommon.BIG_ARR[7];
-	        var h7 = bigIntCommon.bigIntLoad3(bytes, 23) << bigIntCommon.BIG_ARR[5];
-	        var h8 = bigIntCommon.bigIntLoad3(bytes, 26) << bigIntCommon.BIG_ARR[4];
-	        var h9 = (bigIntCommon.bigIntLoad3(bytes, 29) & bigIntCommon.BIG_8388607) << bigIntCommon.BIG_ARR[2];
+	        var h0 = bigIntHelper.BigIntHelper.read4(bytes, 0);
+	        var h1 = bigIntHelper.BigIntHelper.read3(bytes, 4) << bigIntCommon.BIG_ARR[6];
+	        var h2 = bigIntHelper.BigIntHelper.read3(bytes, 7) << bigIntCommon.BIG_ARR[5];
+	        var h3 = bigIntHelper.BigIntHelper.read3(bytes, 10) << bigIntCommon.BIG_ARR[3];
+	        var h4 = bigIntHelper.BigIntHelper.read3(bytes, 13) << bigIntCommon.BIG_ARR[2];
+	        var h5 = bigIntHelper.BigIntHelper.read4(bytes, 16);
+	        var h6 = bigIntHelper.BigIntHelper.read3(bytes, 20) << bigIntCommon.BIG_ARR[7];
+	        var h7 = bigIntHelper.BigIntHelper.read3(bytes, 23) << bigIntCommon.BIG_ARR[5];
+	        var h8 = bigIntHelper.BigIntHelper.read3(bytes, 26) << bigIntCommon.BIG_ARR[4];
+	        var h9 = (bigIntHelper.BigIntHelper.read3(bytes, 29) & bigIntCommon.BIG_8388607) << bigIntCommon.BIG_ARR[2];
 	        this.combine(h0, h1, h2, h3, h4, h5, h6, h7, h8, h9);
 	    };
 	    /**
@@ -3024,6 +3100,7 @@
 	 */
 
 
+
 	/**
 	 * The scalars are GF(2^252 + 27742317777372353535851937790883648493).
 	 *
@@ -3041,42 +3118,42 @@
 	 * @param c The c.
 	 */
 	function scalarMulAdd(s, a, b, c) {
-	    var a0 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(a, 0);
-	    var a1 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(a, 2) >> bigIntCommon.BIG_ARR[5]);
-	    var a2 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(a, 5) >> bigIntCommon.BIG_ARR[2]);
-	    var a3 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(a, 7) >> bigIntCommon.BIG_ARR[7]);
-	    var a4 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(a, 10) >> bigIntCommon.BIG_ARR[4]);
-	    var a5 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(a, 13) >> bigIntCommon.BIG_ARR[1]);
-	    var a6 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(a, 15) >> bigIntCommon.BIG_ARR[6]);
-	    var a7 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(a, 18) >> bigIntCommon.BIG_ARR[3]);
-	    var a8 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(a, 21);
-	    var a9 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(a, 23) >> bigIntCommon.BIG_ARR[5]);
-	    var a10 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(a, 26) >> bigIntCommon.BIG_ARR[2]);
-	    var a11 = (bigIntCommon.bigIntLoad4(a, 28) >> bigIntCommon.BIG_ARR[7]);
-	    var b0 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(b, 0);
-	    var b1 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(b, 2) >> bigIntCommon.BIG_ARR[5]);
-	    var b2 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(b, 5) >> bigIntCommon.BIG_ARR[2]);
-	    var b3 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(b, 7) >> bigIntCommon.BIG_ARR[7]);
-	    var b4 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(b, 10) >> bigIntCommon.BIG_ARR[4]);
-	    var b5 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(b, 13) >> bigIntCommon.BIG_ARR[1]);
-	    var b6 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(b, 15) >> bigIntCommon.BIG_ARR[6]);
-	    var b7 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(b, 18) >> bigIntCommon.BIG_ARR[3]);
-	    var b8 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(b, 21);
-	    var b9 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(b, 23) >> bigIntCommon.BIG_ARR[5]);
-	    var b10 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(b, 26) >> bigIntCommon.BIG_ARR[2]);
-	    var b11 = (bigIntCommon.bigIntLoad4(b, 28) >> bigIntCommon.BIG_ARR[7]);
-	    var c0 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(c, 0);
-	    var c1 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(c, 2) >> bigIntCommon.BIG_ARR[5]);
-	    var c2 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(c, 5) >> bigIntCommon.BIG_ARR[2]);
-	    var c3 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(c, 7) >> bigIntCommon.BIG_ARR[7]);
-	    var c4 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(c, 10) >> bigIntCommon.BIG_ARR[4]);
-	    var c5 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(c, 13) >> bigIntCommon.BIG_ARR[1]);
-	    var c6 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(c, 15) >> bigIntCommon.BIG_ARR[6]);
-	    var c7 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(c, 18) >> bigIntCommon.BIG_ARR[3]);
-	    var c8 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(c, 21);
-	    var c9 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(c, 23) >> bigIntCommon.BIG_ARR[5]);
-	    var c10 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(c, 26) >> bigIntCommon.BIG_ARR[2]);
-	    var c11 = (bigIntCommon.bigIntLoad4(c, 28) >> bigIntCommon.BIG_ARR[7]);
+	    var a0 = bigIntCommon.BIG_2097151 & bigIntHelper.BigIntHelper.read3(a, 0);
+	    var a1 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(a, 2) >> bigIntCommon.BIG_ARR[5]);
+	    var a2 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(a, 5) >> bigIntCommon.BIG_ARR[2]);
+	    var a3 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(a, 7) >> bigIntCommon.BIG_ARR[7]);
+	    var a4 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(a, 10) >> bigIntCommon.BIG_ARR[4]);
+	    var a5 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(a, 13) >> bigIntCommon.BIG_ARR[1]);
+	    var a6 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(a, 15) >> bigIntCommon.BIG_ARR[6]);
+	    var a7 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(a, 18) >> bigIntCommon.BIG_ARR[3]);
+	    var a8 = bigIntCommon.BIG_2097151 & bigIntHelper.BigIntHelper.read3(a, 21);
+	    var a9 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(a, 23) >> bigIntCommon.BIG_ARR[5]);
+	    var a10 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(a, 26) >> bigIntCommon.BIG_ARR[2]);
+	    var a11 = (bigIntHelper.BigIntHelper.read4(a, 28) >> bigIntCommon.BIG_ARR[7]);
+	    var b0 = bigIntCommon.BIG_2097151 & bigIntHelper.BigIntHelper.read3(b, 0);
+	    var b1 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(b, 2) >> bigIntCommon.BIG_ARR[5]);
+	    var b2 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(b, 5) >> bigIntCommon.BIG_ARR[2]);
+	    var b3 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(b, 7) >> bigIntCommon.BIG_ARR[7]);
+	    var b4 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(b, 10) >> bigIntCommon.BIG_ARR[4]);
+	    var b5 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(b, 13) >> bigIntCommon.BIG_ARR[1]);
+	    var b6 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(b, 15) >> bigIntCommon.BIG_ARR[6]);
+	    var b7 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(b, 18) >> bigIntCommon.BIG_ARR[3]);
+	    var b8 = bigIntCommon.BIG_2097151 & bigIntHelper.BigIntHelper.read3(b, 21);
+	    var b9 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(b, 23) >> bigIntCommon.BIG_ARR[5]);
+	    var b10 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(b, 26) >> bigIntCommon.BIG_ARR[2]);
+	    var b11 = (bigIntHelper.BigIntHelper.read4(b, 28) >> bigIntCommon.BIG_ARR[7]);
+	    var c0 = bigIntCommon.BIG_2097151 & bigIntHelper.BigIntHelper.read3(c, 0);
+	    var c1 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(c, 2) >> bigIntCommon.BIG_ARR[5]);
+	    var c2 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(c, 5) >> bigIntCommon.BIG_ARR[2]);
+	    var c3 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(c, 7) >> bigIntCommon.BIG_ARR[7]);
+	    var c4 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(c, 10) >> bigIntCommon.BIG_ARR[4]);
+	    var c5 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(c, 13) >> bigIntCommon.BIG_ARR[1]);
+	    var c6 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(c, 15) >> bigIntCommon.BIG_ARR[6]);
+	    var c7 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(c, 18) >> bigIntCommon.BIG_ARR[3]);
+	    var c8 = bigIntCommon.BIG_2097151 & bigIntHelper.BigIntHelper.read3(c, 21);
+	    var c9 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(c, 23) >> bigIntCommon.BIG_ARR[5]);
+	    var c10 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(c, 26) >> bigIntCommon.BIG_ARR[2]);
+	    var c11 = (bigIntHelper.BigIntHelper.read4(c, 28) >> bigIntCommon.BIG_ARR[7]);
 	    var carry = new BigInt64Array(32);
 	    var s0 = c0 + (a0 * b0);
 	    var s1 = c1 + (a0 * b1) + (a1 * b0);
@@ -3448,30 +3525,30 @@
 	 * @param s s[0]+256*s[1]+...+256^63*s[63] = s
 	 */
 	function scalarReduce(out, s) {
-	    var s0 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(s, 0);
-	    var s1 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 2) >> bigIntCommon.BIG_ARR[5]);
-	    var s2 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 5) >> bigIntCommon.BIG_ARR[2]);
-	    var s3 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 7) >> bigIntCommon.BIG_ARR[7]);
-	    var s4 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 10) >> bigIntCommon.BIG_ARR[4]);
-	    var s5 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 13) >> bigIntCommon.BIG_ARR[1]);
-	    var s6 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 15) >> bigIntCommon.BIG_ARR[6]);
-	    var s7 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 18) >> bigIntCommon.BIG_ARR[3]);
-	    var s8 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(s, 21);
-	    var s9 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 23) >> bigIntCommon.BIG_ARR[5]);
-	    var s10 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 26) >> bigIntCommon.BIG_ARR[2]);
-	    var s11 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 28) >> bigIntCommon.BIG_ARR[7]);
-	    var s12 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 31) >> bigIntCommon.BIG_ARR[4]);
-	    var s13 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 34) >> bigIntCommon.BIG_ARR[1]);
-	    var s14 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 36) >> bigIntCommon.BIG_ARR[6]);
-	    var s15 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 39) >> bigIntCommon.BIG_ARR[3]);
-	    var s16 = bigIntCommon.BIG_2097151 & bigIntCommon.bigIntLoad3(s, 42);
-	    var s17 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 44) >> bigIntCommon.BIG_ARR[5]);
-	    var s18 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 47) >> bigIntCommon.BIG_ARR[2]);
-	    var s19 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 49) >> bigIntCommon.BIG_ARR[7]);
-	    var s20 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 52) >> bigIntCommon.BIG_ARR[4]);
-	    var s21 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad3(s, 55) >> bigIntCommon.BIG_ARR[1]);
-	    var s22 = bigIntCommon.BIG_2097151 & (bigIntCommon.bigIntLoad4(s, 57) >> bigIntCommon.BIG_ARR[6]);
-	    var s23 = (bigIntCommon.bigIntLoad4(s, 60) >> bigIntCommon.BIG_ARR[3]);
+	    var s0 = bigIntCommon.BIG_2097151 & bigIntHelper.BigIntHelper.read3(s, 0);
+	    var s1 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(s, 2) >> bigIntCommon.BIG_ARR[5]);
+	    var s2 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(s, 5) >> bigIntCommon.BIG_ARR[2]);
+	    var s3 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(s, 7) >> bigIntCommon.BIG_ARR[7]);
+	    var s4 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(s, 10) >> bigIntCommon.BIG_ARR[4]);
+	    var s5 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(s, 13) >> bigIntCommon.BIG_ARR[1]);
+	    var s6 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(s, 15) >> bigIntCommon.BIG_ARR[6]);
+	    var s7 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(s, 18) >> bigIntCommon.BIG_ARR[3]);
+	    var s8 = bigIntCommon.BIG_2097151 & bigIntHelper.BigIntHelper.read3(s, 21);
+	    var s9 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(s, 23) >> bigIntCommon.BIG_ARR[5]);
+	    var s10 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(s, 26) >> bigIntCommon.BIG_ARR[2]);
+	    var s11 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(s, 28) >> bigIntCommon.BIG_ARR[7]);
+	    var s12 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(s, 31) >> bigIntCommon.BIG_ARR[4]);
+	    var s13 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(s, 34) >> bigIntCommon.BIG_ARR[1]);
+	    var s14 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(s, 36) >> bigIntCommon.BIG_ARR[6]);
+	    var s15 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(s, 39) >> bigIntCommon.BIG_ARR[3]);
+	    var s16 = bigIntCommon.BIG_2097151 & bigIntHelper.BigIntHelper.read3(s, 42);
+	    var s17 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(s, 44) >> bigIntCommon.BIG_ARR[5]);
+	    var s18 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(s, 47) >> bigIntCommon.BIG_ARR[2]);
+	    var s19 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(s, 49) >> bigIntCommon.BIG_ARR[7]);
+	    var s20 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(s, 52) >> bigIntCommon.BIG_ARR[4]);
+	    var s21 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read3(s, 55) >> bigIntCommon.BIG_ARR[1]);
+	    var s22 = bigIntCommon.BIG_2097151 & (bigIntHelper.BigIntHelper.read4(s, 57) >> bigIntCommon.BIG_ARR[6]);
+	    var s23 = (bigIntHelper.BigIntHelper.read4(s, 60) >> bigIntCommon.BIG_ARR[3]);
 	    s11 += s23 * bigIntCommon.BIG_666643;
 	    s12 += s23 * bigIntCommon.BIG_470296;
 	    s13 += s23 * bigIntCommon.BIG_654183;
@@ -3750,7 +3827,7 @@
 	 */
 	function scalarMinimal(scalar) {
 	    for (var i = 3; i >= 0; i--) {
-	        var v = bigIntCommon.bigIntLoad8(scalar, i * 8);
+	        var v = bigIntHelper.BigIntHelper.read8(scalar, i * 8);
 	        if (v > _const.CONST_ORDER[i]) {
 	            return false;
 	        }
@@ -4743,47 +4820,11 @@
 
 	});
 
-	var randomHelper = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.RandomHelper = void 0;
-	/**
-	 * Class to help with random generation.
-	 */
-	var RandomHelper = /** @class */ (function () {
-	    function RandomHelper() {
-	    }
-	    /**
-	     * Generate a new random array.
-	     * @param length The length of buffer to create.
-	     * @returns The random array.
-	     */
-	    RandomHelper.generate = function (length) {
-	        var _a;
-	        var randomBytes;
-	        if ((_a = globalThis.crypto) === null || _a === void 0 ? void 0 : _a.getRandomValues) {
-	            randomBytes = new Uint8Array(length);
-	            globalThis.crypto.getRandomValues(randomBytes);
-	        }
-	        else if (typeof commonjsRequire !== "undefined") {
-	            // eslint-disable-next-line @typescript-eslint/no-var-requires,@typescript-eslint/no-require-imports
-	            var crypto_1 = require$$0__default['default'];
-	            randomBytes = crypto_1.randomBytes(length);
-	        }
-	        else {
-	            throw new TypeError("No random method available");
-	        }
-	        return randomBytes;
-	    };
-	    return RandomHelper;
-	}());
-	exports.RandomHelper = RandomHelper;
-
-	});
-
 	var readStream = createCommonjsModule(function (module, exports) {
-	/* eslint-disable no-bitwise */
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ReadStream = void 0;
+	/* eslint-disable no-bitwise */
+
 
 	/**
 	 * Keep track of the read index within a stream.
@@ -4923,8 +4964,7 @@
 	        if (!this.hasRemaining(8)) {
 	            throw new Error(name + " length " + 8 + " exceeds the remaining data " + this.unused());
 	        }
-	        // We reverse the string conversion as this is LE
-	        var val = BigInt("0x" + converter.Converter.bytesToHex(this._storage, this._readIndex, 8, true));
+	        var val = bigIntHelper.BigIntHelper.read8(this._storage, this._readIndex);
 	        if (moveIndex) {
 	            this._readIndex += 8;
 	        }
@@ -5393,73 +5433,11 @@
 
 	});
 
-	var zeroPowProvider = createCommonjsModule(function (module, exports) {
-	var __awaiter = (commonjsGlobal && commonjsGlobal.__awaiter) || function (thisArg, _arguments, P, generator) {
-	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-	    return new (P || (P = Promise))(function (resolve, reject) {
-	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-	        step((generator = generator.apply(thisArg, _arguments || [])).next());
-	    });
-	};
-	var __generator = (commonjsGlobal && commonjsGlobal.__generator) || function (thisArg, body) {
-	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-	    function verb(n) { return function (v) { return step([n, v]); }; }
-	    function step(op) {
-	        if (f) throw new TypeError("Generator is already executing.");
-	        while (_) try {
-	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-	            if (y = 0, t) op = [op[0] & 2, t.value];
-	            switch (op[0]) {
-	                case 0: case 1: t = op; break;
-	                case 4: _.label++; return { value: op[1], done: false };
-	                case 5: _.label++; y = op[1]; op = [0]; continue;
-	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-	                default:
-	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-	                    if (t[2]) _.ops.pop();
-	                    _.trys.pop(); continue;
-	            }
-	            op = body.call(thisArg, _);
-	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-	    }
-	};
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.ZeroPowProvider = void 0;
-	/**
-	 * Zero POW Provider which does nothing.
-	 */
-	var ZeroPowProvider = /** @class */ (function () {
-	    function ZeroPowProvider() {
-	    }
-	    /**
-	     * Perform pow on the message and return the nonce.
-	     * @param message The message to process.
-	     * @returns The nonce.
-	     */
-	    ZeroPowProvider.prototype.doPow = function (message) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, BigInt(0)];
-	            });
-	        });
-	    };
-	    return ZeroPowProvider;
-	}());
-	exports.ZeroPowProvider = ZeroPowProvider;
-
-	});
-
 	var writeStream = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.WriteStream = void 0;
 	/* eslint-disable no-bitwise */
+
 
 
 	/**
@@ -5582,9 +5560,7 @@
 	     */
 	    WriteStream.prototype.writeUInt64 = function (name, val) {
 	        this.expand(8);
-	        var hex = val.toString(16).padStart(16, "0");
-	        var arr = converter.Converter.hexToBytes(hex, true);
-	        this._storage.set(arr, this._writeIndex);
+	        bigIntHelper.BigIntHelper.write8(val, this._storage, this._writeIndex);
 	        this._writeIndex += 8;
 	    };
 	    /**
@@ -5666,7 +5642,6 @@
 
 
 
-
 	/**
 	 * Client for API communication.
 	 */
@@ -5681,7 +5656,7 @@
 	            throw new Error("The endpoint is not in the correct format");
 	        }
 	        this._endpoint = endpoint.replace(/\/+$/, "");
-	        this._powProvider = powProvider !== null && powProvider !== void 0 ? powProvider : new zeroPowProvider.ZeroPowProvider();
+	        this._powProvider = powProvider;
 	    }
 	    /**
 	     * Get the health of the node.
@@ -5771,23 +5746,27 @@
 	     */
 	    SingleNodeClient.prototype.messageSubmit = function (message$1) {
 	        return __awaiter(this, void 0, void 0, function () {
-	            var writeStream$1, messageBytes, _a, response;
-	            return __generator(this, function (_b) {
-	                switch (_b.label) {
+	            var targetScore, writeStream$1, messageBytes, nonce, response;
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
 	                    case 0:
-	                        if (!(this._powProvider &&
-	                            (!message$1.nonce || message$1.nonce.length === 0))) return [3 /*break*/, 2];
+	                        if (!(!message$1.nonce || message$1.nonce.length === 0)) return [3 /*break*/, 3];
+	                        if (!this._powProvider) return [3 /*break*/, 2];
+	                        targetScore = 100;
 	                        writeStream$1 = new writeStream.WriteStream();
 	                        message.serializeMessage(writeStream$1, message$1);
 	                        messageBytes = writeStream$1.finalBytes();
-	                        _a = message$1;
-	                        return [4 /*yield*/, this._powProvider.doPow(messageBytes)];
+	                        return [4 /*yield*/, this._powProvider.pow(messageBytes, targetScore)];
 	                    case 1:
-	                        _a.nonce = (_b.sent()).toString(10);
-	                        _b.label = 2;
-	                    case 2: return [4 /*yield*/, this.fetchJson("post", "/api/v1/messages", message$1)];
-	                    case 3:
-	                        response = _b.sent();
+	                        nonce = _a.sent();
+	                        message$1.nonce = nonce.toString(10);
+	                        return [3 /*break*/, 3];
+	                    case 2:
+	                        message$1.nonce = "0";
+	                        _a.label = 3;
+	                    case 3: return [4 /*yield*/, this.fetchJson("post", "/api/v1/messages", message$1)];
+	                    case 4:
+	                        response = _a.sent();
 	                        return [2 /*return*/, response.messageId];
 	                }
 	            });
@@ -5800,17 +5779,16 @@
 	     */
 	    SingleNodeClient.prototype.messageSubmitRaw = function (message) {
 	        return __awaiter(this, void 0, void 0, function () {
-	            var nonce, hex, nonceBytes, response;
+	            var targetScore, nonce, response;
 	            return __generator(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
-	                        if (!(this._powProvider && arrayHelper.ArrayHelper.equal(message.slice(-8), SingleNodeClient.NONCE_ZERO))) return [3 /*break*/, 2];
-	                        return [4 /*yield*/, this._powProvider.doPow(message)];
+	                        if (!(arrayHelper.ArrayHelper.equal(message.slice(-8), SingleNodeClient.NONCE_ZERO) && this._powProvider)) return [3 /*break*/, 2];
+	                        targetScore = 100;
+	                        return [4 /*yield*/, this._powProvider.pow(message, targetScore)];
 	                    case 1:
 	                        nonce = _a.sent();
-	                        hex = nonce.toString(16).padStart(16, "0");
-	                        nonceBytes = converter.Converter.hexToBytes(hex, true);
-	                        message.set(nonceBytes, message.length - 8);
+	                        bigIntHelper.BigIntHelper.write8(nonce, message, message.length - 8);
 	                        _a.label = 2;
 	                    case 2: return [4 /*yield*/, this.fetchBinary("post", "/api/v1/messages", message)];
 	                    case 3:
@@ -6351,6 +6329,108 @@
 	    return Bip32Path;
 	}());
 	exports.Bip32Path = Bip32Path;
+
+	});
+
+	var curl = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.Curl = void 0;
+	/* eslint-disable no-bitwise */
+	/**
+	 * Class to implement Curl sponge.
+	 * @internal
+	 */
+	var Curl = /** @class */ (function () {
+	    /**
+	     * Create a new instance of Curl.
+	     * @param rounds The number of rounds to perform.
+	     */
+	    function Curl(rounds) {
+	        if (rounds === void 0) { rounds = Curl.NUMBER_OF_ROUNDS; }
+	        if (rounds !== 27 && rounds !== 81) {
+	            throw new Error("Illegal number of rounds. Only `27` and `81` rounds are supported.");
+	        }
+	        this._state = new Int8Array(Curl.STATE_LENGTH);
+	        this._rounds = rounds;
+	    }
+	    /**
+	     * Resets the state
+	     */
+	    Curl.prototype.reset = function () {
+	        this._state = new Int8Array(Curl.STATE_LENGTH);
+	    };
+	    /**
+	     * Get the state of the sponge.
+	     * @param len The length of the state to get.
+	     * @returns The state.
+	     */
+	    Curl.prototype.rate = function (len) {
+	        if (len === void 0) { len = Curl.HASH_LENGTH; }
+	        return this._state.slice(0, len);
+	    };
+	    /**
+	     * Absorbs trits given an offset and length
+	     * @param trits The trits to absorb.
+	     * @param offset The offset to start abororbing from the array.
+	     * @param length The length of trits to absorb.
+	     */
+	    Curl.prototype.absorb = function (trits, offset, length) {
+	        do {
+	            var limit = length < Curl.HASH_LENGTH ? length : Curl.HASH_LENGTH;
+	            this._state.set(trits.subarray(offset, offset + limit));
+	            this.transform();
+	            length -= Curl.HASH_LENGTH;
+	            offset += limit;
+	        } while (length > 0);
+	    };
+	    /**
+	     * Squeezes trits given an offset and length
+	     * @param trits The trits to squeeze.
+	     * @param offset The offset to start squeezing from the array.
+	     * @param length The length of trits to squeeze.
+	     */
+	    Curl.prototype.squeeze = function (trits, offset, length) {
+	        do {
+	            var limit = length < Curl.HASH_LENGTH ? length : Curl.HASH_LENGTH;
+	            trits.set(this._state.subarray(0, limit), offset);
+	            this.transform();
+	            length -= Curl.HASH_LENGTH;
+	            offset += limit;
+	        } while (length > 0);
+	    };
+	    /**
+	     * Sponge transform function
+	     */
+	    Curl.prototype.transform = function () {
+	        var stateCopy;
+	        var index = 0;
+	        for (var round = 0; round < this._rounds; round++) {
+	            stateCopy = this._state.slice();
+	            for (var i = 0; i < Curl.STATE_LENGTH; i++) {
+	                this._state[i] =
+	                    Curl.TRUTH_TABLE[stateCopy[index] + (stateCopy[(index += index < 365 ? 364 : -365)] << 2) + 5];
+	            }
+	        }
+	    };
+	    /**
+	     * The Hash Length
+	     */
+	    Curl.HASH_LENGTH = 243;
+	    /**
+	     * The State Length.
+	     */
+	    Curl.STATE_LENGTH = 3 * Curl.HASH_LENGTH;
+	    /**
+	     * The default number of rounds.
+	     */
+	    Curl.NUMBER_OF_ROUNDS = 81;
+	    /**
+	     * Truth Table.
+	     */
+	    Curl.TRUTH_TABLE = [1, 0, -1, 2, 1, -1, 0, 2, -1, 1, 0];
+	    return Curl;
+	}());
+	exports.Curl = Curl;
 
 	});
 
@@ -7733,6 +7813,11 @@
 
 	});
 
+	var IPowProvider = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
 	var IReferenceUnlockBlock = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
@@ -7773,6 +7858,281 @@
 
 	});
 
+	var b1t6 = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.B1T6 = void 0;
+	/* eslint-disable no-bitwise */
+	/**
+	 * Class implements the b1t6 encoding encoding which uses a group of 6 trits to encode each byte.
+	 */
+	var B1T6 = /** @class */ (function () {
+	    function B1T6() {
+	    }
+	    /**
+	     * The encoded length of the data.
+	     * @param data The data.
+	     * @returns The encoded length.
+	     */
+	    B1T6.encodedLen = function (data) {
+	        return data.length * B1T6.TRITS_PER_TRYTE;
+	    };
+	    /**
+	     * Encode a byte array into trits.
+	     * @param dst The destination array.
+	     * @param startIndex The start index to write in the array.
+	     * @param src The source data.
+	     * @returns The length of the encode.
+	     */
+	    B1T6.encode = function (dst, startIndex, src) {
+	        var j = 0;
+	        for (var i = 0; i < src.length; i++) {
+	            var _a = B1T6.encodeGroup(src[i]), t1 = _a.t1, t2 = _a.t2;
+	            B1T6.storeTrits(dst, startIndex + j, t1);
+	            B1T6.storeTrits(dst, startIndex + j + B1T6.TRITS_PER_TRYTE, t2);
+	            j += 6;
+	        }
+	        return j;
+	    };
+	    /**
+	     * Encode a group to trits.
+	     * @param b The value to encode.
+	     * @returns The trit groups.
+	     */
+	    B1T6.encodeGroup = function (b) {
+	        var v = (b << 24 >> 24) + (B1T6.TRYTE_RADIX_HALF * B1T6.TRYTE_RADIX) + B1T6.TRYTE_RADIX_HALF;
+	        var quo = Math.trunc(v / 27);
+	        var rem = Math.trunc(v % 27);
+	        return {
+	            t1: rem + B1T6.MIN_TRYTE_VALUE,
+	            t2: quo + B1T6.MIN_TRYTE_VALUE
+	        };
+	    };
+	    /**
+	     * Store the trits in the dest array.
+	     * @param trits The trits array.
+	     * @param startIndex The start index in the array to write.
+	     * @param value The value to write.
+	     */
+	    B1T6.storeTrits = function (trits, startIndex, value) {
+	        var idx = value - B1T6.MIN_TRYTE_VALUE;
+	        trits[startIndex] = B1T6.TRYTE_VALUE_TO_TRITS[idx][0];
+	        trits[startIndex + 1] = B1T6.TRYTE_VALUE_TO_TRITS[idx][1];
+	        trits[startIndex + 2] = B1T6.TRYTE_VALUE_TO_TRITS[idx][2];
+	    };
+	    /**
+	     * Trytes to trits lookup table.
+	     * @internal
+	     */
+	    B1T6.TRYTE_VALUE_TO_TRITS = [
+	        [-1, -1, -1], [0, -1, -1], [1, -1, -1], [-1, 0, -1], [0, 0, -1], [1, 0, -1],
+	        [-1, 1, -1], [0, 1, -1], [1, 1, -1], [-1, -1, 0], [0, -1, 0], [1, -1, 0],
+	        [-1, 0, 0], [0, 0, 0], [1, 0, 0], [-1, 1, 0], [0, 1, 0], [1, 1, 0],
+	        [-1, -1, 1], [0, -1, 1], [1, -1, 1], [-1, 0, 1], [0, 0, 1], [1, 0, 1],
+	        [-1, 1, 1], [0, 1, 1], [1, 1, 1]
+	    ];
+	    /**
+	     * Minimum tryte value.
+	     */
+	    B1T6.MIN_TRYTE_VALUE = -13;
+	    /**
+	     * Radix for trytes.
+	     */
+	    B1T6.TRYTE_RADIX = 27;
+	    /**
+	     * Galf radix for trytes to save recalculating.
+	     */
+	    B1T6.TRYTE_RADIX_HALF = 13;
+	    /**
+	     * Trites per tryte.
+	     */
+	    B1T6.TRITS_PER_TRYTE = 3;
+	    return B1T6;
+	}());
+	exports.B1T6 = B1T6;
+
+	});
+
+	var powHelper = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.PowHelper = void 0;
+	/* eslint-disable no-bitwise */
+
+
+
+
+	/**
+	 * Helper methods for POW.
+	 */
+	var PowHelper = /** @class */ (function () {
+	    function PowHelper() {
+	    }
+	    /**
+	     * Perform the score calculation.
+	     * @param message The data to perform the score on
+	     * @returns The score for the data.
+	     */
+	    PowHelper.score = function (message) {
+	        // the PoW digest is the hash of msg without the nonce
+	        var powRelevantData = message.slice(0, -8);
+	        var powDigest = blake2b.Blake2b.sum256(powRelevantData);
+	        var nonce = bigIntHelper.BigIntHelper.read8(message, message.length - 8);
+	        var zeros = PowHelper.trailingZeros(powDigest, nonce);
+	        return Math.pow(3, zeros) / message.length;
+	    };
+	    /**
+	     * Calculate the trailing zeros.
+	     * @param powDigest The pow digest.
+	     * @param nonce The nonce.
+	     * @returns The trailing zeros.
+	     * @internal
+	     */
+	    PowHelper.trailingZeros = function (powDigest, nonce) {
+	        // allocate exactly one Curl block
+	        var buf = new Int8Array(243);
+	        var n = b1t6.B1T6.encode(buf, 0, powDigest);
+	        // add the nonce to the trit buffer
+	        PowHelper.encodeNonce(buf, n, nonce);
+	        var curl$1 = new curl.Curl();
+	        curl$1.absorb(buf, 0, buf.length);
+	        var digest = new Int8Array(243);
+	        curl$1.squeeze(digest, 0, digest.length);
+	        return PowHelper.trinaryTrailingZeros(digest);
+	    };
+	    /**
+	     * Find the number of trailing zeros.
+	     * @param trits The trits to look for zeros.
+	     * @returns The number of trailing zeros.
+	     * @internal
+	     */
+	    PowHelper.trinaryTrailingZeros = function (trits) {
+	        var z = 0;
+	        for (var i = trits.length - 1; i >= 0 && trits[i] === 0; i--) {
+	            z++;
+	        }
+	        return z;
+	    };
+	    /**
+	     * Encodes nonce as 48 trits using the b1t6 encoding.
+	     * @param dst The destination buffer.
+	     * @param startIndex The start index;
+	     * @param nonce The nonce to encode.
+	     * @internal
+	     */
+	    PowHelper.encodeNonce = function (dst, startIndex, nonce) {
+	        var arr = new Uint8Array(8);
+	        bigIntHelper.BigIntHelper.write8(nonce, arr, 0);
+	        b1t6.B1T6.encode(dst, startIndex, arr);
+	    };
+	    return PowHelper;
+	}());
+	exports.PowHelper = PowHelper;
+
+	});
+
+	var localPowProvider = createCommonjsModule(function (module, exports) {
+	var __awaiter = (commonjsGlobal && commonjsGlobal.__awaiter) || function (thisArg, _arguments, P, generator) {
+	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+	    return new (P || (P = Promise))(function (resolve, reject) {
+	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+	        step((generator = generator.apply(thisArg, _arguments || [])).next());
+	    });
+	};
+	var __generator = (commonjsGlobal && commonjsGlobal.__generator) || function (thisArg, body) {
+	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+	    function verb(n) { return function (v) { return step([n, v]); }; }
+	    function step(op) {
+	        if (f) throw new TypeError("Generator is already executing.");
+	        while (_) try {
+	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+	            if (y = 0, t) op = [op[0] & 2, t.value];
+	            switch (op[0]) {
+	                case 0: case 1: t = op; break;
+	                case 4: _.label++; return { value: op[1], done: false };
+	                case 5: _.label++; y = op[1]; op = [0]; continue;
+	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+	                default:
+	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+	                    if (t[2]) _.ops.pop();
+	                    _.trys.pop(); continue;
+	            }
+	            op = body.call(thisArg, _);
+	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+	    }
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.LocalPowProvider = void 0;
+
+
+
+
+	/**
+	 * Local POW Provider.
+	 * WARNING - This is really slow.
+	 */
+	var LocalPowProvider = /** @class */ (function () {
+	    function LocalPowProvider() {
+	        /**
+	         * LN3 Const see https://oeis.org/A002391
+	         */
+	        this.LN3 = 1.098612288668109691395245236922525704647490557822749451734694333;
+	    }
+	    /**
+	     * Perform pow on the message and return the nonce of at least targetScore.
+	     * @param message The message to process.
+	     * @param targetScore the target score.
+	     * @returns The nonce.
+	     */
+	    LocalPowProvider.prototype.pow = function (message, targetScore) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            var powRelevantData, powDigest, targetZeros;
+	            return __generator(this, function (_a) {
+	                powRelevantData = message.slice(0, -8);
+	                powDigest = blake2b.Blake2b.sum256(powRelevantData);
+	                targetZeros = Math.ceil(Math.log((powRelevantData.length + 8) * targetScore) / this.LN3);
+	                return [2 /*return*/, this.worker(powDigest, targetZeros)];
+	            });
+	        });
+	    };
+	    /**
+	     * Perform the hash on the data until we reach target number of zeros.
+	     * @param powDigest The pow digest.
+	     * @param target The target number of zeros.
+	     * @returns The nonce.
+	     * @internal
+	     */
+	    LocalPowProvider.prototype.worker = function (powDigest, target) {
+	        var curl$1 = new curl.Curl();
+	        var hash = new Int8Array(curl.Curl.HASH_LENGTH);
+	        var buf = new Int8Array(curl.Curl.HASH_LENGTH);
+	        b1t6.B1T6.encode(buf, 0, powDigest);
+	        var digestTritsLen = b1t6.B1T6.encodedLen(powDigest);
+	        var nonce = BigInt(0);
+	        var returnNonce;
+	        do {
+	            powHelper.PowHelper.encodeNonce(buf, digestTritsLen, nonce);
+	            curl$1.reset();
+	            curl$1.absorb(buf, 0, curl.Curl.HASH_LENGTH);
+	            curl$1.squeeze(hash, 0, curl.Curl.HASH_LENGTH);
+	            if (powHelper.PowHelper.trinaryTrailingZeros(hash) >= target) {
+	                returnNonce = nonce;
+	            }
+	            nonce++;
+	        } while (returnNonce === undefined);
+	        return returnNonce !== null && returnNonce !== void 0 ? returnNonce : BigInt(0);
+	    };
+	    return LocalPowProvider;
+	}());
+	exports.LocalPowProvider = LocalPowProvider;
+
+	});
+
 	var bech32Helper = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Bech32Helper = void 0;
@@ -7788,24 +8148,28 @@
 	     * Encode an address to bech32.
 	     * @param addressType The address type to encode.
 	     * @param addressBytes The address bytes to encode.
+	     * @param humanReadablePart The human readable part to use.
 	     * @returns The array formated as hex.
 	     */
-	    Bech32Helper.toBech32 = function (addressType, addressBytes) {
+	    Bech32Helper.toBech32 = function (addressType, addressBytes, humanReadablePart) {
+	        if (humanReadablePart === void 0) { humanReadablePart = Bech32Helper.BECH32_DEFAULT_HRP; }
 	        var addressData = new Uint8Array(1 + addressBytes.length);
 	        addressData[0] = addressType;
 	        addressData.set(addressBytes, 1);
-	        return bech32.Bech32.encode(Bech32Helper.BECH32_HRP, addressData);
+	        return bech32.Bech32.encode(humanReadablePart, addressData);
 	    };
 	    /**
 	     * Decode an address from bech32.
 	     * @param bech32Text The bech32 text to decode.
+	     * @param humanReadablePart The human readable part to use.
 	     * @returns The address type and address bytes or undefined if it cannot be decoded.
 	     */
-	    Bech32Helper.fromBech32 = function (bech32Text) {
+	    Bech32Helper.fromBech32 = function (bech32Text, humanReadablePart) {
+	        if (humanReadablePart === void 0) { humanReadablePart = Bech32Helper.BECH32_DEFAULT_HRP; }
 	        var decoded = bech32.Bech32.decode(bech32Text);
 	        if (decoded) {
-	            if (decoded.humanReadablePart !== Bech32Helper.BECH32_HRP) {
-	                throw new Error("The hrp part of the address should be " + Bech32Helper.BECH32_HRP + ", it is " + decoded.humanReadablePart);
+	            if (decoded.humanReadablePart !== humanReadablePart) {
+	                throw new Error("The hrp part of the address should be " + humanReadablePart + ", it is " + decoded.humanReadablePart);
 	            }
 	            if (decoded.data.length === 0) {
 	                throw new Error("The data part of the address should be at least length 1, it is 0");
@@ -7821,15 +8185,17 @@
 	    /**
 	     * Does the provided string look like it might be an bech32 address with matching hrp.
 	     * @param bech32Text The bech32 text to text.
+	     * @param humanReadablePart The human readable part to match.
 	     * @returns True.
 	     */
-	    Bech32Helper.matches = function (bech32Text) {
-	        return bech32.Bech32.matches(Bech32Helper.BECH32_HRP, bech32Text);
+	    Bech32Helper.matches = function (bech32Text, humanReadablePart) {
+	        if (humanReadablePart === void 0) { humanReadablePart = Bech32Helper.BECH32_DEFAULT_HRP; }
+	        return bech32.Bech32.matches(humanReadablePart, bech32Text);
 	    };
 	    /**
 	     * The human readable part of the bech32 addresses.
 	     */
-	    Bech32Helper.BECH32_HRP = "iot";
+	    Bech32Helper.BECH32_DEFAULT_HRP = "iot";
 	    return Bech32Helper;
 	}());
 	exports.Bech32Helper = Bech32Helper;
@@ -8037,6 +8403,7 @@
 	__exportStar(bech32, exports);
 	__exportStar(bip32Path, exports);
 	__exportStar(blake2b, exports);
+	__exportStar(curl, exports);
 	__exportStar(ed25519, exports);
 	__exportStar(ed25519Address, exports);
 	__exportStar(ed25519Seed, exports);
@@ -8076,6 +8443,7 @@
 	__exportStar(IMilestonePayload, exports);
 	__exportStar(IMqttClient, exports);
 	__exportStar(IMqttStatus, exports);
+	__exportStar(IPowProvider, exports);
 	__exportStar(IReferenceUnlockBlock, exports);
 	__exportStar(ISeed, exports);
 	__exportStar(ISigLockedSingleOutput, exports);
@@ -8084,11 +8452,13 @@
 	__exportStar(ITransactionPayload, exports);
 	__exportStar(ITypeBase, exports);
 	__exportStar(IUTXOInput, exports);
-	__exportStar(zeroPowProvider, exports);
+	__exportStar(localPowProvider, exports);
 	__exportStar(arrayHelper, exports);
 	__exportStar(bech32Helper, exports);
+	__exportStar(bigIntHelper, exports);
 	__exportStar(converter, exports);
 	__exportStar(logging, exports);
+	__exportStar(powHelper, exports);
 	__exportStar(randomHelper, exports);
 	__exportStar(readStream, exports);
 	__exportStar(writeStream, exports);

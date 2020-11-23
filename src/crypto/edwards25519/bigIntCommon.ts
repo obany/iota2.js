@@ -22,8 +22,6 @@ export const BIG_ARR: bigint[] = [
 ];
 
 /* @internal */
-export const BIG_32: bigint = BigInt(32);
-/* @internal */
 export const BIG_38: bigint = BigInt(38);
 
 /* @internal */
@@ -43,54 +41,3 @@ export const BIG_2097151: bigint = BigInt(2097151);
 /* @internal */
 export const BIG_8388607: bigint = BigInt(8388607);
 
-/**
- * Load 3 bytes from array as bigint.
- * @param data The input array.
- * @param byteOffset The start index to read from.
- * @returns The bigint.
- * @internal
- */
-export function bigIntLoad3(data: Uint8Array, byteOffset: number): bigint {
-    const v0 = (data[byteOffset + 0] +
-        (data[byteOffset + 1] << 8) +
-        (data[byteOffset + 2] << 16)) >>> 0;
-
-    return BigInt(v0);
-}
-
-/**
- * Load 4 bytes from array as bigint.
- * @param data The input array.
- * @param byteOffset The start index to read from.
- * @returns The bigint.
- * @internal
- */
-export function bigIntLoad4(data: Uint8Array, byteOffset: number): bigint {
-    const v0 = (data[byteOffset + 0] +
-        (data[byteOffset + 1] << 8) +
-        (data[byteOffset + 2] << 16) +
-        (data[byteOffset + 3] << 24)) >>> 0;
-
-    return BigInt(v0);
-}
-
-/**
- * Load 8 bytes from array as bigint.
- * @param data The data to read from.
- * @param byteOffset The start index to read from.
- * @returns The bigint.
- * @internal
- */
-export function bigIntLoad8(data: Uint8Array, byteOffset: number): bigint {
-    const v0 = (data[byteOffset + 0] +
-        (data[byteOffset + 1] << 8) +
-        (data[byteOffset + 2] << 16) +
-        (data[byteOffset + 3] << 24)) >>> 0;
-
-    const v1 = (data[byteOffset + 4] +
-        (data[byteOffset + 5] << 8) +
-        (data[byteOffset + 6] << 16) +
-        (data[byteOffset + 7] << 24)) >>> 0;
-
-    return (BigInt(v1) << BIG_32) | BigInt(v0);
-}

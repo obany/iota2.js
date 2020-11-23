@@ -12,27 +12,28 @@ Perform the POW on a message.
 
 ## Implemented by
 
-* [ZeroPowProvider](../classes/zeropowprovider.md)
+* [LocalPowProvider](../classes/localpowprovider.md)
 
 ## Index
 
 ### Methods
 
-* [doPow](ipowprovider.md#dopow)
+* [pow](ipowprovider.md#pow)
 
 ## Methods
 
-### doPow
+### pow
 
-▸ **doPow**(`message`: Uint8Array): Promise\<bigint>
+▸ **pow**(`message`: Uint8Array, `targetScore`: number): Promise\<bigint>
 
-Perform pow on the message and return the nonce.
+Perform pow on the message and return the nonce of at least targetScore.
 
 #### Parameters:
 
 Name | Type | Description |
 ------ | ------ | ------ |
 `message` | Uint8Array | The message to process. |
+`targetScore` | number | the target score. |
 
 **Returns:** Promise\<bigint>
 

@@ -3,9 +3,10 @@
  */
 export interface IPowProvider {
     /**
-     * Perform pow on the message and return the nonce.
+     * Perform pow on the message and return the nonce of at least targetScore.
      * @param message The message to process.
+     * @param targetScore the target score.
      * @returns The nonce.
      */
-    doPow(message: Uint8Array): Promise<bigint>;
+    pow(message: Uint8Array, targetScore: number): Promise<bigint>;
 }

@@ -5,12 +5,9 @@
  * which is an extension of https://github.com/golang/crypto/tree/master/ed25519
  * which in a port of the “ref10” implementation of ed25519 from SUPERCOP
  */
+import { BigIntHelper } from "../../utils/bigIntHelper";
 import {
-    BIG_ARR,
-    BIG_136657, BIG_1_SHIFTL_20, BIG_2097151, BIG_470296, BIG_654183, BIG_666643, BIG_683901, BIG_997805,
-    bigIntLoad3,
-    bigIntLoad4,
-    bigIntLoad8
+    BIG_ARR, BIG_136657, BIG_1_SHIFTL_20, BIG_2097151, BIG_470296, BIG_654183, BIG_666643, BIG_683901, BIG_997805
 } from "./bigIntCommon";
 import { CONST_ORDER } from "./const";
 
@@ -31,42 +28,42 @@ import { CONST_ORDER } from "./const";
  * @param c The c.
  */
 export function scalarMulAdd(s: Uint8Array, a: Uint8Array, b: Uint8Array, c: Uint8Array): void {
-    const a0 = BIG_2097151 & bigIntLoad3(a, 0);
-    const a1 = BIG_2097151 & (bigIntLoad4(a, 2) >> BIG_ARR[5]);
-    const a2 = BIG_2097151 & (bigIntLoad3(a, 5) >> BIG_ARR[2]);
-    const a3 = BIG_2097151 & (bigIntLoad4(a, 7) >> BIG_ARR[7]);
-    const a4 = BIG_2097151 & (bigIntLoad4(a, 10) >> BIG_ARR[4]);
-    const a5 = BIG_2097151 & (bigIntLoad3(a, 13) >> BIG_ARR[1]);
-    const a6 = BIG_2097151 & (bigIntLoad4(a, 15) >> BIG_ARR[6]);
-    const a7 = BIG_2097151 & (bigIntLoad3(a, 18) >> BIG_ARR[3]);
-    const a8 = BIG_2097151 & bigIntLoad3(a, 21);
-    const a9 = BIG_2097151 & (bigIntLoad4(a, 23) >> BIG_ARR[5]);
-    const a10 = BIG_2097151 & (bigIntLoad3(a, 26) >> BIG_ARR[2]);
-    const a11 = (bigIntLoad4(a, 28) >> BIG_ARR[7]);
-    const b0 = BIG_2097151 & bigIntLoad3(b, 0);
-    const b1 = BIG_2097151 & (bigIntLoad4(b, 2) >> BIG_ARR[5]);
-    const b2 = BIG_2097151 & (bigIntLoad3(b, 5) >> BIG_ARR[2]);
-    const b3 = BIG_2097151 & (bigIntLoad4(b, 7) >> BIG_ARR[7]);
-    const b4 = BIG_2097151 & (bigIntLoad4(b, 10) >> BIG_ARR[4]);
-    const b5 = BIG_2097151 & (bigIntLoad3(b, 13) >> BIG_ARR[1]);
-    const b6 = BIG_2097151 & (bigIntLoad4(b, 15) >> BIG_ARR[6]);
-    const b7 = BIG_2097151 & (bigIntLoad3(b, 18) >> BIG_ARR[3]);
-    const b8 = BIG_2097151 & bigIntLoad3(b, 21);
-    const b9 = BIG_2097151 & (bigIntLoad4(b, 23) >> BIG_ARR[5]);
-    const b10 = BIG_2097151 & (bigIntLoad3(b, 26) >> BIG_ARR[2]);
-    const b11 = (bigIntLoad4(b, 28) >> BIG_ARR[7]);
-    const c0 = BIG_2097151 & bigIntLoad3(c, 0);
-    const c1 = BIG_2097151 & (bigIntLoad4(c, 2) >> BIG_ARR[5]);
-    const c2 = BIG_2097151 & (bigIntLoad3(c, 5) >> BIG_ARR[2]);
-    const c3 = BIG_2097151 & (bigIntLoad4(c, 7) >> BIG_ARR[7]);
-    const c4 = BIG_2097151 & (bigIntLoad4(c, 10) >> BIG_ARR[4]);
-    const c5 = BIG_2097151 & (bigIntLoad3(c, 13) >> BIG_ARR[1]);
-    const c6 = BIG_2097151 & (bigIntLoad4(c, 15) >> BIG_ARR[6]);
-    const c7 = BIG_2097151 & (bigIntLoad3(c, 18) >> BIG_ARR[3]);
-    const c8 = BIG_2097151 & bigIntLoad3(c, 21);
-    const c9 = BIG_2097151 & (bigIntLoad4(c, 23) >> BIG_ARR[5]);
-    const c10 = BIG_2097151 & (bigIntLoad3(c, 26) >> BIG_ARR[2]);
-    const c11 = (bigIntLoad4(c, 28) >> BIG_ARR[7]);
+    const a0 = BIG_2097151 & BigIntHelper.read3(a, 0);
+    const a1 = BIG_2097151 & (BigIntHelper.read4(a, 2) >> BIG_ARR[5]);
+    const a2 = BIG_2097151 & (BigIntHelper.read3(a, 5) >> BIG_ARR[2]);
+    const a3 = BIG_2097151 & (BigIntHelper.read4(a, 7) >> BIG_ARR[7]);
+    const a4 = BIG_2097151 & (BigIntHelper.read4(a, 10) >> BIG_ARR[4]);
+    const a5 = BIG_2097151 & (BigIntHelper.read3(a, 13) >> BIG_ARR[1]);
+    const a6 = BIG_2097151 & (BigIntHelper.read4(a, 15) >> BIG_ARR[6]);
+    const a7 = BIG_2097151 & (BigIntHelper.read3(a, 18) >> BIG_ARR[3]);
+    const a8 = BIG_2097151 & BigIntHelper.read3(a, 21);
+    const a9 = BIG_2097151 & (BigIntHelper.read4(a, 23) >> BIG_ARR[5]);
+    const a10 = BIG_2097151 & (BigIntHelper.read3(a, 26) >> BIG_ARR[2]);
+    const a11 = (BigIntHelper.read4(a, 28) >> BIG_ARR[7]);
+    const b0 = BIG_2097151 & BigIntHelper.read3(b, 0);
+    const b1 = BIG_2097151 & (BigIntHelper.read4(b, 2) >> BIG_ARR[5]);
+    const b2 = BIG_2097151 & (BigIntHelper.read3(b, 5) >> BIG_ARR[2]);
+    const b3 = BIG_2097151 & (BigIntHelper.read4(b, 7) >> BIG_ARR[7]);
+    const b4 = BIG_2097151 & (BigIntHelper.read4(b, 10) >> BIG_ARR[4]);
+    const b5 = BIG_2097151 & (BigIntHelper.read3(b, 13) >> BIG_ARR[1]);
+    const b6 = BIG_2097151 & (BigIntHelper.read4(b, 15) >> BIG_ARR[6]);
+    const b7 = BIG_2097151 & (BigIntHelper.read3(b, 18) >> BIG_ARR[3]);
+    const b8 = BIG_2097151 & BigIntHelper.read3(b, 21);
+    const b9 = BIG_2097151 & (BigIntHelper.read4(b, 23) >> BIG_ARR[5]);
+    const b10 = BIG_2097151 & (BigIntHelper.read3(b, 26) >> BIG_ARR[2]);
+    const b11 = (BigIntHelper.read4(b, 28) >> BIG_ARR[7]);
+    const c0 = BIG_2097151 & BigIntHelper.read3(c, 0);
+    const c1 = BIG_2097151 & (BigIntHelper.read4(c, 2) >> BIG_ARR[5]);
+    const c2 = BIG_2097151 & (BigIntHelper.read3(c, 5) >> BIG_ARR[2]);
+    const c3 = BIG_2097151 & (BigIntHelper.read4(c, 7) >> BIG_ARR[7]);
+    const c4 = BIG_2097151 & (BigIntHelper.read4(c, 10) >> BIG_ARR[4]);
+    const c5 = BIG_2097151 & (BigIntHelper.read3(c, 13) >> BIG_ARR[1]);
+    const c6 = BIG_2097151 & (BigIntHelper.read4(c, 15) >> BIG_ARR[6]);
+    const c7 = BIG_2097151 & (BigIntHelper.read3(c, 18) >> BIG_ARR[3]);
+    const c8 = BIG_2097151 & BigIntHelper.read3(c, 21);
+    const c9 = BIG_2097151 & (BigIntHelper.read4(c, 23) >> BIG_ARR[5]);
+    const c10 = BIG_2097151 & (BigIntHelper.read3(c, 26) >> BIG_ARR[2]);
+    const c11 = (BigIntHelper.read4(c, 28) >> BIG_ARR[7]);
 
     const carry = new BigInt64Array(32);
 
@@ -463,30 +460,30 @@ export function scalarMulAdd(s: Uint8Array, a: Uint8Array, b: Uint8Array, c: Uin
  * @param s s[0]+256*s[1]+...+256^63*s[63] = s
  */
 export function scalarReduce(out: Uint8Array, s: Uint8Array): void {
-    let s0 = BIG_2097151 & bigIntLoad3(s, 0);
-    let s1 = BIG_2097151 & (bigIntLoad4(s, 2) >> BIG_ARR[5]);
-    let s2 = BIG_2097151 & (bigIntLoad3(s, 5) >> BIG_ARR[2]);
-    let s3 = BIG_2097151 & (bigIntLoad4(s, 7) >> BIG_ARR[7]);
-    let s4 = BIG_2097151 & (bigIntLoad4(s, 10) >> BIG_ARR[4]);
-    let s5 = BIG_2097151 & (bigIntLoad3(s, 13) >> BIG_ARR[1]);
-    let s6 = BIG_2097151 & (bigIntLoad4(s, 15) >> BIG_ARR[6]);
-    let s7 = BIG_2097151 & (bigIntLoad3(s, 18) >> BIG_ARR[3]);
-    let s8 = BIG_2097151 & bigIntLoad3(s, 21);
-    let s9 = BIG_2097151 & (bigIntLoad4(s, 23) >> BIG_ARR[5]);
-    let s10 = BIG_2097151 & (bigIntLoad3(s, 26) >> BIG_ARR[2]);
-    let s11 = BIG_2097151 & (bigIntLoad4(s, 28) >> BIG_ARR[7]);
-    let s12 = BIG_2097151 & (bigIntLoad4(s, 31) >> BIG_ARR[4]);
-    let s13 = BIG_2097151 & (bigIntLoad3(s, 34) >> BIG_ARR[1]);
-    let s14 = BIG_2097151 & (bigIntLoad4(s, 36) >> BIG_ARR[6]);
-    let s15 = BIG_2097151 & (bigIntLoad3(s, 39) >> BIG_ARR[3]);
-    let s16 = BIG_2097151 & bigIntLoad3(s, 42);
-    let s17 = BIG_2097151 & (bigIntLoad4(s, 44) >> BIG_ARR[5]);
-    let s18 = BIG_2097151 & (bigIntLoad3(s, 47) >> BIG_ARR[2]);
-    let s19 = BIG_2097151 & (bigIntLoad4(s, 49) >> BIG_ARR[7]);
-    let s20 = BIG_2097151 & (bigIntLoad4(s, 52) >> BIG_ARR[4]);
-    let s21 = BIG_2097151 & (bigIntLoad3(s, 55) >> BIG_ARR[1]);
-    let s22 = BIG_2097151 & (bigIntLoad4(s, 57) >> BIG_ARR[6]);
-    let s23 = (bigIntLoad4(s, 60) >> BIG_ARR[3]);
+    let s0 = BIG_2097151 & BigIntHelper.read3(s, 0);
+    let s1 = BIG_2097151 & (BigIntHelper.read4(s, 2) >> BIG_ARR[5]);
+    let s2 = BIG_2097151 & (BigIntHelper.read3(s, 5) >> BIG_ARR[2]);
+    let s3 = BIG_2097151 & (BigIntHelper.read4(s, 7) >> BIG_ARR[7]);
+    let s4 = BIG_2097151 & (BigIntHelper.read4(s, 10) >> BIG_ARR[4]);
+    let s5 = BIG_2097151 & (BigIntHelper.read3(s, 13) >> BIG_ARR[1]);
+    let s6 = BIG_2097151 & (BigIntHelper.read4(s, 15) >> BIG_ARR[6]);
+    let s7 = BIG_2097151 & (BigIntHelper.read3(s, 18) >> BIG_ARR[3]);
+    let s8 = BIG_2097151 & BigIntHelper.read3(s, 21);
+    let s9 = BIG_2097151 & (BigIntHelper.read4(s, 23) >> BIG_ARR[5]);
+    let s10 = BIG_2097151 & (BigIntHelper.read3(s, 26) >> BIG_ARR[2]);
+    let s11 = BIG_2097151 & (BigIntHelper.read4(s, 28) >> BIG_ARR[7]);
+    let s12 = BIG_2097151 & (BigIntHelper.read4(s, 31) >> BIG_ARR[4]);
+    let s13 = BIG_2097151 & (BigIntHelper.read3(s, 34) >> BIG_ARR[1]);
+    let s14 = BIG_2097151 & (BigIntHelper.read4(s, 36) >> BIG_ARR[6]);
+    let s15 = BIG_2097151 & (BigIntHelper.read3(s, 39) >> BIG_ARR[3]);
+    let s16 = BIG_2097151 & BigIntHelper.read3(s, 42);
+    let s17 = BIG_2097151 & (BigIntHelper.read4(s, 44) >> BIG_ARR[5]);
+    let s18 = BIG_2097151 & (BigIntHelper.read3(s, 47) >> BIG_ARR[2]);
+    let s19 = BIG_2097151 & (BigIntHelper.read4(s, 49) >> BIG_ARR[7]);
+    let s20 = BIG_2097151 & (BigIntHelper.read4(s, 52) >> BIG_ARR[4]);
+    let s21 = BIG_2097151 & (BigIntHelper.read3(s, 55) >> BIG_ARR[1]);
+    let s22 = BIG_2097151 & (BigIntHelper.read4(s, 57) >> BIG_ARR[6]);
+    let s23 = (BigIntHelper.read4(s, 60) >> BIG_ARR[3]);
 
     s11 += s23 * BIG_666643;
     s12 += s23 * BIG_470296;
@@ -787,7 +784,7 @@ export function scalarReduce(out: Uint8Array, s: Uint8Array): void {
  */
 export function scalarMinimal(scalar: Uint8Array): boolean {
     for (let i = 3; i >= 0; i--) {
-        const v = bigIntLoad8(scalar, i * 8);
+        const v = BigIntHelper.read8(scalar, i * 8);
 
         if (v > CONST_ORDER[i]) {
             return false;

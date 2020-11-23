@@ -1,9 +1,9 @@
 /* eslint-disable max-len */
-import { Ed25519 } from "../../src/crypto/ed25519";
-import { Zip215 } from "../../src/crypto/zip215";
 import { Blake2b } from "../../src/crypto/blake2b";
+import { Ed25519 } from "../../src/crypto/ed25519";
 import { HmacSha512 } from "../../src/crypto/hmacSha512";
 import { Sha512 } from "../../src/crypto/sha512";
+import { Zip215 } from "../../src/crypto/zip215";
 import { Converter } from "../../src/utils/converter";
 import testData from "./testData.json";
 

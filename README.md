@@ -93,6 +93,16 @@ You can create a MQTT client which once connected can stream the following feeds
 
 You can see the model definitions for all the objects in the [typings](./typings/models) folder.
 
+## Proof of Work
+
+A very simple local proof of work provider [./localPowProvider](./src/pow/localPowProvider.ts) is implemented but not used by default.
+The example is included for reference purposes, but should not be used as it is very slow.
+You can experiment using it or any other PoW implementation by passing it to the constructor of a SingleNodeClient.
+
+```js
+const client = new SingleNodeClient("http://localhost:14265", new LocalPowProvider());
+```
+
 ## More Examples
 
 Please find other examples in the [./examples](./examples) folder.

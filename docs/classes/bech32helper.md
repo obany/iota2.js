@@ -14,7 +14,7 @@ Convert address to bech32.
 
 ### Properties
 
-* [BECH32\_HRP](bech32helper.md#bech32_hrp)
+* [BECH32\_DEFAULT\_HRP](bech32helper.md#bech32_default_hrp)
 
 ### Methods
 
@@ -24,9 +24,9 @@ Convert address to bech32.
 
 ## Properties
 
-### BECH32\_HRP
+### BECH32\_DEFAULT\_HRP
 
-▪ `Static` **BECH32\_HRP**: string = "iot"
+▪ `Static` **BECH32\_DEFAULT\_HRP**: string = "iot"
 
 The human readable part of the bech32 addresses.
 
@@ -34,15 +34,16 @@ The human readable part of the bech32 addresses.
 
 ### fromBech32
 
-▸ `Static`**fromBech32**(`bech32Text`: string): { addressBytes: Uint8Array ; addressType: number  } \| undefined
+▸ `Static`**fromBech32**(`bech32Text`: string, `humanReadablePart?`: string): { addressBytes: Uint8Array ; addressType: number  } \| undefined
 
 Decode an address from bech32.
 
 #### Parameters:
 
-Name | Type | Description |
------- | ------ | ------ |
-`bech32Text` | string | The bech32 text to decode. |
+Name | Type | Default value | Description |
+------ | ------ | ------ | ------ |
+`bech32Text` | string | - | The bech32 text to decode. |
+`humanReadablePart` | string | Bech32Helper.BECH32\_DEFAULT\_HRP | The human readable part to use. |
 
 **Returns:** { addressBytes: Uint8Array ; addressType: number  } \| undefined
 
@@ -52,15 +53,16 @@ ___
 
 ### matches
 
-▸ `Static`**matches**(`bech32Text?`: undefined \| string): boolean
+▸ `Static`**matches**(`bech32Text?`: undefined \| string, `humanReadablePart?`: string): boolean
 
 Does the provided string look like it might be an bech32 address with matching hrp.
 
 #### Parameters:
 
-Name | Type | Description |
------- | ------ | ------ |
-`bech32Text?` | undefined \| string | The bech32 text to text. |
+Name | Type | Default value | Description |
+------ | ------ | ------ | ------ |
+`bech32Text?` | undefined \| string | - | The bech32 text to text. |
+`humanReadablePart` | string | Bech32Helper.BECH32\_DEFAULT\_HRP | The human readable part to match. |
 
 **Returns:** boolean
 
@@ -70,16 +72,17 @@ ___
 
 ### toBech32
 
-▸ `Static`**toBech32**(`addressType`: number, `addressBytes`: Uint8Array): string
+▸ `Static`**toBech32**(`addressType`: number, `addressBytes`: Uint8Array, `humanReadablePart?`: string): string
 
 Encode an address to bech32.
 
 #### Parameters:
 
-Name | Type | Description |
------- | ------ | ------ |
-`addressType` | number | The address type to encode. |
-`addressBytes` | Uint8Array | The address bytes to encode. |
+Name | Type | Default value | Description |
+------ | ------ | ------ | ------ |
+`addressType` | number | - | The address type to encode. |
+`addressBytes` | Uint8Array | - | The address bytes to encode. |
+`humanReadablePart` | string | Bech32Helper.BECH32\_DEFAULT\_HRP | The human readable part to use. |
 
 **Returns:** string
 

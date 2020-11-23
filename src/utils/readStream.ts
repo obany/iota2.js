@@ -1,5 +1,5 @@
 /* eslint-disable no-bitwise */
-
+import { BigIntHelper } from "./bigIntHelper";
 import { Converter } from "./converter";
 
 /**
@@ -166,8 +166,7 @@ export class ReadStream {
                 } exceeds the remaining data ${this.unused()}`);
         }
 
-        // We reverse the string conversion as this is LE
-        const val = BigInt(`0x${Converter.bytesToHex(this._storage, this._readIndex, 8, true)}`);
+        const val = BigIntHelper.read8(this._storage, this._readIndex);
 
         if (moveIndex) {
             this._readIndex += 8;

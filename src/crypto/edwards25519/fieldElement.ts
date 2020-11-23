@@ -5,7 +5,8 @@
  * which is an extension of https://github.com/golang/crypto/tree/master/ed25519
  * which in a port of the “ref10” implementation of ed25519 from SUPERCOP
  */
-import { BIG_1_SHIFTL_24, BIG_1_SHIFTL_25, BIG_38, BIG_8388607, BIG_ARR, bigIntLoad3, bigIntLoad4 } from "./bigIntCommon";
+import { BigIntHelper } from "../../utils/bigIntHelper";
+import { BIG_1_SHIFTL_24, BIG_1_SHIFTL_25, BIG_38, BIG_8388607, BIG_ARR } from "./bigIntCommon";
 
 /**
  * Class for field element operations.
@@ -370,16 +371,16 @@ export class FieldElement {
      * @param bytes The bytes to populate from.
      */
     public fromBytes(bytes: Uint8Array): void {
-        const h0 = bigIntLoad4(bytes, 0);
-        const h1 = bigIntLoad3(bytes, 4) << BIG_ARR[6];
-        const h2 = bigIntLoad3(bytes, 7) << BIG_ARR[5];
-        const h3 = bigIntLoad3(bytes, 10) << BIG_ARR[3];
-        const h4 = bigIntLoad3(bytes, 13) << BIG_ARR[2];
-        const h5 = bigIntLoad4(bytes, 16);
-        const h6 = bigIntLoad3(bytes, 20) << BIG_ARR[7];
-        const h7 = bigIntLoad3(bytes, 23) << BIG_ARR[5];
-        const h8 = bigIntLoad3(bytes, 26) << BIG_ARR[4];
-        const h9 = (bigIntLoad3(bytes, 29) & BIG_8388607) << BIG_ARR[2];
+        const h0 = BigIntHelper.read4(bytes, 0);
+        const h1 = BigIntHelper.read3(bytes, 4) << BIG_ARR[6];
+        const h2 = BigIntHelper.read3(bytes, 7) << BIG_ARR[5];
+        const h3 = BigIntHelper.read3(bytes, 10) << BIG_ARR[3];
+        const h4 = BigIntHelper.read3(bytes, 13) << BIG_ARR[2];
+        const h5 = BigIntHelper.read4(bytes, 16);
+        const h6 = BigIntHelper.read3(bytes, 20) << BIG_ARR[7];
+        const h7 = BigIntHelper.read3(bytes, 23) << BIG_ARR[5];
+        const h8 = BigIntHelper.read3(bytes, 26) << BIG_ARR[4];
+        const h9 = (BigIntHelper.read3(bytes, 29) & BIG_8388607) << BIG_ARR[2];
 
         this.combine(h0, h1, h2, h3, h4, h5, h6, h7, h8, h9);
     }

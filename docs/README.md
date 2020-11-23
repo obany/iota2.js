@@ -9,8 +9,10 @@
 ### Classes
 
 * [ArrayHelper](classes/arrayhelper.md)
+* [B1T6](classes/b1t6.md)
 * [Bech32](classes/bech32.md)
 * [Bech32Helper](classes/bech32helper.md)
+* [BigIntHelper](classes/biginthelper.md)
 * [Bip32Path](classes/bip32path.md)
 * [Blake2b](classes/blake2b.md)
 * [CachedGroupElement](classes/cachedgroupelement.md)
@@ -22,7 +24,9 @@
 * [ExtendedGroupElement](classes/extendedgroupelement.md)
 * [FieldElement](classes/fieldelement.md)
 * [HmacSha512](classes/hmacsha512.md)
+* [LocalPowProvider](classes/localpowprovider.md)
 * [MqttClient](classes/mqttclient.md)
+* [PowHelper](classes/powhelper.md)
 * [PreComputedGroupElement](classes/precomputedgroupelement.md)
 * [ProjectiveGroupElement](classes/projectivegroupelement.md)
 * [RandomHelper](classes/randomhelper.md)
@@ -31,7 +35,6 @@
 * [SingleNodeClient](classes/singlenodeclient.md)
 * [Slip0010](classes/slip0010.md)
 * [WriteStream](classes/writestream.md)
-* [ZeroPowProvider](classes/zeropowprovider.md)
 
 ### Interfaces
 

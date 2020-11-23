@@ -14,9 +14,8 @@ import { ITips } from "../models/api/ITips";
 import { IClient } from "../models/IClient";
 import { IMessage } from "../models/IMessage";
 import { IPowProvider } from "../models/IPowProvider";
-import { ZeroPowProvider } from "../pow/zeroPowProvider";
 import { ArrayHelper } from "../utils/arrayHelper";
-import { Converter } from "../utils/converter";
+import { BigIntHelper } from "../utils/bigIntHelper";
 import { WriteStream } from "../utils/writeStream";
 import { ClientError } from "./clientError";
 
@@ -50,7 +49,7 @@ export class SingleNodeClient implements IClient {
             throw new Error("The endpoint is not in the correct format");
         }
         this._endpoint = endpoint.replace(/\/+$/, "");
-        this._powProvider = powProvider ?? new ZeroPowProvider();
+        this._powProvider = powProvider;
     }
 
     /**
@@ -118,12 +117,18 @@ export class SingleNodeClient implements IClient {
      * @returns The messageId.
      */
     public async messageSubmit(message: IMessage): Promise<string> {
-        if (this._powProvider &&
-            (!message.nonce || message.nonce.length === 0)) {
-            const writeStream = new WriteStream();
-            serializeMessage(writeStream, message);
-            const messageBytes = writeStream.finalBytes();
-            message.nonce = (await this._powProvider.doPow(messageBytes)).toString(10);
+        if (!message.nonce || message.nonce.length === 0) {
+            if (this._powProvider) {
+                // Get the pow targetscore from node info ?
+                const targetScore = 100;
+                const writeStream = new WriteStream();
+                serializeMessage(writeStream, message);
+                const messageBytes = writeStream.finalBytes();
+                const nonce = await this._powProvider.pow(messageBytes, targetScore);
+                message.nonce = nonce.toString(10);
+            } else {
+                message.nonce = "0";
+            }
         }
 
         const response = await this.fetchJson<IMessage, IMessageId>("post", "/api/v1/messages", message);
@@ -137,11 +142,11 @@ export class SingleNodeClient implements IClient {
      * @returns The messageId.
      */
     public async messageSubmitRaw(message: Uint8Array): Promise<string> {
-        if (this._powProvider && ArrayHelper.equal(message.slice(-8), SingleNodeClient.NONCE_ZERO)) {
-            const nonce = await this._powProvider.doPow(message);
-            const hex = nonce.toString(16).padStart(16, "0");
-            const nonceBytes = Converter.hexToBytes(hex, true);
-            message.set(nonceBytes, message.length - 8);
+        if (ArrayHelper.equal(message.slice(-8), SingleNodeClient.NONCE_ZERO) && this._powProvider) {
+            // Get the pow targetscore from node info ?
+            const targetScore = 100;
+            const nonce = await this._powProvider.pow(message, targetScore);
+            BigIntHelper.write8(nonce, message, message.length - 8);
         }
 
         const response = await this.fetchBinary<IMessageId>("post", "/api/v1/messages", message);
