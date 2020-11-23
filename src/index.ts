@@ -69,6 +69,7 @@ export * from "./utils/bech32Helper";
 export * from "./utils/bigIntHelper";
 export * from "./utils/converter";
 export * from "./utils/logging";
+export * from "./utils/messageHelper";
 export * from "./utils/powHelper";
 export * from "./utils/randomHelper";
 export * from "./utils/readStream";

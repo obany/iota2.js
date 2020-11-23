@@ -26,6 +26,7 @@
 * [FieldElement](classes/fieldelement.md)
 * [HmacSha512](classes/hmacsha512.md)
 * [LocalPowProvider](classes/localpowprovider.md)
+* [MessageHelper](classes/messagehelper.md)
 * [MqttClient](classes/mqttclient.md)
 * [PowHelper](classes/powhelper.md)
 * [PreComputedGroupElement](classes/precomputedgroupelement.md)
