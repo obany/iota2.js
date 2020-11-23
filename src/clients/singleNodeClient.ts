@@ -25,6 +25,7 @@ import { ClientError } from "./clientError";
 export class SingleNodeClient implements IClient {
     /**
      * A zero nonce.
+     * @internal
      */
     private static readonly NONCE_ZERO: Uint8Array = new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]);
 
@@ -36,6 +37,7 @@ export class SingleNodeClient implements IClient {
 
     /**
      * Optional POW provider to be used for messages with nonce=0/undefined.
+     * @internal
      */
     private readonly _powProvider?: IPowProvider;
 

@@ -6,13 +6,11 @@
 export class Blake2b {
     /**
      * Blake2b 256.
-     * @internal
      */
     public static SIZE_256: number = 32;
 
     /**
      * Blake2b 512.
-     * @internal
      */
     public static SIZE_512: number = 64;
 

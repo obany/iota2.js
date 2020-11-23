@@ -6,16 +6,19 @@
 export class Bech32 {
     /**
      * The alphabet to use.
+     * @internal
      */
     private static readonly CHARSET: string = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
 
     /**
      * The separator between human readable part and data.
+     * @internal
      */
     private static readonly SEPARATOR: string = "1";
 
     /**
      * The generator constants;
+     * @internal
      */
     private static readonly GENERATOR: Uint32Array = Uint32Array.from([
         0x3B6A57B2,
@@ -154,6 +157,7 @@ export class Bech32 {
      * @param humanReadablePart The human readable part.
      * @param data The data.
      * @returns The checksum.
+     * @internal
      */
     private static createChecksum(humanReadablePart: string, data: Uint8Array): Uint8Array {
         const expanded = Bech32.humanReadablePartExpand(humanReadablePart);
@@ -177,6 +181,7 @@ export class Bech32 {
      * @param humanReadablePart The human redable part to validate the checksum.
      * @param data The data to validate the checksum.
      * @returns True if the checksum was verified.
+     * @internal
      */
     private static verifyChecksum(humanReadablePart: string, data: Uint8Array): boolean {
         const expanded = Bech32.humanReadablePartExpand(humanReadablePart);
@@ -192,6 +197,7 @@ export class Bech32 {
      * Calculate the polymod of the values.
      * @param values The values to calculate the polymod for.
      * @returns The polymod of the values.
+     * @internal
      */
     private static polymod(values: Uint8Array): number {
         let chk = 1;
@@ -211,6 +217,7 @@ export class Bech32 {
      * Expand the human readable part.
      * @param humanReadablePart The human readable part to expand.
      * @returns The expanded human readable part.
+     * @internal
      */
     private static humanReadablePartExpand(humanReadablePart: string): Uint8Array {
         const ret = new Uint8Array((humanReadablePart.length * 2) + 1);
@@ -232,6 +239,7 @@ export class Bech32 {
      * @param toBits The required resolution of the output data.
      * @param padding Include padding in the output.
      * @returns The converted data,
+     * @internal
      */
     private static convertBits(
         data: Uint8Array,

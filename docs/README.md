@@ -19,6 +19,7 @@
 * [ClientError](classes/clienterror.md)
 * [CompletedGroupElement](classes/completedgroupelement.md)
 * [Converter](classes/converter.md)
+* [Curl](classes/curl.md)
 * [Ed25519Address](classes/ed25519address.md)
 * [Ed25519Seed](classes/ed25519seed.md)
 * [ExtendedGroupElement](classes/extendedgroupelement.md)
@@ -69,6 +70,10 @@
 * [ITransactionPayload](interfaces/itransactionpayload.md)
 * [ITypeBase](interfaces/itypebase.md)
 * [IUTXOInput](interfaces/iutxoinput.md)
+
+### Type aliases
+
+* [LedgerInclusionState](README.md#ledgerinclusionstate)
 
 ### Variables
 
@@ -141,6 +146,14 @@
 * [serializeUnlockBlock](README.md#serializeunlockblock)
 * [serializeUnlockBlocks](README.md#serializeunlockblocks)
 * [setLogger](README.md#setlogger)
+
+## Type aliases
+
+### LedgerInclusionState
+
+Ƭ  **LedgerInclusionState**: \"noTransaction\" \| \"included\" \| \"conflicting\"
+
+The different states of ledger inclusion.
 
 ## Variables
 

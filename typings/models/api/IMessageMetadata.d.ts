@@ -1,3 +1,4 @@
+import { LedgerInclusionState } from "./ledgerInclusionState";
 /**
  * Response from the metadata endpoint.
  */
@@ -25,7 +26,7 @@ export interface IMessageMetadata {
     /**
      * The ledger inclusion state.
      */
-    ledgerInclusionState?: "noTransaction" | "included" | "conflicting";
+    ledgerInclusionState?: LedgerInclusionState;
     /**
      * Should the message be promoted.
      */

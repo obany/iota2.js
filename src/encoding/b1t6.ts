@@ -17,21 +17,25 @@ export class B1T6 {
 
     /**
      * Minimum tryte value.
+     * @internal
      */
     private static readonly MIN_TRYTE_VALUE: number = -13;
 
     /**
      * Radix for trytes.
+     * @internal
      */
     private static readonly TRYTE_RADIX: number = 27;
 
     /**
-     * Galf radix for trytes to save recalculating.
+     * Half radix for trytes to save recalculating.
+     * @internal
      */
     private static readonly TRYTE_RADIX_HALF: number = 13;
 
     /**
      * Trites per tryte.
+     * @internal
      */
     private static readonly TRITS_PER_TRYTE: number = 3;
 
@@ -66,6 +70,7 @@ export class B1T6 {
      * Encode a group to trits.
      * @param b The value to encode.
      * @returns The trit groups.
+     * @internal
      */
     private static encodeGroup(b: number): { t1: number; t2: number } {
         const v = (b << 24 >> 24) + (B1T6.TRYTE_RADIX_HALF * B1T6.TRYTE_RADIX) + B1T6.TRYTE_RADIX_HALF;
@@ -82,6 +87,7 @@ export class B1T6 {
      * @param trits The trits array.
      * @param startIndex The start index in the array to write.
      * @param value The value to write.
+     * @internal
      */
     private static storeTrits(trits: Int8Array, startIndex: number, value: number): void {
         const idx = value - B1T6.MIN_TRYTE_VALUE;

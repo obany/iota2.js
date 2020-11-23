@@ -10,34 +10,6 @@ import { IMqttStatus } from "../models/IMqttStatus";
  */
 export declare class MqttClient implements IMqttClient {
     /**
-     * What is the endpoint for the client.
-     */
-    private readonly _endpoint;
-    /**
-     * Timeout to reconnect if no messages received.
-     */
-    private readonly _keepAliveTimeoutSeconds;
-    /**
-     * The communication client.
-     */
-    private _client?;
-    /**
-     * The last time a message was received.
-     */
-    private _lastMessageTime;
-    /**
-     * The keep alive timer.
-     */
-    private _timerId?;
-    /**
-     * The callback for different events.
-     */
-    private readonly _subscriptions;
-    /**
-     * The callbacks for status.
-     */
-    private readonly _statusSubscriptions;
-    /**
      * Create a new instace of MqttClient.
      * @param endpoint The endpoint to connect to.
      * @param keepAliveTimeoutSeconds Timeout to reconnect if no messages received.
@@ -133,63 +105,4 @@ export declare class MqttClient implements IMqttClient {
      * @returns A subscription Id which can be used to unsubscribe.
      */
     statusChanged(callback: (data: IMqttStatus) => void): string;
-    /**
-     * Subscribe to another type of message.
-     * @param customTopic The topic to subscribe to.
-     * @param isJson Should we deserialize the data as JSON.
-     * @param callback The callback which is called when new data arrives.
-     * @returns A subscription Id which can be used to unsubscribe.
-     * @private
-     */
-    private internalSubscribe;
-    /**
-     * Subscribe to a new topic on the client.
-     * @param topic The topic to subscribe to.
-     * @private
-     */
-    private mqttSubscribe;
-    /**
-     * Unsubscribe from a topic on the client.
-     * @param topic The topic to unsubscribe from.
-     * @private
-     */
-    private mqttUnsubscribe;
-    /**
-     * Connect the client.
-     * @private
-     */
-    private mqttConnect;
-    /**
-     * Disconnect the client.
-     * @private
-     */
-    private mqttDisconnect;
-    /**
-     * Trigger the callbacks for the specified topic.
-     * @param topic The topic to call the callbacks for.
-     * @param data The data to send to the callbacks.
-     * @private
-     */
-    private triggerCallbacks;
-    /**
-     * Trigger the callbacks for the status.
-     * @param status The status to send to the callbacks.
-     * @private
-     */
-    private triggerStatusCallbacks;
-    /**
-     * Start the keep alive timer.
-     * @private
-     */
-    private startKeepAlive;
-    /**
-     * Stop the keep alive timer.
-     * @private
-     */
-    private stopKeepAlive;
-    /**
-     * Keep the connection alive.
-     * @private
-     */
-    private keepAlive;
 }

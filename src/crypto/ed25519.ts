@@ -11,16 +11,24 @@ import { ProjectiveGroupElement } from "./edwards25519/projectiveGroupElement";
 import { scalarMinimal, scalarMulAdd, scalarReduce } from "./edwards25519/scalar";
 
 export class Ed25519 {
-    // PublicKeySize is the size, in bytes, of public keys as used in this package.
+    /**
+     * PublicKeySize is the size, in bytes, of public keys as used in this package.
+     */
     public static PUBLIC_KEY_SIZE: number = 32;
 
-    // PrivateKeySize is the size, in bytes, of private keys as used in this package.
+    /**
+     * PrivateKeySize is the size, in bytes, of private keys as used in this package.
+     */
     public static PRIVATE_KEY_SIZE: number = 64;
 
-    // SignatureSize is the size, in bytes, of signatures generated and verified by this package.
+    /**
+     * SignatureSize is the size, in bytes, of signatures generated and verified by this package.
+     */
     public static SIGNATURE_SIZE: number = 64;
 
-    // SeedSize is the size, in bytes, of private key seeds. These are the private key representations used by RFC 8032.
+    /**
+     * SeedSize is the size, in bytes, of private key seeds. These are the private key representations used by RFC 8032.
+     */
     public static SEED_SIZE: number = 32;
 
     /**

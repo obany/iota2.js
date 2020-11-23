@@ -35,7 +35,7 @@ ___
 
 ### ledgerInclusionState
 
-• `Optional` **ledgerInclusionState**: \"noTransaction\" \| \"included\" \| \"conflicting\"
+• `Optional` **ledgerInclusionState**: [LedgerInclusionState](../README.md#ledgerinclusionstate)
 
 The ledger inclusion state.
 

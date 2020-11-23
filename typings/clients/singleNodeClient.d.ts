@@ -16,14 +16,6 @@ import { IPowProvider } from "../models/IPowProvider";
  */
 export declare class SingleNodeClient implements IClient {
     /**
-     * A zero nonce.
-     */
-    private static readonly NONCE_ZERO;
-    /**
-     * Optional POW provider to be used for messages with nonce=0/undefined.
-     */
-    private readonly _powProvider?;
-    /**
      * Create a new instance of client.
      * @param endpoint The endpoint.
      * @param powProvider Optional local POW provider.

@@ -11,6 +11,7 @@ import { PowHelper } from "../utils/powHelper";
 export class LocalPowProvider implements IPowProvider {
     /**
      * LN3 Const see https://oeis.org/A002391
+     * @internal
      */
     private readonly LN3: number = 1.098612288668109691395245236922525704647490557822749451734694333;
 

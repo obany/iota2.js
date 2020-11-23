@@ -17,31 +17,37 @@ import { ReadStream } from "../utils/readStream";
 export class MqttClient implements IMqttClient {
     /**
      * What is the endpoint for the client.
+     * @internal
      */
     private readonly _endpoint: string;
 
     /**
      * Timeout to reconnect if no messages received.
+     * @internal
      */
     private readonly _keepAliveTimeoutSeconds: number;
 
     /**
      * The communication client.
+     * @internal
      */
     private _client?: mqtt.MqttClient;
 
     /**
      * The last time a message was received.
+     * @internal
      */
     private _lastMessageTime: number;
 
     /**
      * The keep alive timer.
+     * @internal
      */
     private _timerId?: NodeJS.Timeout;
 
     /**
      * The callback for different events.
+     * @internal
      */
     private readonly _subscriptions: {
         [topic: string]: {
@@ -71,6 +77,7 @@ export class MqttClient implements IMqttClient {
 
     /**
      * The callbacks for status.
+     * @internal
      */
     private readonly _statusSubscriptions: { [subscriptionId: string]: (data: IMqttStatus) => void };
 
@@ -294,7 +301,7 @@ export class MqttClient implements IMqttClient {
      * @param isJson Should we deserialize the data as JSON.
      * @param callback The callback which is called when new data arrives.
      * @returns A subscription Id which can be used to unsubscribe.
-     * @private
+     * @internal
      */
     private internalSubscribe<T>(customTopic: string,
         isJson: boolean,
@@ -332,7 +339,7 @@ export class MqttClient implements IMqttClient {
     /**
      * Subscribe to a new topic on the client.
      * @param topic The topic to subscribe to.
-     * @private
+     * @internal
      */
     private mqttSubscribe(topic: string): void {
         if (!this._client) {
@@ -358,7 +365,7 @@ export class MqttClient implements IMqttClient {
     /**
      * Unsubscribe from a topic on the client.
      * @param topic The topic to unsubscribe from.
-     * @private
+     * @internal
      */
     private mqttUnsubscribe(topic: string): void {
         if (this._client) {
@@ -377,7 +384,7 @@ export class MqttClient implements IMqttClient {
 
     /**
      * Connect the client.
-     * @private
+     * @internal
      */
     private mqttConnect(): void {
         if (!this._client) {
@@ -436,7 +443,7 @@ export class MqttClient implements IMqttClient {
 
     /**
      * Disconnect the client.
-     * @private
+     * @internal
      */
     private mqttDisconnect(): void {
         this.stopKeepAlive();
@@ -461,7 +468,7 @@ export class MqttClient implements IMqttClient {
      * Trigger the callbacks for the specified topic.
      * @param topic The topic to call the callbacks for.
      * @param data The data to send to the callbacks.
-     * @private
+     * @internal
      */
     private triggerCallbacks(topic: string, data: Buffer | unknown): void {
         if (this._subscriptions[topic]) {
@@ -497,7 +504,7 @@ export class MqttClient implements IMqttClient {
     /**
      * Trigger the callbacks for the status.
      * @param status The status to send to the callbacks.
-     * @private
+     * @internal
      */
     private triggerStatusCallbacks(status: IMqttStatus): void {
         const subscriptionIds = Object.keys(this._statusSubscriptions);
@@ -508,7 +515,7 @@ export class MqttClient implements IMqttClient {
 
     /**
      * Start the keep alive timer.
-     * @private
+     * @internal
      */
     private startKeepAlive(): void {
         this.stopKeepAlive();
@@ -518,7 +525,7 @@ export class MqttClient implements IMqttClient {
 
     /**
      * Stop the keep alive timer.
-     * @private
+     * @internal
      */
     private stopKeepAlive(): void {
         if (this._timerId !== undefined) {
@@ -529,7 +536,7 @@ export class MqttClient implements IMqttClient {
 
     /**
      * Keep the connection alive.
-     * @private
+     * @internal
      */
     private keepAlive(): void {
         if (Date.now() - this._lastMessageTime > (this._keepAliveTimeoutSeconds * 1000)) {

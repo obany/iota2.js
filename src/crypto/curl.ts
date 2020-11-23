@@ -1,7 +1,6 @@
 /* eslint-disable no-bitwise */
 /**
  * Class to implement Curl sponge.
- * @internal
  */
 export class Curl {
     /**
@@ -16,21 +15,25 @@ export class Curl {
 
     /**
      * The default number of rounds.
+     * @internal
      */
     private static readonly NUMBER_OF_ROUNDS: number = 81;
 
     /**
      * Truth Table.
+     * @internal
      */
     private static readonly TRUTH_TABLE: number[] = [1, 0, -1, 2, 1, -1, 0, 2, -1, 1, 0];
 
     /**
      * The number of rounds.
+     * @internal
      */
     private readonly _rounds: number;
 
     /**
      * The state of the sponge.
+     * @internal
      */
     private _state: Int8Array;
 
@@ -101,6 +104,7 @@ export class Curl {
 
     /**
      * Sponge transform function
+     * @internal
      */
     private transform(): void {
         let stateCopy;

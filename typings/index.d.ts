@@ -44,6 +44,7 @@ export * from "./models/api/IOutput";
 export * from "./models/api/IPeer";
 export * from "./models/api/IResponse";
 export * from "./models/api/ITips";
+export * from "./models/api/ledgerInclusionState";
 export * from "./models/IClient";
 export * from "./models/IEd25519Address";
 export * from "./models/IEd25519Signature";

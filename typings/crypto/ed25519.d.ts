@@ -1,7 +1,19 @@
 export declare class Ed25519 {
+    /**
+     * PublicKeySize is the size, in bytes, of public keys as used in this package.
+     */
     static PUBLIC_KEY_SIZE: number;
+    /**
+     * PrivateKeySize is the size, in bytes, of private keys as used in this package.
+     */
     static PRIVATE_KEY_SIZE: number;
+    /**
+     * SignatureSize is the size, in bytes, of signatures generated and verified by this package.
+     */
     static SIGNATURE_SIZE: number;
+    /**
+     * SeedSize is the size, in bytes, of private key seeds. These are the private key representations used by RFC 8032.
+     */
     static SEED_SIZE: number;
     /**
      * Public returns the PublicKey corresponding to priv.

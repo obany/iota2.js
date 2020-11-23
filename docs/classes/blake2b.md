@@ -13,10 +13,31 @@ TypeScript conversion from https://github.com/dcposch/blakejs
 
 ## Index
 
+### Properties
+
+* [SIZE\_256](blake2b.md#size_256)
+* [SIZE\_512](blake2b.md#size_512)
+
 ### Methods
 
 * [sum256](blake2b.md#sum256)
 * [sum512](blake2b.md#sum512)
+
+## Properties
+
+### SIZE\_256
+
+▪ `Static` **SIZE\_256**: number = 32
+
+Blake2b 256.
+
+___
+
+### SIZE\_512
+
+▪ `Static` **SIZE\_512**: number = 64
+
+Blake2b 512.
 
 ## Methods
 

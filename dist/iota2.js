@@ -328,12 +328,10 @@
 	    };
 	    /**
 	     * Blake2b 256.
-	     * @internal
 	     */
 	    Blake2b.SIZE_256 = 32;
 	    /**
 	     * Blake2b 512.
-	     * @internal
 	     */
 	    Blake2b.SIZE_512 = 64;
 	    /**
@@ -3989,13 +3987,21 @@
 	        R.toBytes(checkR);
 	        return arrayHelper.ArrayHelper.equal(sig.subarray(0, 32), checkR);
 	    };
-	    // PublicKeySize is the size, in bytes, of public keys as used in this package.
+	    /**
+	     * PublicKeySize is the size, in bytes, of public keys as used in this package.
+	     */
 	    Ed25519.PUBLIC_KEY_SIZE = 32;
-	    // PrivateKeySize is the size, in bytes, of private keys as used in this package.
+	    /**
+	     * PrivateKeySize is the size, in bytes, of private keys as used in this package.
+	     */
 	    Ed25519.PRIVATE_KEY_SIZE = 64;
-	    // SignatureSize is the size, in bytes, of signatures generated and verified by this package.
+	    /**
+	     * SignatureSize is the size, in bytes, of signatures generated and verified by this package.
+	     */
 	    Ed25519.SIGNATURE_SIZE = 64;
-	    // SeedSize is the size, in bytes, of private key seeds. These are the private key representations used by RFC 8032.
+	    /**
+	     * SeedSize is the size, in bytes, of private key seeds. These are the private key representations used by RFC 8032.
+	     */
 	    Ed25519.SEED_SIZE = 32;
 	    return Ed25519;
 	}());
@@ -5198,7 +5204,7 @@
 	     * @param isJson Should we deserialize the data as JSON.
 	     * @param callback The callback which is called when new data arrives.
 	     * @returns A subscription Id which can be used to unsubscribe.
-	     * @private
+	     * @internal
 	     */
 	    MqttClient.prototype.internalSubscribe = function (customTopic, isJson, callback) {
 	        var isNewTopic = false;
@@ -5227,7 +5233,7 @@
 	    /**
 	     * Subscribe to a new topic on the client.
 	     * @param topic The topic to subscribe to.
-	     * @private
+	     * @internal
 	     */
 	    MqttClient.prototype.mqttSubscribe = function (topic) {
 	        if (!this._client) {
@@ -5254,7 +5260,7 @@
 	    /**
 	     * Unsubscribe from a topic on the client.
 	     * @param topic The topic to unsubscribe from.
-	     * @private
+	     * @internal
 	     */
 	    MqttClient.prototype.mqttUnsubscribe = function (topic) {
 	        if (this._client) {
@@ -5273,7 +5279,7 @@
 	    };
 	    /**
 	     * Connect the client.
-	     * @private
+	     * @internal
 	     */
 	    MqttClient.prototype.mqttConnect = function () {
 	        var _this = this;
@@ -5331,7 +5337,7 @@
 	    };
 	    /**
 	     * Disconnect the client.
-	     * @private
+	     * @internal
 	     */
 	    MqttClient.prototype.mqttDisconnect = function () {
 	        this.stopKeepAlive();
@@ -5354,7 +5360,7 @@
 	     * Trigger the callbacks for the specified topic.
 	     * @param topic The topic to call the callbacks for.
 	     * @param data The data to send to the callbacks.
-	     * @private
+	     * @internal
 	     */
 	    MqttClient.prototype.triggerCallbacks = function (topic, data) {
 	        if (this._subscriptions[topic]) {
@@ -5390,7 +5396,7 @@
 	    /**
 	     * Trigger the callbacks for the status.
 	     * @param status The status to send to the callbacks.
-	     * @private
+	     * @internal
 	     */
 	    MqttClient.prototype.triggerStatusCallbacks = function (status) {
 	        var subscriptionIds = Object.keys(this._statusSubscriptions);
@@ -5400,7 +5406,7 @@
 	    };
 	    /**
 	     * Start the keep alive timer.
-	     * @private
+	     * @internal
 	     */
 	    MqttClient.prototype.startKeepAlive = function () {
 	        var _this = this;
@@ -5410,7 +5416,7 @@
 	    };
 	    /**
 	     * Stop the keep alive timer.
-	     * @private
+	     * @internal
 	     */
 	    MqttClient.prototype.stopKeepAlive = function () {
 	        if (this._timerId !== undefined) {
@@ -5420,7 +5426,7 @@
 	    };
 	    /**
 	     * Keep the connection alive.
-	     * @private
+	     * @internal
 	     */
 	    MqttClient.prototype.keepAlive = function () {
 	        if (Date.now() - this._lastMessageTime > (this._keepAliveTimeoutSeconds * 1000)) {
@@ -6026,6 +6032,7 @@
 	    };
 	    /**
 	     * A zero nonce.
+	     * @internal
 	     */
 	    SingleNodeClient.NONCE_ZERO = new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]);
 	    return SingleNodeClient;
@@ -6149,6 +6156,7 @@
 	     * @param humanReadablePart The human readable part.
 	     * @param data The data.
 	     * @returns The checksum.
+	     * @internal
 	     */
 	    Bech32.createChecksum = function (humanReadablePart, data) {
 	        var expanded = Bech32.humanReadablePartExpand(humanReadablePart);
@@ -6168,6 +6176,7 @@
 	     * @param humanReadablePart The human redable part to validate the checksum.
 	     * @param data The data to validate the checksum.
 	     * @returns True if the checksum was verified.
+	     * @internal
 	     */
 	    Bech32.verifyChecksum = function (humanReadablePart, data) {
 	        var expanded = Bech32.humanReadablePartExpand(humanReadablePart);
@@ -6180,6 +6189,7 @@
 	     * Calculate the polymod of the values.
 	     * @param values The values to calculate the polymod for.
 	     * @returns The polymod of the values.
+	     * @internal
 	     */
 	    Bech32.polymod = function (values) {
 	        var chk = 1;
@@ -6198,6 +6208,7 @@
 	     * Expand the human readable part.
 	     * @param humanReadablePart The human readable part to expand.
 	     * @returns The expanded human readable part.
+	     * @internal
 	     */
 	    Bech32.humanReadablePartExpand = function (humanReadablePart) {
 	        var ret = new Uint8Array((humanReadablePart.length * 2) + 1);
@@ -6218,6 +6229,7 @@
 	     * @param toBits The required resolution of the output data.
 	     * @param padding Include padding in the output.
 	     * @returns The converted data,
+	     * @internal
 	     */
 	    Bech32.convertBits = function (data, fromBits, toBits, padding) {
 	        var value = 0;
@@ -6249,14 +6261,17 @@
 	    };
 	    /**
 	     * The alphabet to use.
+	     * @internal
 	     */
 	    Bech32.CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
 	    /**
 	     * The separator between human readable part and data.
+	     * @internal
 	     */
 	    Bech32.SEPARATOR = "1";
 	    /**
 	     * The generator constants;
+	     * @internal
 	     */
 	    Bech32.GENERATOR = Uint32Array.from([
 	        0x3B6A57B2,
@@ -6339,7 +6354,6 @@
 	/* eslint-disable no-bitwise */
 	/**
 	 * Class to implement Curl sponge.
-	 * @internal
 	 */
 	var Curl = /** @class */ (function () {
 	    /**
@@ -6401,6 +6415,7 @@
 	    };
 	    /**
 	     * Sponge transform function
+	     * @internal
 	     */
 	    Curl.prototype.transform = function () {
 	        var stateCopy;
@@ -6423,10 +6438,12 @@
 	    Curl.STATE_LENGTH = 3 * Curl.HASH_LENGTH;
 	    /**
 	     * The default number of rounds.
+	     * @internal
 	     */
 	    Curl.NUMBER_OF_ROUNDS = 81;
 	    /**
 	     * Truth Table.
+	     * @internal
 	     */
 	    Curl.TRUTH_TABLE = [1, 0, -1, 2, 1, -1, 0, 2, -1, 1, 0];
 	    return Curl;
@@ -7769,6 +7786,11 @@
 
 	});
 
+	var ledgerInclusionState = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
 	var IClient = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
@@ -7898,6 +7920,7 @@
 	     * Encode a group to trits.
 	     * @param b The value to encode.
 	     * @returns The trit groups.
+	     * @internal
 	     */
 	    B1T6.encodeGroup = function (b) {
 	        var v = (b << 24 >> 24) + (B1T6.TRYTE_RADIX_HALF * B1T6.TRYTE_RADIX) + B1T6.TRYTE_RADIX_HALF;
@@ -7913,6 +7936,7 @@
 	     * @param trits The trits array.
 	     * @param startIndex The start index in the array to write.
 	     * @param value The value to write.
+	     * @internal
 	     */
 	    B1T6.storeTrits = function (trits, startIndex, value) {
 	        var idx = value - B1T6.MIN_TRYTE_VALUE;
@@ -7933,18 +7957,22 @@
 	    ];
 	    /**
 	     * Minimum tryte value.
+	     * @internal
 	     */
 	    B1T6.MIN_TRYTE_VALUE = -13;
 	    /**
 	     * Radix for trytes.
+	     * @internal
 	     */
 	    B1T6.TRYTE_RADIX = 27;
 	    /**
-	     * Galf radix for trytes to save recalculating.
+	     * Half radix for trytes to save recalculating.
+	     * @internal
 	     */
 	    B1T6.TRYTE_RADIX_HALF = 13;
 	    /**
 	     * Trites per tryte.
+	     * @internal
 	     */
 	    B1T6.TRITS_PER_TRYTE = 3;
 	    return B1T6;
@@ -8081,6 +8109,7 @@
 	    function LocalPowProvider() {
 	        /**
 	         * LN3 Const see https://oeis.org/A002391
+	         * @internal
 	         */
 	        this.LN3 = 1.098612288668109691395245236922525704647490557822749451734694333;
 	    }
@@ -8435,6 +8464,7 @@
 	__exportStar(IPeer, exports);
 	__exportStar(IResponse, exports);
 	__exportStar(ITips, exports);
+	__exportStar(ledgerInclusionState, exports);
 	__exportStar(IClient, exports);
 	__exportStar(IEd25519Address, exports);
 	__exportStar(IEd25519Signature, exports);

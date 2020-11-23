@@ -4,18 +4,6 @@
  */
 export declare class Bech32 {
     /**
-     * The alphabet to use.
-     */
-    private static readonly CHARSET;
-    /**
-     * The separator between human readable part and data.
-     */
-    private static readonly SEPARATOR;
-    /**
-     * The generator constants;
-     */
-    private static readonly GENERATOR;
-    /**
      * Encode the buffer.
      * @param humanReadablePart The header
      * @param data The data to encode.
@@ -66,39 +54,4 @@ export declare class Bech32 {
      * @returns True if this is potentially a match.
      */
     static matches(humanReadablePart: string, bech32Text?: string): boolean;
-    /**
-     * Create the checksum from the human redable part and the data.
-     * @param humanReadablePart The human readable part.
-     * @param data The data.
-     * @returns The checksum.
-     */
-    private static createChecksum;
-    /**
-     * Verify the checksum given the humarn readable part and data.
-     * @param humanReadablePart The human redable part to validate the checksum.
-     * @param data The data to validate the checksum.
-     * @returns True if the checksum was verified.
-     */
-    private static verifyChecksum;
-    /**
-     * Calculate the polymod of the values.
-     * @param values The values to calculate the polymod for.
-     * @returns The polymod of the values.
-     */
-    private static polymod;
-    /**
-     * Expand the human readable part.
-     * @param humanReadablePart The human readable part to expand.
-     * @returns The expanded human readable part.
-     */
-    private static humanReadablePartExpand;
-    /**
-     * Convert input data from one bit resolution to another.
-     * @param data The data to convert.
-     * @param fromBits The resolution of the input data.
-     * @param toBits The required resolution of the output data.
-     * @param padding Include padding in the output.
-     * @returns The converted data,
-     */
-    private static convertBits;
 }
