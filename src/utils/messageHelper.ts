@@ -23,7 +23,7 @@ export class MessageHelper {
      * @returns The reasons why to message is not valid.
      */
     public static async validateTransaction(client: IClient, message: IMessage): Promise<string[]> {
-        const invalid = [];
+        const invalid: string[] = [];
 
         try {
             if (!message) {
@@ -211,7 +211,9 @@ export class MessageHelper {
                     }
                 }
             }
-        } catch {
+        } catch (err) {
+            invalid.push("The following error occured while validating the transaction");
+            invalid.push(err.toString().replace("TypeError: ", ""));
         }
 
         return invalid;

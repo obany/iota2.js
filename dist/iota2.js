@@ -8467,14 +8467,14 @@
 	    MessageHelper.validateTransaction = function (client, message) {
 	        var _a, _b;
 	        return __awaiter(this, void 0, void 0, function () {
-	            var invalid, txsForAddresses, i, sigUnlockBlock, address, outputs, _i, _c, outputId, output$1, inputCount, inputTotal, _d, _e, input$1, unlockBlockCount, outputTotal, _f, _g, output$1, serializedInputs, _h, _j, input$1, writeStream$1, sortedInputs, inputsAreSorted, i, serializedOutputs, _k, _l, output$1, writeStream$1, sortedOutputs, outputsAreSorted, i, binaryEssence, essenceFinal, unlockBlocksFull, i, refUnlockBlock, i, sigUnlockBlock, verified, _m;
-	            return __generator(this, function (_o) {
-	                switch (_o.label) {
+	            var invalid, txsForAddresses, i, sigUnlockBlock, address, outputs, _i, _c, outputId, output$1, inputCount, inputTotal, _d, _e, input$1, unlockBlockCount, outputTotal, _f, _g, output$1, serializedInputs, _h, _j, input$1, writeStream$1, sortedInputs, inputsAreSorted, i, serializedOutputs, _k, _l, output$1, writeStream$1, sortedOutputs, outputsAreSorted, i, binaryEssence, essenceFinal, unlockBlocksFull, i, refUnlockBlock, i, sigUnlockBlock, verified, err_1;
+	            return __generator(this, function (_m) {
+	                switch (_m.label) {
 	                    case 0:
 	                        invalid = [];
-	                        _o.label = 1;
+	                        _m.label = 1;
 	                    case 1:
-	                        _o.trys.push([1, 15, , 16]);
+	                        _m.trys.push([1, 15, , 16]);
 	                        if (!!message) return [3 /*break*/, 2];
 	                        invalid.push("The message is empty.");
 	                        return [3 /*break*/, 14];
@@ -8507,7 +8507,7 @@
 	                        txsForAddresses = {};
 	                        if (!message.payload.unlockBlocks) return [3 /*break*/, 13];
 	                        i = 0;
-	                        _o.label = 7;
+	                        _m.label = 7;
 	                    case 7:
 	                        if (!(i < message.payload.unlockBlocks.length)) return [3 /*break*/, 13];
 	                        if (!(message.payload.unlockBlocks[i].type === 0)) return [3 /*break*/, 12];
@@ -8515,20 +8515,20 @@
 	                        address = ed25519Address.Ed25519Address.publicKeyToAddress(converter.Converter.hexToBytes(sigUnlockBlock.signature.publicKey));
 	                        return [4 /*yield*/, client.addressOutputs(converter.Converter.bytesToHex(address))];
 	                    case 8:
-	                        outputs = _o.sent();
+	                        outputs = _m.sent();
 	                        _i = 0, _c = outputs.outputIds;
-	                        _o.label = 9;
+	                        _m.label = 9;
 	                    case 9:
 	                        if (!(_i < _c.length)) return [3 /*break*/, 12];
 	                        outputId = _c[_i];
 	                        return [4 /*yield*/, client.output(outputId)];
 	                    case 10:
-	                        output$1 = _o.sent();
+	                        output$1 = _m.sent();
 	                        txsForAddresses[output$1.transactionId] = {
 	                            isSpent: output$1.isSpent,
 	                            amount: output$1.output.amount
 	                        };
-	                        _o.label = 11;
+	                        _m.label = 11;
 	                    case 11:
 	                        _i++;
 	                        return [3 /*break*/, 9];
@@ -8645,10 +8645,12 @@
 	                                }
 	                            }
 	                        }
-	                        _o.label = 14;
+	                        _m.label = 14;
 	                    case 14: return [3 /*break*/, 16];
 	                    case 15:
-	                        _m = _o.sent();
+	                        err_1 = _m.sent();
+	                        invalid.push("The following error occured while validating the transaction");
+	                        invalid.push(err_1.toString().replace("TypeError: ", ""));
 	                        return [3 /*break*/, 16];
 	                    case 16: return [2 /*return*/, invalid];
 	                }
