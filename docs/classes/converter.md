@@ -20,6 +20,7 @@ Convert arrays to and from different formats.
 * [bytesToHex](converter.md#bytestohex)
 * [hexToAscii](converter.md#hextoascii)
 * [hexToBytes](converter.md#hextobytes)
+* [isHex](converter.md#ishex)
 
 ## Methods
 
@@ -134,3 +135,21 @@ Name | Type | Description |
 **Returns:** Uint8Array
 
 The array.
+
+___
+
+### isHex
+
+▸ `Static`**isHex**(`value`: string): boolean
+
+Is the data hex format.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`value` | string | The value to test. |
+
+**Returns:** boolean
+
+true if the string is hex.

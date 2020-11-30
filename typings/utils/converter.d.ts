@@ -44,4 +44,10 @@ export declare class Converter {
      * @returns The ascii version of the bytes.
      */
     static hexToAscii(hex: string): string;
+    /**
+     * Is the data hex format.
+     * @param value The value to test.
+     * @returns true if the string is hex.
+     */
+    static isHex(value: string): boolean;
 }

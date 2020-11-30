@@ -19,6 +19,8 @@ Client interface definition for API communication.
 ### Methods
 
 * [address](iclient.md#address)
+* [addressEd25519](iclient.md#addressed25519)
+* [addressEd25519Outputs](iclient.md#addressed25519outputs)
 * [addressOutputs](iclient.md#addressoutputs)
 * [health](iclient.md#health)
 * [info](iclient.md#info)
@@ -41,25 +43,43 @@ Client interface definition for API communication.
 
 ### address
 
-▸ **address**(`address`: string): Promise\<[IAddress](iaddress.md)>
+▸ **address**(`addressBech32`: string): Promise\<[IAddressResponse](iaddressresponse.md)>
 
-Get the address details.
+Get the address details using bech32 address.
 
 #### Parameters:
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`address` | string | The address to get the details for. |
+`addressBech32` | string | The address to get the details for. |
 
-**Returns:** Promise\<[IAddress](iaddress.md)>
+**Returns:** Promise\<[IAddressResponse](iaddressresponse.md)>
 
 The address details.
 
 ___
 
-### addressOutputs
+### addressEd25519
 
-▸ **addressOutputs**(`address`: string): Promise\<[IAddressOutputs](iaddressoutputs.md)>
+▸ **addressEd25519**(`addressEd25519`: string): Promise\<[IAddressResponse](iaddressresponse.md)>
+
+Get the address details using ed25519 address.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`addressEd25519` | string | The address to get the details for. |
+
+**Returns:** Promise\<[IAddressResponse](iaddressresponse.md)>
+
+The address details.
+
+___
+
+### addressEd25519Outputs
+
+▸ **addressEd25519Outputs**(`addressEd25519`: string): Promise\<[IAddressOutputsResponse](iaddressoutputsresponse.md)>
 
 Get the address outputs.
 
@@ -67,9 +87,27 @@ Get the address outputs.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`address` | string | The address to get the outputs for. |
+`addressEd25519` | string | The address to get the outputs for. |
 
-**Returns:** Promise\<[IAddressOutputs](iaddressoutputs.md)>
+**Returns:** Promise\<[IAddressOutputsResponse](iaddressoutputsresponse.md)>
+
+The address outputs.
+
+___
+
+### addressOutputs
+
+▸ **addressOutputs**(`addressBech32`: string): Promise\<[IAddressOutputsResponse](iaddressoutputsresponse.md)>
+
+Get the address outputs using bech32 address.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`addressBech32` | string | The address to get the outputs for. |
+
+**Returns:** Promise\<[IAddressOutputsResponse](iaddressoutputsresponse.md)>
 
 The address outputs.
 
@@ -89,11 +127,11 @@ ___
 
 ### info
 
-▸ **info**(): Promise\<[IInfo](iinfo.md)>
+▸ **info**(): Promise\<[INodeInfo](inodeinfo.md)>
 
 Get the info about the node.
 
-**Returns:** Promise\<[IInfo](iinfo.md)>
+**Returns:** Promise\<[INodeInfo](inodeinfo.md)>
 
 The node information.
 
@@ -119,7 +157,7 @@ ___
 
 ### messageChildren
 
-▸ **messageChildren**(`messageId`: string): Promise\<[IChildren](ichildren.md)>
+▸ **messageChildren**(`messageId`: string): Promise\<[IChildrenResponse](ichildrenresponse.md)>
 
 Get the children of a message.
 
@@ -129,7 +167,7 @@ Name | Type | Description |
 ------ | ------ | ------ |
 `messageId` | string | The id of the message to get the children for. |
 
-**Returns:** Promise\<[IChildren](ichildren.md)>
+**Returns:** Promise\<[IChildrenResponse](ichildrenresponse.md)>
 
 The messages children.
 
@@ -209,7 +247,7 @@ ___
 
 ### messagesFind
 
-▸ **messagesFind**(`indexationKey`: string): Promise\<[IMessages](imessages.md)>
+▸ **messagesFind**(`indexationKey`: string): Promise\<[IMessagesResponse](imessagesresponse.md)>
 
 Find messages by index.
 
@@ -219,7 +257,7 @@ Name | Type | Description |
 ------ | ------ | ------ |
 `indexationKey` | string | The index value. |
 
-**Returns:** Promise\<[IMessages](imessages.md)>
+**Returns:** Promise\<[IMessagesResponse](imessagesresponse.md)>
 
 The messageId.
 
@@ -227,7 +265,7 @@ ___
 
 ### milestone
 
-▸ **milestone**(`index`: number): Promise\<[IMilestone](imilestone.md)>
+▸ **milestone**(`index`: number): Promise\<[IMilestoneResponse](imilestoneresponse.md)>
 
 Get the requested milestone.
 
@@ -237,7 +275,7 @@ Name | Type | Description |
 ------ | ------ | ------ |
 `index` | number | The index of the milestone to get. |
 
-**Returns:** Promise\<[IMilestone](imilestone.md)>
+**Returns:** Promise\<[IMilestoneResponse](imilestoneresponse.md)>
 
 The milestone details.
 
@@ -245,7 +283,7 @@ ___
 
 ### output
 
-▸ **output**(`outputId`: string): Promise\<[IOutput](ioutput.md)>
+▸ **output**(`outputId`: string): Promise\<[IOutputResponse](ioutputresponse.md)>
 
 Find an output by its identifier.
 
@@ -255,7 +293,7 @@ Name | Type | Description |
 ------ | ------ | ------ |
 `outputId` | string | The id of the output to get. |
 
-**Returns:** Promise\<[IOutput](ioutput.md)>
+**Returns:** Promise\<[IOutputResponse](ioutputresponse.md)>
 
 The output details.
 
@@ -330,10 +368,10 @@ ___
 
 ### tips
 
-▸ **tips**(): Promise\<[ITips](itips.md)>
+▸ **tips**(): Promise\<[ITipsResponse](itipsresponse.md)>
 
 Get the tips from the node.
 
-**Returns:** Promise\<[ITips](itips.md)>
+**Returns:** Promise\<[ITipsResponse](itipsresponse.md)>
 
 The tips.

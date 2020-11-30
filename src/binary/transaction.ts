@@ -1,4 +1,5 @@
-import { ITransactionEssence } from "../models/ITransactionEssence";
+import { IIndexationPayload, INDEXATION_PAYLOAD_TYPE } from "../models/IIndexationPayload";
+import { ITransactionEssence, TRANSACTION_ESSENCE_TYPE } from "../models/ITransactionEssence";
 import { ReadStream } from "../utils/readStream";
 import { WriteStream } from "../utils/writeStream";
 import { ARRAY_LENGTH, SMALL_TYPE_LENGTH, UINT32_SIZE } from "./common";
@@ -20,7 +21,7 @@ export function deserializeTransactionEssence(readStream: ReadStream): ITransact
     }
 
     const type = readStream.readByte("transactionEssence.type");
-    if (type !== 0) {
+    if (type !== TRANSACTION_ESSENCE_TYPE) {
         throw new Error(`Type mismatch in transactionEssence ${type}`);
     }
 
@@ -28,15 +29,15 @@ export function deserializeTransactionEssence(readStream: ReadStream): ITransact
     const outputs = deserializeOutputs(readStream);
 
     const payload = deserializePayload(readStream);
-    if (payload && payload.type !== 2) {
+    if (payload && payload.type !== INDEXATION_PAYLOAD_TYPE) {
         throw new Error("Transaction essence can only contain embedded Indexation Payload");
     }
 
     return {
-        type,
+        type: 0,
         inputs,
         outputs,
-        payload
+        payload: payload as IIndexationPayload
     };
 }
 

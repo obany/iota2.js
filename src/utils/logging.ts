@@ -1,14 +1,18 @@
-import { IEd25519Address } from "../models/IEd25519Address";
-import { IEd25519Signature } from "../models/IEd25519Signature";
-import { IIndexationPayload } from "../models/IIndexationPayload";
+import { ITipsResponse } from "../models/api/ITipsResponse";
+import { ED25519_ADDRESS_TYPE, IEd25519Address } from "../models/IEd25519Address";
+import { ED25519_SIGNATURE_TYPE, IEd25519Signature } from "../models/IEd25519Signature";
+import { IIndexationPayload, INDEXATION_PAYLOAD_TYPE } from "../models/IIndexationPayload";
 import { IMessage } from "../models/IMessage";
-import { IMilestonePayload } from "../models/IMilestonePayload";
-import { IReferenceUnlockBlock } from "../models/IReferenceUnlockBlock";
-import { ISigLockedSingleOutput } from "../models/ISigLockedSingleOutput";
-import { ISignatureUnlockBlock } from "../models/ISignatureUnlockBlock";
-import { ITransactionPayload } from "../models/ITransactionPayload";
+import { IMessageMetadata } from "../models/IMessageMetadata";
+import { IMilestonePayload, MILESTONE_PAYLOAD_TYPE } from "../models/IMilestonePayload";
+import { INodeInfo } from "../models/INodeInfo";
+import { IReferenceUnlockBlock, REFERENCE_UNLOCK_BLOCK_TYPE } from "../models/IReferenceUnlockBlock";
+import { ISigLockedSingleOutput, SIG_LOCKED_SINGLE_OUTPUT_TYPE } from "../models/ISigLockedSingleOutput";
+import { ISignatureUnlockBlock, SIGNATURE_UNLOCK_BLOCK_TYPE } from "../models/ISignatureUnlockBlock";
+import { TRANSACTION_ESSENCE_TYPE } from "../models/ITransactionEssence";
+import { ITransactionPayload, TRANSACTION_PAYLOAD_TYPE } from "../models/ITransactionPayload";
 import { ITypeBase } from "../models/ITypeBase";
-import { IUTXOInput } from "../models/IUTXOInput";
+import { IUTXOInput, UTXO_INPUT_TYPE } from "../models/IUTXOInput";
 import { Converter } from "./converter";
 
 /**
@@ -29,6 +33,32 @@ export function setLogger(log: (message: string, data?: unknown) => void): void 
 }
 
 /**
+ * Log the node information.
+ * @param prefix The prefix for the output.
+ * @param info The info to log.
+ */
+export function logInfo(prefix: string, info: INodeInfo): void {
+    logger(`${prefix}\tName:`, info.name);
+    logger(`${prefix}\tVersion:`, info.version);
+    logger(`${prefix}\tNetwork Id:`, info.networkId);
+    logger(`${prefix}\tIs Healthy:`, info.isHealthy);
+    logger(`${prefix}\tLatest Milestone Index:`, info.latestMilestoneIndex);
+    logger(`${prefix}\tSolid Milestone Index:`, info.solidMilestoneIndex);
+    logger(`${prefix}\tPruning Index:`, info.pruningIndex);
+    logger(`${prefix}\tFeatures:`, info.features);
+}
+
+/**
+ * Log the tips information.
+ * @param prefix The prefix for the output.
+ * @param tips The tips to log.
+ */
+export function logTips(prefix: string, tips: ITipsResponse): void {
+    logger(`${prefix}\tTip 1 Message Id:`, tips.tip1MessageId);
+    logger(`${prefix}\tTip 2 Message Id:`, tips.tip2MessageId);
+}
+
+/**
  * Log a message to the console.
  * @param prefix The prefix for the output.
  * @param message The message to log.
@@ -44,16 +74,40 @@ export function logMessage(prefix: string, message: IMessage): void {
 }
 
 /**
+ * Log the message metadata to the console.
+ * @param prefix The prefix for the output.
+ * @param messageMetadata The messageMetadata to log.
+ */
+export function logMessageMetadata(prefix: string, messageMetadata: IMessageMetadata): void {
+    console.log(`${prefix}\tMessage Id:`, messageMetadata.messageId);
+    console.log(`${prefix}\tParent 1 Message Id:`, messageMetadata.parent1MessageId);
+    console.log(`${prefix}\tParent 2 Message Id:`, messageMetadata.parent2MessageId);
+    if (messageMetadata.isSolid !== undefined) {
+        console.log(`${prefix}\tIs Solid:`, messageMetadata.isSolid);
+    }
+    if (messageMetadata.referencedByMilestoneIndex !== undefined) {
+        console.log(`${prefix}\tReferenced By Milestone Index:`, messageMetadata.referencedByMilestoneIndex);
+    }
+    console.log(`${prefix}\tLedger Inclusion State:`, messageMetadata.ledgerInclusionState);
+    if (messageMetadata.shouldPromote !== undefined) {
+        console.log(`${prefix}\tShould Promote:`, messageMetadata.shouldPromote);
+    }
+    if (messageMetadata.shouldReattach !== undefined) {
+        console.log(`${prefix}\tShould Reattach:`, messageMetadata.shouldReattach);
+    }
+}
+
+/**
  * Log a message to the console.
  * @param prefix The prefix for the output.
  * @param unknownPayload The payload.
  */
 export function logPayload(prefix: string, unknownPayload?: ITypeBase<unknown>): void {
     if (unknownPayload) {
-        if (unknownPayload.type === 0) {
+        if (unknownPayload.type === TRANSACTION_PAYLOAD_TYPE) {
             const payload = unknownPayload as ITransactionPayload;
             logger(`${prefix}Transaction Payload`);
-            if (payload.essence.type === 0) {
+            if (payload.essence.type === TRANSACTION_ESSENCE_TYPE) {
                 if (payload.essence.inputs) {
                     logger(`${prefix}\tInputs:`, payload.essence.inputs.length);
                     for (const input of payload.essence.inputs) {
@@ -74,14 +128,14 @@ export function logPayload(prefix: string, unknownPayload?: ITypeBase<unknown>):
                     logUnlockBlock(`${prefix}\t\t`, unlockBlock);
                 }
             }
-        } else if (unknownPayload.type === 1) {
+        } else if (unknownPayload.type === MILESTONE_PAYLOAD_TYPE) {
             const payload = unknownPayload as IMilestonePayload;
             logger(`${prefix}Milestone Payload`);
             logger(`${prefix}\tIndex:`, payload.index);
             logger(`${prefix}\tTimestamp:`, payload.timestamp);
             logger(`${prefix}\tInclusion Merkle Proof:`, payload.inclusionMerkleProof);
             logger(`${prefix}\tSignatures:`, payload.signatures);
-        } else if (unknownPayload.type === 2) {
+        } else if (unknownPayload.type === INDEXATION_PAYLOAD_TYPE) {
             const payload = unknownPayload as IIndexationPayload;
             logger(`${prefix}Indexation Payload`);
             logger(`${prefix}\tIndex:`, payload.index);
@@ -97,7 +151,7 @@ export function logPayload(prefix: string, unknownPayload?: ITypeBase<unknown>):
  */
 export function logAddress(prefix: string, unknownAddress?: ITypeBase<unknown>): void {
     if (unknownAddress) {
-        if (unknownAddress.type === 1) {
+        if (unknownAddress.type === ED25519_ADDRESS_TYPE) {
             const address = unknownAddress as IEd25519Address;
             logger(`${prefix}Ed25519 Address`);
             logger(`${prefix}\tAddress:`, address.address);
@@ -112,7 +166,7 @@ export function logAddress(prefix: string, unknownAddress?: ITypeBase<unknown>):
  */
 export function logSignature(prefix: string, unknownSignature?: ITypeBase<unknown>): void {
     if (unknownSignature) {
-        if (unknownSignature.type === 1) {
+        if (unknownSignature.type === ED25519_SIGNATURE_TYPE) {
             const signature = unknownSignature as IEd25519Signature;
             logger(`${prefix}Ed25519 Signature`);
             logger(`${prefix}\tPublic Key:`, signature.publicKey);
@@ -128,7 +182,7 @@ export function logSignature(prefix: string, unknownSignature?: ITypeBase<unknow
  */
 export function logInput(prefix: string, unknownInput?: ITypeBase<unknown>): void {
     if (unknownInput) {
-        if (unknownInput.type === 0) {
+        if (unknownInput.type === UTXO_INPUT_TYPE) {
             const input = unknownInput as IUTXOInput;
             logger(`${prefix}UTXO Input`);
             logger(`${prefix}\tTransaction Id:`, input.transactionId);
@@ -144,7 +198,7 @@ export function logInput(prefix: string, unknownInput?: ITypeBase<unknown>): voi
  */
 export function logOutput(prefix: string, unknownOutput?: ITypeBase<unknown>): void {
     if (unknownOutput) {
-        if (unknownOutput.type === 0) {
+        if (unknownOutput.type === SIG_LOCKED_SINGLE_OUTPUT_TYPE) {
             const output = unknownOutput as ISigLockedSingleOutput;
             logger(`${prefix}Signature Locked Single Output`);
             logAddress(`${prefix}\t\t`, output.address);
@@ -160,11 +214,11 @@ export function logOutput(prefix: string, unknownOutput?: ITypeBase<unknown>): v
  */
 export function logUnlockBlock(prefix: string, unknownUnlockBlock?: ITypeBase<unknown>): void {
     if (unknownUnlockBlock) {
-        if (unknownUnlockBlock.type === 0) {
+        if (unknownUnlockBlock.type === SIGNATURE_UNLOCK_BLOCK_TYPE) {
             const unlockBlock = unknownUnlockBlock as ISignatureUnlockBlock;
             logger(`${prefix}\tSignature Unlock Block`);
             logSignature(`${prefix}\t\t\t`, unlockBlock.signature);
-        } else if (unknownUnlockBlock.type === 1) {
+        } else if (unknownUnlockBlock.type === REFERENCE_UNLOCK_BLOCK_TYPE) {
             const unlockBlock = unknownUnlockBlock as IReferenceUnlockBlock;
             logger(`${prefix}\tReference Unlock Block`);
             logger(`${prefix}\t\tReference:`, unlockBlock.reference);

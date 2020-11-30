@@ -20,125 +20,110 @@
 
         async function run() {
             Iota2.setLogger(consoleLog);
-            const client = new Iota2.SingleNodeClient("https://api.hornet03.alphanet.iota.cafe/");
+            const client = new Iota2.SingleNodeClient("http://localhost:14265/");
 
-            const res = await Iota2.MessageHelper.validateTransaction(client, {"networkId":"6530425480034647824","parent1MessageId":"3ca395bf1e78bd1808388ae2d77deda2cdc2610a874f22a264cef310578e8328","parent2MessageId":"da52bdb360cc19d3b206df95e69d62eca001e36aaa69eb8aad129df98969ebfb","payload":{"type":0,"essence":{"type":0,"inputs":[{"type":0,"transactionId":"668503ea3b410d36dda5b03f0231e53e2e637e578d3da6517a6c651f5aeec7fd","transactionOutputIndex":1},{"type":0,"transactionId":"755f2c01f76d8e56a8abda6a46ffa94bad1a116d53a178bf5c5b59b87d94e4cd","transactionOutputIndex":0},{"type":0,"transactionId":"86f9fe3b03d63cb7845943b0c9460f556a7dfe7b9517ef47ad4ea35ba48b6aa6","transactionOutputIndex":1}],"outputs":[{"type":0,"address":{"type":1,"address":"5eec99d6ee4ba21aa536c3364bbf2b587cb98a7f2565b75d948b10083e214fff"},"amount":200},{"type":0,"address":{"type":1,"address":"bcbe5e2ccd4ce942407a0fd8ccad1df33c68c9cb1078c043e95e486d8c6e0230"},"amount":50}],"payload":null},"unlockBlocks":[{"type":0,"signature":{"type":1,"publicKey":"6a500f8ca92935cadce3adaa813c3cd8387130fe95f27de252a41bc355ae386e","signature":"95fadf8ba1e98132f1826e6696ffcf1555580e053bca0a36ab31cb9214e7549bde2142383c3b9e9d6c6ebc78702e7248d09bb0b497d911f26d8afb64bb49b204"}},{"type":0,"signature":{"type":1,"publicKey":"6bcc298644c543968b8ad3894526dac3ced3ce388f9dc718112b2f5edb2a3b32","signature":"638151016511b18e7b7bc0dd338917f084d79e115db034ab1b1aaaaa8cc312266bff7179afef1b8fbc129a859383847c903d0627bc2806c770ece4f5280ebe0e"}},{"type":1,"reference":1}]},"nonce":"90482"});
+            const res = await Iota2.MessageHelper.validateTransaction(client, { "networkId": "6530425480034647824", "parent1MessageId": "3ca395bf1e78bd1808388ae2d77deda2cdc2610a874f22a264cef310578e8328", "parent2MessageId": "da52bdb360cc19d3b206df95e69d62eca001e36aaa69eb8aad129df98969ebfb", "payload": { "type": 0, "essence": { "type": 0, "inputs": [{ "type": 0, "transactionId": "668503ea3b410d36dda5b03f0231e53e2e637e578d3da6517a6c651f5aeec7fd", "transactionOutputIndex": 1 }, { "type": 0, "transactionId": "755f2c01f76d8e56a8abda6a46ffa94bad1a116d53a178bf5c5b59b87d94e4cd", "transactionOutputIndex": 0 }, { "type": 0, "transactionId": "86f9fe3b03d63cb7845943b0c9460f556a7dfe7b9517ef47ad4ea35ba48b6aa6", "transactionOutputIndex": 1 }], "outputs": [{ "type": 0, "address": { "type": 1, "address": "5eec99d6ee4ba21aa536c3364bbf2b587cb98a7f2565b75d948b10083e214fff" }, "amount": 200 }, { "type": 0, "address": { "type": 1, "address": "bcbe5e2ccd4ce942407a0fd8ccad1df33c68c9cb1078c043e95e486d8c6e0230" }, "amount": 50 }], "payload": null }, "unlockBlocks": [{ "type": 0, "signature": { "type": 1, "publicKey": "6a500f8ca92935cadce3adaa813c3cd8387130fe95f27de252a41bc355ae386e", "signature": "95fadf8ba1e98132f1826e6696ffcf1555580e053bca0a36ab31cb9214e7549bde2142383c3b9e9d6c6ebc78702e7248d09bb0b497d911f26d8afb64bb49b204" } }, { "type": 0, "signature": { "type": 1, "publicKey": "6bcc298644c543968b8ad3894526dac3ced3ce388f9dc718112b2f5edb2a3b32", "signature": "638151016511b18e7b7bc0dd338917f084d79e115db034ab1b1aaaaa8cc312266bff7179afef1b8fbc129a859383847c903d0627bc2806c770ece4f5280ebe0e" } }, { "type": 1, "reference": 1 }] }, "nonce": "90482" });
             console.log(res);
 
-            // const health = await client.health();
-            // consoleLog("Is the node healthy", health ? "Yes" : "No");
-            // consoleLog();
+            const health = await client.health();
+            consoleLog("Is the node healthy", health ? "Yes" : "No");
+            consoleLog();
 
-            // const info = await client.info();
-            // consoleLog("Node Info");
-            // consoleLog("\tName:", info.name);
-            // consoleLog("\tVersion:", info.version);
-            // consoleLog("\tIs Healthy:", info.isHealthy);
-            // consoleLog("\tNetwork Id:", info.networkId);
-            // consoleLog("\tLatest Milestone Index:", info.latestMilestoneIndex);
-            // consoleLog("\tSolid Milestone Index:", info.solidMilestoneIndex);
-            // consoleLog("\tPruning Index:", info.pruningIndex);
-            // consoleLog("\tFeatures:", info.features);
-            // consoleLog();
+            const info = await client.info();
+            consoleLog("Node Info");
+            Iota2.logInfo("", info);
+            consoleLog();
 
-            // const tips = await client.tips();
-            // consoleLog("Tips");
-            // consoleLog("\tTip 1 Message Id:", tips.tip1MessageId);
-            // consoleLog("\tTip 2 Message Id:", tips.tip2MessageId);
-            // consoleLog();
+            const tips = await client.tips();
+            consoleLog("Tips");
+            Iota2.logTips("", tips);
+            consoleLog();
 
-            // const submitMessage = {
-            //     version: 1,
-            //     parent1MessageId: tips.tip1MessageId,
-            //     parent2MessageId: tips.tip2MessageId,
-            //     payload: {
-            //         type: 2,
-            //         index: "Foo",
-            //         data: Iota2.Converter.asciiToHex("Bar")
-            //     }
-            // };
+            const submitMessage = {
+                version: 1,
+                parent1MessageId: tips.tip1MessageId,
+                parent2MessageId: tips.tip2MessageId,
+                payload: {
+                    type: 2,
+                    index: "Foo",
+                    data: Iota2.Converter.asciiToHex("Bar")
+                }
+            };
 
-            // const messageIdCreated = await client.messageSubmit(submitMessage);
-            // consoleLog("Submit Message:");
-            // consoleLog("\tMessage Id", messageIdCreated);
-            // consoleLog();
+            const messageIdCreated = await client.messageSubmit(submitMessage);
+            consoleLog("Submit Message:");
+            consoleLog("\tMessage Id", messageIdCreated);
+            consoleLog();
 
-            // const message = await client.message(messageIdCreated);
-            // consoleLog("Get Message");
-            // Iota2.logMessage("", message);
-            // consoleLog();
+            const message = await client.message(messageIdCreated);
+            consoleLog("Get Message");
+            Iota2.logMessage("", message);
+            consoleLog();
 
-            // const messageMetadata = await client.messageMetadata(messageIdCreated);
-            // consoleLog("Message Metadata");
-            // consoleLog("\tMessage Id:", messageMetadata.messageId);
-            // consoleLog("\tParent 1 Message Id:", messageMetadata.parent1MessageId);
-            // consoleLog("\tParent 2 Message Id:", messageMetadata.parent2MessageId);
-            // consoleLog("\tIs Solid:", messageMetadata.isSolid);
-            // consoleLog("\tReferenced By Milestone Index:", messageMetadata.referencedByMilestoneIndex);
-            // consoleLog("\tLedger Inclusion State:", messageMetadata.ledgerInclusionState);
-            // consoleLog("\tShould Promote:", messageMetadata.shouldPromote);
-            // consoleLog("\tShould Reattach:", messageMetadata.shouldReattach);
-            // consoleLog();
+            const messageMetadata = await client.messageMetadata(messageIdCreated);
+            consoleLog("Message Metadata");
+            Iota2.logMessageMetadata("", messageMetadata);
+            consoleLog();
 
-            // const messageRaw = await client.messageRaw(messageIdCreated);
-            // consoleLog("Message Raw");
-            // consoleLog("\tRaw:", Iota2.Converter.bytesToHex(messageRaw));
-            // consoleLog();
+            const messageRaw = await client.messageRaw(messageIdCreated);
+            consoleLog("Message Raw");
+            consoleLog("\tRaw:", Iota2.Converter.bytesToHex(messageRaw));
+            consoleLog();
 
-            // const decoded = Iota2.deserializeMessage(new Iota2.ReadStream(messageRaw));
-            // consoleLog("Message Decoded");
-            // Iota2.logMessage("", decoded);
-            // consoleLog();
+            const decoded = Iota2.deserializeMessage(new Iota2.ReadStream(messageRaw));
+            consoleLog("Message Decoded");
+            Iota2.logMessage("", decoded);
+            consoleLog();
 
-            // const messages = await client.messagesFind("Foo");
-            // consoleLog("Messages");
-            // consoleLog("\tIndex:", messages.index);
-            // consoleLog("\tMax Results:", messages.maxResults);
-            // consoleLog("\tCount:", messages.count);
-            // consoleLog("\tMessage Ids:", messages.messageIds);
-            // consoleLog();
+            const messages = await client.messagesFind("Foo");
+            consoleLog("Messages");
+            consoleLog("\tIndex:", messages.index);
+            consoleLog("\tMax Results:", messages.maxResults);
+            consoleLog("\tCount:", messages.count);
+            consoleLog("\tMessage Ids:", messages.messageIds);
+            consoleLog();
 
-            // const children = await client.messageChildren(tips.tip1MessageId);
-            // consoleLog("Children");
-            // consoleLog("\tMessage Id:", children.messageId);
-            // consoleLog("\tMax Results:", children.maxResults);
-            // consoleLog("\tCount:", children.count);
-            // consoleLog("\tChildren Message Ids:", children.childrenMessageIds);
-            // consoleLog();
+            const children = await client.messageChildren(tips.tip1MessageId);
+            consoleLog("Children");
+            consoleLog("\tMessage Id:", children.messageId);
+            consoleLog("\tMax Results:", children.maxResults);
+            consoleLog("\tCount:", children.count);
+            consoleLog("\tChildren Message Ids:", children.childrenMessageIds);
+            consoleLog();
 
-            // const milestone = await client.milestone(info.latestMilestoneIndex);
-            // consoleLog("Milestone");
-            // consoleLog("\tMilestone Index:", milestone.milestoneIndex);
-            // consoleLog("\tMessage Id:", milestone.messageId);
-            // consoleLog("\tTimestamp:", milestone.timestamp);
-            // consoleLog();
+            const milestone = await client.milestone(info.latestMilestoneIndex);
+            consoleLog("Milestone");
+            consoleLog("\tMilestone Index:", milestone.milestoneIndex);
+            consoleLog("\tMessage Id:", milestone.messageId);
+            consoleLog("\tTimestamp:", milestone.timestamp);
+            consoleLog();
 
-            // const output = await client.output("00000000000000000000000000000000000000000000000000000000000000000000");
-            // consoleLog("Output");
-            // consoleLog("\tMessage Id:", output.messageId);
-            // consoleLog("\tTransaction Id:", output.transactionId);
-            // consoleLog("\tOutput Index:", output.outputIndex);
-            // consoleLog("\tIs Spent:", output.isSpent);
-            // Iota2.logOutput("\t", output.output);
-            // consoleLog();
+            const output = await client.output("00000000000000000000000000000000000000000000000000000000000000000000");
+            consoleLog("Output");
+            consoleLog("\tMessage Id:", output.messageId);
+            consoleLog("\tTransaction Id:", output.transactionId);
+            consoleLog("\tOutput Index:", output.outputIndex);
+            consoleLog("\tIs Spent:", output.isSpent);
+            Iota2.logOutput("\t", output.output);
+            consoleLog();
 
-            // const address = await client.address(output.output.address.address);
-            // consoleLog("Address");
-            // consoleLog("\tAddress:", address.address);
-            // consoleLog("\tMax Results:", address.maxResults);
-            // consoleLog("\tCount:", address.count);
-            // consoleLog("\tBalance:", address.balance);
-            // consoleLog();
+            const address = await client.addressEd25519(output.output.address.address);
+            consoleLog("Address");
+            consoleLog("\tAddress:", address.address);
+            consoleLog("\tMax Results:", address.maxResults);
+            consoleLog("\tCount:", address.count);
+            consoleLog("\tBalance:", address.balance);
+            consoleLog();
 
-            // const addressOutputs = await client.addressOutputs(output.output.address.address);
-            // consoleLog("Address Outputs");
-            // consoleLog("\tAddress:", addressOutputs.address);
-            // consoleLog("\tMax Results:", addressOutputs.maxResults);
-            // consoleLog("\tCount:", addressOutputs.count);
-            // consoleLog("\tOutput Ids:", addressOutputs.outputIds);
-            // consoleLog();
+            const addressOutputs = await client.addressEd25519Outputs(output.output.address.address);
+            consoleLog("Address Outputs");
+            consoleLog("\tAddress:", addressOutputs.address);
+            consoleLog("\tMax Results:", addressOutputs.maxResults);
+            consoleLog("\tCount:", addressOutputs.count);
+            consoleLog("\tOutput Ids:", addressOutputs.outputIds);
+            consoleLog();
 
-            // await doTransfer(client);
+            await doTransfer(client);
         }
 
         async function doTransfer(client) {
@@ -155,28 +140,33 @@
                 publicKey: Iota2.Converter.hexToBytes(publicKey)
             };
 
-            const genesisAddress = Iota2.Ed25519Address.publicKeyToAddress(genesisSeedKeyPair.publicKey);
+            const ed25519Address = new Iota2.Ed25519Address();
+            const genesisAddress = ed25519Address.publicKeyToAddress(genesisSeedKeyPair.publicKey);
             const genesisAddressHex = Iota2.Converter.bytesToHex(genesisAddress);
-            consoleLog("\tAddress:", genesisAddressHex);
+            consoleLog("\tAddress Ed25519:", genesisAddressHex);
+            consoleLog("\tAddress Bech32:", Iota2.Bech32Helper.toBech32(Iota2.ED25519_ADDRESS_TYPE, genesisAddress));
 
             // Create a new seed for the wallet
-            const walletSeed = Iota2.Ed25519Seed.fromBytes(Iota2.Converter.hexToBytes("e57fb750f3a3a67969ece5bd9ae7eef5b2256a818b2aac458941f7274985a410"));
+            const walletSeed = new Iota2.Ed25519Seed(Iota2.Converter.hexToBytes("e57fb750f3a3a67969ece5bd9ae7eef5b2256a818b2aac458941f7274985a410"));
 
             // Use the new seed like a wallet with Bip32 Paths
             const walletPath = new Iota2.Bip32Path("m/0");
             const walletAddressSeed = walletSeed.generateSeedFromPath(walletPath);
-            const newAddress = Iota2.Converter.bytesToHex(Iota2.Ed25519Address.publicKeyToAddress(walletAddressSeed.keyPair().publicKey));
+            const walletEd25519Address = new Iota2.Ed25519Address();
+            const newAddress = walletEd25519Address.publicKeyToAddress(walletAddressSeed.keyPair().publicKey);
+            const newAddressHex = Iota2.Converter.bytesToHex(newAddress);
 
             consoleLog("Wallet 1");
             consoleLog("\tSeed:", Iota2.Converter.bytesToHex(walletSeed.toBytes()));
             consoleLog("\tPath:", walletPath.toString());
-            consoleLog(`\tAddress ${walletPath.toString()}:`, newAddress);
+            consoleLog(`\tAddress Ed25519 ${walletPath.toString()}:`, newAddressHex);
+            consoleLog(`\tAddress Bech32 ${walletPath.toString()}:`, Iota2.Bech32Helper.toBech32(Iota2.ED25519_ADDRESS_TYPE, newAddress));
             consoleLog();
 
             // Because we are using the genesis address we must use send advanced as the input address is
             // not calculated from a Bip32 path, if you were doing a wallet to wallet transfer you can just use send
             // which calculates all the inputs/outputs for you
-            const genesisAddressOutputs = await client.addressOutputs(genesisAddressHex);
+            const genesisAddressOutputs = await client.addressEd25519Outputs(genesisAddressHex);
 
             const inputsWithKeyPairs = [];
 
@@ -200,17 +190,19 @@
             const amountToSend = 1000;
 
             const outputs = [
-                    // This is the transfer to the new address
-                    {
-                        address: newAddress,
-                        amount: amountToSend
-                    },
-                    // Sending remainder back to genesis
-                    {
-                        address: genesisAddressHex,
-                        amount: totalGenesis - amountToSend
-                    }
-                ];
+                // This is the transfer to the new address
+                {
+                    address: newAddressHex,
+                    addressType: Iota2.ED25519_ADDRESS_TYPE,
+                    amount: amountToSend
+                },
+                // Sending remainder back to genesis
+                {
+                    address: genesisAddressHex,
+                    addressType: Iota2.ED25519_ADDRESS_TYPE,
+                    amount: totalGenesis - amountToSend
+                }
+            ];
 
             const { messageId } = await Iota2.sendAdvanced(client, inputsWithKeyPairs, outputs, "WALLET", Iota2.Converter.asciiToBytes("Not trinity"));
 

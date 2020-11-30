@@ -1,13 +1,14 @@
+import { Ed25519Address } from "../addressTypes/ed25519Address";
 import { serializeInput } from "../binary/input";
 import { serializeOutput } from "../binary/output";
 import { serializeTransactionEssence } from "../binary/transaction";
 import { Ed25519 } from "../crypto/ed25519";
-import { Ed25519Address } from "../crypto/ed25519Address";
 import { IClient } from "../models/IClient";
+import { ED25519_ADDRESS_TYPE } from "../models/IEd25519Address";
 import { IMessage } from "../models/IMessage";
-import { IReferenceUnlockBlock } from "../models/IReferenceUnlockBlock";
+import { IReferenceUnlockBlock, REFERENCE_UNLOCK_BLOCK_TYPE } from "../models/IReferenceUnlockBlock";
 import { ISigLockedSingleOutput } from "../models/ISigLockedSingleOutput";
-import { ISignatureUnlockBlock } from "../models/ISignatureUnlockBlock";
+import { ISignatureUnlockBlock, SIGNATURE_UNLOCK_BLOCK_TYPE } from "../models/ISignatureUnlockBlock";
 import { IUTXOInput } from "../models/IUTXOInput";
 import { Converter } from "./converter";
 import { WriteStream } from "./writeStream";
@@ -58,21 +59,25 @@ export class MessageHelper {
 
                 if (message.payload.unlockBlocks) {
                     for (let i = 0; i < message.payload.unlockBlocks.length; i++) {
-                        if (message.payload.unlockBlocks[i].type === 0) {
+                        if (message.payload.unlockBlocks[i].type === SIGNATURE_UNLOCK_BLOCK_TYPE) {
                             const sigUnlockBlock = message.payload.unlockBlocks[i] as ISignatureUnlockBlock;
 
-                            const address = Ed25519Address.publicKeyToAddress(
-                                Converter.hexToBytes(sigUnlockBlock.signature.publicKey));
+                            if (sigUnlockBlock.signature.type === ED25519_ADDRESS_TYPE) {
+                                const address = new Ed25519Address();
 
-                            const outputs = await client.addressOutputs(Converter.bytesToHex(address));
+                                const addr = address.publicKeyToAddress(
+                                    Converter.hexToBytes(sigUnlockBlock.signature.publicKey));
 
-                            for (const outputId of outputs.outputIds) {
-                                const output = await client.output(outputId);
+                                const outputs = await client.addressEd25519Outputs(Converter.bytesToHex(addr));
 
-                                txsForAddresses[output.transactionId] = {
-                                    isSpent: output.isSpent,
-                                    amount: output.output.amount
-                                };
+                                for (const outputId of outputs.outputIds) {
+                                    const output = await client.output(outputId);
+
+                                    txsForAddresses[output.transactionId] = {
+                                        isSpent: output.isSpent,
+                                        amount: output.output.amount
+                                    };
+                                }
                             }
                         }
                     }
@@ -178,9 +183,9 @@ export class MessageHelper {
 
                     const unlockBlocksFull: ISignatureUnlockBlock[] = [];
                     for (let i = 0; i < message.payload.unlockBlocks.length; i++) {
-                        if (message.payload.unlockBlocks[i].type === 0) {
+                        if (message.payload.unlockBlocks[i].type === SIGNATURE_UNLOCK_BLOCK_TYPE) {
                             unlockBlocksFull.push(message.payload.unlockBlocks[i] as ISignatureUnlockBlock);
-                        } else if (message.payload.unlockBlocks[i].type === 1) {
+                        } else if (message.payload.unlockBlocks[i].type === REFERENCE_UNLOCK_BLOCK_TYPE) {
                             const refUnlockBlock = message.payload.unlockBlocks[i] as IReferenceUnlockBlock;
                             if (refUnlockBlock.reference < 0 ||
                                 refUnlockBlock.reference > message.payload.unlockBlocks.length - 1) {
@@ -198,15 +203,15 @@ export class MessageHelper {
                     }
 
                     for (let i = 0; i < sortedInputs.length; i++) {
-                        const sigUnlockBlock = unlockBlocksFull[i];
+                        if (unlockBlocksFull[i].type === ED25519_ADDRESS_TYPE) {
+                            const verified = Ed25519.verify(
+                                Converter.hexToBytes(unlockBlocksFull[i].signature.publicKey),
+                                essenceFinal,
+                                Converter.hexToBytes(unlockBlocksFull[i].signature.signature));
 
-                        const verified = Ed25519.verify(
-                            Converter.hexToBytes(sigUnlockBlock.signature.publicKey),
-                            essenceFinal,
-                            Converter.hexToBytes(sigUnlockBlock.signature.signature));
-
-                        if (!verified) {
-                            invalid.push(`Signature for unlock block ${i} is incorrect.`);
+                            if (!verified) {
+                                invalid.push(`Signature for unlock block ${i} is incorrect.`);
+                            }
                         }
                     }
                 }

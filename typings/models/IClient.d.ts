@@ -1,14 +1,14 @@
-import { IAddress } from "./api/IAddress";
-import { IAddressOutputs } from "./api/IAddressOutputs";
-import { IChildren } from "./api/IChildren";
-import { IInfo } from "./api/IInfo";
-import { IMessageMetadata } from "./api/IMessageMetadata";
-import { IMessages } from "./api/IMessages";
-import { IMilestone } from "./api/IMilestone";
-import { IOutput } from "./api/IOutput";
-import { IPeer } from "./api/IPeer";
-import { ITips } from "./api/ITips";
+import { IAddressOutputsResponse } from "./api/IAddressOutputsResponse";
+import { IAddressResponse } from "./api/IAddressResponse";
+import { IChildrenResponse } from "./api/IChildrenResponse";
+import { IMessagesResponse } from "./api/IMessagesResponse";
+import { IMilestoneResponse } from "./api/IMilestoneResponse";
+import { IOutputResponse } from "./api/IOutputResponse";
+import { ITipsResponse } from "./api/ITipsResponse";
 import { IMessage } from "./IMessage";
+import { IMessageMetadata } from "./IMessageMetadata";
+import { INodeInfo } from "./INodeInfo";
+import { IPeer } from "./IPeer";
 /**
  * Client interface definition for API communication.
  */
@@ -22,12 +22,12 @@ export interface IClient {
      * Get the info about the node.
      * @returns The node information.
      */
-    info(): Promise<IInfo>;
+    info(): Promise<INodeInfo>;
     /**
      * Get the tips from the node.
      * @returns The tips.
      */
-    tips(): Promise<ITips>;
+    tips(): Promise<ITipsResponse>;
     /**
      * Get the message data by id.
      * @param messageId The message to get the data for.
@@ -63,37 +63,49 @@ export interface IClient {
      * @param indexationKey The index value.
      * @returns The messageId.
      */
-    messagesFind(indexationKey: string): Promise<IMessages>;
+    messagesFind(indexationKey: string): Promise<IMessagesResponse>;
     /**
      * Get the children of a message.
      * @param messageId The id of the message to get the children for.
      * @returns The messages children.
      */
-    messageChildren(messageId: string): Promise<IChildren>;
+    messageChildren(messageId: string): Promise<IChildrenResponse>;
     /**
      * Find an output by its identifier.
      * @param outputId The id of the output to get.
      * @returns The output details.
      */
-    output(outputId: string): Promise<IOutput>;
+    output(outputId: string): Promise<IOutputResponse>;
     /**
-     * Get the address details.
-     * @param address The address to get the details for.
+     * Get the address details using bech32 address.
+     * @param addressBech32 The address to get the details for.
      * @returns The address details.
      */
-    address(address: string): Promise<IAddress>;
+    address(addressBech32: string): Promise<IAddressResponse>;
     /**
-     * Get the address outputs.
-     * @param address The address to get the outputs for.
+     * Get the address outputs using bech32 address.
+     * @param addressBech32 The address to get the outputs for.
      * @returns The address outputs.
      */
-    addressOutputs(address: string): Promise<IAddressOutputs>;
+    addressOutputs(addressBech32: string): Promise<IAddressOutputsResponse>;
+    /**
+     * Get the address details using ed25519 address.
+     * @param addressEd25519 The address to get the details for.
+     * @returns The address details.
+     */
+    addressEd25519(addressEd25519: string): Promise<IAddressResponse>;
+    /**
+     * Get the address outputs.
+     * @param addressEd25519 The address to get the outputs for.
+     * @returns The address outputs.
+     */
+    addressEd25519Outputs(addressEd25519: string): Promise<IAddressOutputsResponse>;
     /**
      * Get the requested milestone.
      * @param index The index of the milestone to get.
      * @returns The milestone details.
      */
-    milestone(index: number): Promise<IMilestone>;
+    milestone(index: number): Promise<IMilestoneResponse>;
     /**
      * Get the list of peers.
      * @returns The list of peers.

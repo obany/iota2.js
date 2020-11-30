@@ -9,9 +9,3 @@ export declare const TYPE_LENGTH: number;
 export declare const SMALL_TYPE_LENGTH: number;
 export declare const STRING_LENGTH: number;
 export declare const ARRAY_LENGTH: number;
-/**
- * Is the data hex format.
- * @param value The value to test.
- * @returns true if the string is hex.
- */
-export declare function isHex(value: string): boolean;

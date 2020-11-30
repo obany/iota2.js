@@ -1,10 +1,12 @@
+import { Ed25519Address } from "../addressTypes/ed25519Address";
 import { Bip32Path } from "../crypto/bip32Path";
-import { Ed25519Address } from "../crypto/ed25519Address";
 import { IClient } from "../models/IClient";
+import { ED25519_ADDRESS_TYPE } from "../models/IEd25519Address";
 import { IKeyPair } from "../models/IKeyPair";
 import { IMessage } from "../models/IMessage";
 import { ISeed } from "../models/ISeed";
 import { IUTXOInput } from "../models/IUTXOInput";
+import { Bech32Helper } from "../utils/bech32Helper";
 import { Converter } from "../utils/converter";
 import { sendAdvanced } from "./sendAdvanced";
 
@@ -13,7 +15,7 @@ import { sendAdvanced } from "./sendAdvanced";
  * @param client The client to send the transfer with.
  * @param seed The seed to use for address generation.
  * @param basePath The base path to start looking for addresses.
- * @param address The address to send the funds to.
+ * @param addressBech32 The address to send the funds to in bech32 format.
  * @param amount The amount to send.
  * @param startIndex The start index for the wallet count address, defaults to 0.
  * @returns The id of the message created and the contructed message.
@@ -22,13 +24,58 @@ export async function send(
     client: IClient,
     seed: ISeed,
     basePath: Bip32Path,
-    address: string,
+    addressBech32: string,
     amount: number,
     startIndex?: number): Promise<{
         messageId: string;
         message: IMessage;
     }> {
-    const outputs = [{ address, amount }];
+    const bech32Details = Bech32Helper.fromBech32(addressBech32);
+    if (!bech32Details) {
+        throw new Error("Unable to decode bech32 address");
+    }
+
+    const outputs = [
+        {
+            address: Converter.bytesToHex(bech32Details.addressBytes),
+            addressType: bech32Details.addressType,
+            amount
+        }
+    ];
+    const inputsAndKey = await calculateInputs(client, seed, basePath, outputs, startIndex);
+
+    const response = await sendAdvanced(
+        client,
+        inputsAndKey,
+        outputs);
+
+    return {
+        messageId: response.messageId,
+        message: response.message
+    };
+}
+
+/**
+ * Send a transfer from the balance on the seed.
+ * @param client The client to send the transfer with.
+ * @param seed The seed to use for address generation.
+ * @param basePath The base path to start looking for addresses.
+ * @param addressEd25519 The address to send the funds to in ed25519 format.
+ * @param amount The amount to send.
+ * @param startIndex The start index for the wallet count address, defaults to 0.
+ * @returns The id of the message created and the contructed message.
+ */
+export async function sendEd25519(
+    client: IClient,
+    seed: ISeed,
+    basePath: Bip32Path,
+    addressEd25519: string,
+    amount: number,
+    startIndex?: number): Promise<{
+        messageId: string;
+        message: IMessage;
+    }> {
+    const outputs = [{ address: addressEd25519, addressType: ED25519_ADDRESS_TYPE, amount }];
     const inputsAndKey = await calculateInputs(client, seed, basePath, outputs, startIndex);
 
     const response = await sendAdvanced(
@@ -55,7 +102,7 @@ export async function calculateInputs(
     client: IClient,
     seed: ISeed,
     basePath: Bip32Path,
-    outputs: { address: string; amount: number }[],
+    outputs: { address: string; addressType: number; amount: number }[],
     startIndex?: number): Promise<{
         input: IUTXOInput;
         addressKeyPair: IKeyPair;
@@ -75,8 +122,9 @@ export async function calculateInputs(
         const addressKeyPair = seed.generateSeedFromPath(basePath).keyPair();
         basePath.pop();
 
-        const address = Converter.bytesToHex(Ed25519Address.publicKeyToAddress(addressKeyPair.publicKey));
-        const addressOutputIds = await client.addressOutputs(address);
+        const ed25519Address = new Ed25519Address();
+        const address = Converter.bytesToHex(ed25519Address.publicKeyToAddress(addressKeyPair.publicKey));
+        const addressOutputIds = await client.addressEd25519Outputs(address);
 
         if (addressOutputIds.count === 0) {
             finished = true;
@@ -108,7 +156,8 @@ export async function calculateInputs(
                             if (consumedBalance - requiredBalance > 0) {
                                 outputs.push({
                                     amount: consumedBalance - requiredBalance,
-                                    address
+                                    address: addressOutput.output.address.address,
+                                    addressType: addressOutput.output.address.type
                                 });
                             }
                             finished = true;

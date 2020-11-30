@@ -37,7 +37,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUnspentAddresses = void 0;
-var ed25519Address_1 = require("../crypto/ed25519Address");
+var ed25519Address_1 = require("../addressTypes/ed25519Address");
+var IEd25519Address_1 = require("../models/IEd25519Address");
+var bech32Helper_1 = require("../utils/bech32Helper");
 var converter_1 = require("../utils/converter");
 /**
  * Get all the unspent addresses.
@@ -50,7 +52,7 @@ var converter_1 = require("../utils/converter");
  */
 function getUnspentAddresses(client, seed, basePath, startIndex, countLimit) {
     return __awaiter(this, void 0, void 0, function () {
-        var localStartIndex, localCountLimit, finished, allUnspent, addressKeyPair, address, addressResponse;
+        var localStartIndex, localCountLimit, finished, allUnspent, addressKeyPair, ed25519Address, addressBytes, addressHex, addressResponse;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -63,8 +65,10 @@ function getUnspentAddresses(client, seed, basePath, startIndex, countLimit) {
                     basePath.push(localStartIndex);
                     addressKeyPair = seed.generateSeedFromPath(basePath).keyPair();
                     basePath.pop();
-                    address = converter_1.Converter.bytesToHex(ed25519Address_1.Ed25519Address.publicKeyToAddress(addressKeyPair.publicKey));
-                    return [4 /*yield*/, client.address(address)];
+                    ed25519Address = new ed25519Address_1.Ed25519Address();
+                    addressBytes = ed25519Address.publicKeyToAddress(addressKeyPair.publicKey);
+                    addressHex = converter_1.Converter.bytesToHex(addressBytes);
+                    return [4 /*yield*/, client.addressEd25519(addressHex)];
                 case 2:
                     addressResponse = _a.sent();
                     // If there are no outputs for the address we have reached the
@@ -74,7 +78,7 @@ function getUnspentAddresses(client, seed, basePath, startIndex, countLimit) {
                     }
                     else {
                         allUnspent.push({
-                            address: address,
+                            address: bech32Helper_1.Bech32Helper.toBech32(IEd25519Address_1.ED25519_ADDRESS_TYPE, addressBytes),
                             index: localStartIndex,
                             balance: addressResponse.balance
                         });
@@ -93,4 +97,4 @@ function getUnspentAddresses(client, seed, basePath, startIndex, countLimit) {
     });
 }
 exports.getUnspentAddresses = getUnspentAddresses;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZ2V0VW5zcGVudEFkZHJlc3Nlcy5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9oaWdoTGV2ZWwvZ2V0VW5zcGVudEFkZHJlc3Nlcy50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFDQSwyREFBMEQ7QUFHMUQsZ0RBQStDO0FBRS9DOzs7Ozs7OztHQVFHO0FBQ0gsU0FBc0IsbUJBQW1CLENBQ3JDLE1BQWUsRUFDZixJQUFXLEVBQ1gsUUFBbUIsRUFDbkIsVUFBbUIsRUFDbkIsVUFBbUI7Ozs7OztvQkFLZixlQUFlLEdBQUcsVUFBVSxhQUFWLFVBQVUsY0FBVixVQUFVLEdBQUksQ0FBQyxDQUFDO29CQUNoQyxlQUFlLEdBQUcsVUFBVSxhQUFWLFVBQVUsY0FBVixVQUFVLEdBQUksTUFBTSxDQUFDLGdCQUFnQixDQUFDO29CQUMxRCxRQUFRLEdBQUcsS0FBSyxDQUFDO29CQUNmLFVBQVUsR0FJVixFQUFFLENBQUM7OztvQkFHTCxRQUFRLENBQUMsSUFBSSxDQUFDLGVBQWUsQ0FBQyxDQUFDO29CQUN6QixjQUFjLEdBQUcsSUFBSSxDQUFDLG9CQUFvQixDQUFDLFFBQVEsQ0FBQyxDQUFDLE9BQU8sRUFBRSxDQUFDO29CQUNyRSxRQUFRLENBQUMsR0FBRyxFQUFFLENBQUM7b0JBRVQsT0FBTyxHQUFHLHFCQUFTLENBQUMsVUFBVSxDQUFDLCtCQUFjLENBQUMsa0JBQWtCLENBQUMsY0FBYyxDQUFDLFNBQVMsQ0FBQyxDQUFDLENBQUM7b0JBQzFFLHFCQUFNLE1BQU0sQ0FBQyxPQUFPLENBQUMsT0FBTyxDQUFDLEVBQUE7O29CQUEvQyxlQUFlLEdBQUcsU0FBNkI7b0JBRXJELDhEQUE4RDtvQkFDOUQsNEJBQTRCO29CQUM1QixJQUFJLGVBQWUsQ0FBQyxLQUFLLEtBQUssQ0FBQyxFQUFFO3dCQUM3QixRQUFRLEdBQUcsSUFBSSxDQUFDO3FCQUNuQjt5QkFBTTt3QkFDSCxVQUFVLENBQUMsSUFBSSxDQUFDOzRCQUNaLE9BQU8sU0FBQTs0QkFDUCxLQUFLLEVBQUUsZUFBZTs0QkFDdEIsT0FBTyxFQUFFLGVBQWUsQ0FBQyxPQUFPO3lCQUNuQyxDQUFDLENBQUM7d0JBRUgsSUFBSSxVQUFVLENBQUMsTUFBTSxLQUFLLGVBQWUsRUFBRTs0QkFDdkMsUUFBUSxHQUFHLElBQUksQ0FBQzt5QkFDbkI7cUJBQ0o7b0JBRUQsZUFBZSxFQUFFLENBQUM7Ozt3QkFDYixDQUFDLFFBQVE7O3dCQUVsQixzQkFBTyxVQUFVLEVBQUM7Ozs7Q0FDckI7QUEvQ0Qsa0RBK0NDIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZ2V0VW5zcGVudEFkZHJlc3Nlcy5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9oaWdoTGV2ZWwvZ2V0VW5zcGVudEFkZHJlc3Nlcy50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSxpRUFBZ0U7QUFHaEUsNkRBQWlFO0FBRWpFLHNEQUFxRDtBQUNyRCxnREFBK0M7QUFFL0M7Ozs7Ozs7O0dBUUc7QUFDSCxTQUFzQixtQkFBbUIsQ0FDckMsTUFBZSxFQUNmLElBQVcsRUFDWCxRQUFtQixFQUNuQixVQUFtQixFQUNuQixVQUFtQjs7Ozs7O29CQUtmLGVBQWUsR0FBRyxVQUFVLGFBQVYsVUFBVSxjQUFWLFVBQVUsR0FBSSxDQUFDLENBQUM7b0JBQ2hDLGVBQWUsR0FBRyxVQUFVLGFBQVYsVUFBVSxjQUFWLFVBQVUsR0FBSSxNQUFNLENBQUMsZ0JBQWdCLENBQUM7b0JBQzFELFFBQVEsR0FBRyxLQUFLLENBQUM7b0JBQ2YsVUFBVSxHQUlWLEVBQUUsQ0FBQzs7O29CQUdMLFFBQVEsQ0FBQyxJQUFJLENBQUMsZUFBZSxDQUFDLENBQUM7b0JBQ3pCLGNBQWMsR0FBRyxJQUFJLENBQUMsb0JBQW9CLENBQUMsUUFBUSxDQUFDLENBQUMsT0FBTyxFQUFFLENBQUM7b0JBQ3JFLFFBQVEsQ0FBQyxHQUFHLEVBQUUsQ0FBQztvQkFFVCxjQUFjLEdBQUcsSUFBSSwrQkFBYyxFQUFFLENBQUM7b0JBQ3RDLFlBQVksR0FBRyxjQUFjLENBQUMsa0JBQWtCLENBQUMsY0FBYyxDQUFDLFNBQVMsQ0FBQyxDQUFDO29CQUMzRSxVQUFVLEdBQUcscUJBQVMsQ0FBQyxVQUFVLENBQUMsWUFBWSxDQUFDLENBQUM7b0JBQzlCLHFCQUFNLE1BQU0sQ0FBQyxjQUFjLENBQUMsVUFBVSxDQUFDLEVBQUE7O29CQUF6RCxlQUFlLEdBQUcsU0FBdUM7b0JBRS9ELDhEQUE4RDtvQkFDOUQsNEJBQTRCO29CQUM1QixJQUFJLGVBQWUsQ0FBQyxLQUFLLEtBQUssQ0FBQyxFQUFFO3dCQUM3QixRQUFRLEdBQUcsSUFBSSxDQUFDO3FCQUNuQjt5QkFBTTt3QkFDSCxVQUFVLENBQUMsSUFBSSxDQUFDOzRCQUNaLE9BQU8sRUFBRSwyQkFBWSxDQUFDLFFBQVEsQ0FBQyxzQ0FBb0IsRUFBRSxZQUFZLENBQUM7NEJBQ2xFLEtBQUssRUFBRSxlQUFlOzRCQUN0QixPQUFPLEVBQUUsZUFBZSxDQUFDLE9BQU87eUJBQ25DLENBQUMsQ0FBQzt3QkFFSCxJQUFJLFVBQVUsQ0FBQyxNQUFNLEtBQUssZUFBZSxFQUFFOzRCQUN2QyxRQUFRLEdBQUcsSUFBSSxDQUFDO3lCQUNuQjtxQkFDSjtvQkFFRCxlQUFlLEVBQUUsQ0FBQzs7O3dCQUNiLENBQUMsUUFBUTs7d0JBRWxCLHNCQUFPLFVBQVUsRUFBQzs7OztDQUNyQjtBQWpERCxrREFpREMifQ==

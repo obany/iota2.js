@@ -1,5 +1,5 @@
 import { ITypeBase } from "../models/ITypeBase";
-import { IUTXOInput } from "../models/IUTXOInput";
+import { IUTXOInput, UTXO_INPUT_TYPE } from "../models/IUTXOInput";
 import { ReadStream } from "../utils/readStream";
 import { WriteStream } from "../utils/writeStream";
 import { SMALL_TYPE_LENGTH, TRANSACTION_ID_LENGTH, UINT16_SIZE } from "./common";
@@ -51,7 +51,7 @@ export function deserializeInput(readStream: ReadStream): IUTXOInput {
     const type = readStream.readByte("input.type", false);
     let input;
 
-    if (type === 0) {
+    if (type === UTXO_INPUT_TYPE) {
         input = deserializeUTXOInput(readStream);
     } else {
         throw new Error(`Unrecognized input type ${type}`);
@@ -67,7 +67,7 @@ export function deserializeInput(readStream: ReadStream): IUTXOInput {
  */
 export function serializeInput(writeStream: WriteStream,
     object: IUTXOInput): void {
-    if (object.type === 0) {
+    if (object.type === UTXO_INPUT_TYPE) {
         serializeUTXOInput(writeStream, object);
     } else {
         throw new Error(`Unrecognized input type ${(object as ITypeBase<unknown>).type}`);
@@ -86,7 +86,7 @@ export function deserializeUTXOInput(readStream: ReadStream): IUTXOInput {
     }
 
     const type = readStream.readByte("utxoInput.type");
-    if (type !== 0) {
+    if (type !== UTXO_INPUT_TYPE) {
         throw new Error(`Type mismatch in utxoInput ${type}`);
     }
 
@@ -94,7 +94,7 @@ export function deserializeUTXOInput(readStream: ReadStream): IUTXOInput {
     const transactionOutputIndex = readStream.readUInt16("utxoInput.transactionOutputIndex");
 
     return {
-        type,
+        type: 0,
         transactionId,
         transactionOutputIndex
     };

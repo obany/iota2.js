@@ -1,8 +1,7 @@
-import { IAddressOutputs } from "../models/api/IAddressOutputs";
-import { IMessageMetadata } from "../models/api/IMessageMetadata";
-import { IMilestone } from "../models/api/IMilestone";
-import { IOutput } from "../models/api/IOutput";
+import { IMilestoneResponse } from "../models/api/IMilestoneResponse";
+import { IOutputResponse } from "../models/api/IOutputResponse";
 import { IMessage } from "../models/IMessage";
+import { IMessageMetadata } from "../models/IMessageMetadata";
 import { IMqttClient } from "../models/IMqttClient";
 import { IMqttStatus } from "../models/IMqttStatus";
 /**
@@ -20,13 +19,13 @@ export declare class MqttClient implements IMqttClient {
      * @param callback The callback which is called when new data arrives.
      * @returns A subscription Id which can be used to unsubscribe.
      */
-    milestonesLatest(callback: (topic: string, data: IMilestone) => void): string;
+    milestonesLatest(callback: (topic: string, data: IMilestoneResponse) => void): string;
     /**
      * Subscribe to the latest solid milestone updates.
      * @param callback The callback which is called when new data arrives.
      * @returns A subscription Id which can be used to unsubscribe.
      */
-    milestonesSolid(callback: (topic: string, data: IMilestone) => void): string;
+    milestonesSolid(callback: (topic: string, data: IMilestoneResponse) => void): string;
     /**
      * Subscribe to metadata updates for a specific message.
      * @param messageId The message to monitor.
@@ -40,14 +39,14 @@ export declare class MqttClient implements IMqttClient {
      * @param callback The callback which is called when new data arrives.
      * @returns A subscription Id which can be used to unsubscribe.
      */
-    output(outputId: string, callback: (topic: string, data: IOutput) => void): string;
+    output(outputId: string, callback: (topic: string, data: IOutputResponse) => void): string;
     /**
      * Subscribe to the address for output updates.
      * @param address The address to monitor.
      * @param callback The callback which is called when new data arrives.
      * @returns A subscription Id which can be used to unsubscribe.
      */
-    addressOutputs(address: string, callback: (topic: string, data: IAddressOutputs) => void): string;
+    addressOutputs(address: string, callback: (topic: string, data: IOutputResponse) => void): string;
     /**
      * Subscribe to get all messages in binary form.
      * @param callback The callback which is called when new data arrives.

@@ -4,6 +4,11 @@ import { ITransactionEssence } from "./ITransactionEssence";
 import { ITypeBase } from "./ITypeBase";
 
 /**
+ * The global type for the payload.
+ */
+export const TRANSACTION_PAYLOAD_TYPE: number = 0;
+
+/**
  * Transaction payload.
  */
 export interface ITransactionPayload extends ITypeBase<0> {

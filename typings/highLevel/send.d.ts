@@ -9,12 +9,26 @@ import { IUTXOInput } from "../models/IUTXOInput";
  * @param client The client to send the transfer with.
  * @param seed The seed to use for address generation.
  * @param basePath The base path to start looking for addresses.
- * @param address The address to send the funds to.
+ * @param addressBech32 The address to send the funds to in bech32 format.
  * @param amount The amount to send.
  * @param startIndex The start index for the wallet count address, defaults to 0.
  * @returns The id of the message created and the contructed message.
  */
-export declare function send(client: IClient, seed: ISeed, basePath: Bip32Path, address: string, amount: number, startIndex?: number): Promise<{
+export declare function send(client: IClient, seed: ISeed, basePath: Bip32Path, addressBech32: string, amount: number, startIndex?: number): Promise<{
+    messageId: string;
+    message: IMessage;
+}>;
+/**
+ * Send a transfer from the balance on the seed.
+ * @param client The client to send the transfer with.
+ * @param seed The seed to use for address generation.
+ * @param basePath The base path to start looking for addresses.
+ * @param addressEd25519 The address to send the funds to in ed25519 format.
+ * @param amount The amount to send.
+ * @param startIndex The start index for the wallet count address, defaults to 0.
+ * @returns The id of the message created and the contructed message.
+ */
+export declare function sendEd25519(client: IClient, seed: ISeed, basePath: Bip32Path, addressEd25519: string, amount: number, startIndex?: number): Promise<{
     messageId: string;
     message: IMessage;
 }>;
@@ -29,6 +43,7 @@ export declare function send(client: IClient, seed: ISeed, basePath: Bip32Path, 
  */
 export declare function calculateInputs(client: IClient, seed: ISeed, basePath: Bip32Path, outputs: {
     address: string;
+    addressType: number;
     amount: number;
 }[], startIndex?: number): Promise<{
     input: IUTXOInput;

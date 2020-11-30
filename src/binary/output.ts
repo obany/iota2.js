@@ -1,4 +1,4 @@
-import { ISigLockedSingleOutput } from "../models/ISigLockedSingleOutput";
+import { ISigLockedSingleOutput, SIG_LOCKED_SINGLE_OUTPUT_TYPE } from "../models/ISigLockedSingleOutput";
 import { ITypeBase } from "../models/ITypeBase";
 import { ReadStream } from "../utils/readStream";
 import { WriteStream } from "../utils/writeStream";
@@ -52,7 +52,7 @@ export function deserializeOutput(readStream: ReadStream): ISigLockedSingleOutpu
     const type = readStream.readByte("output.type", false);
     let input;
 
-    if (type === 0) {
+    if (type === SIG_LOCKED_SINGLE_OUTPUT_TYPE) {
         input = deserializeSigLockedSingleOutput(readStream);
     } else {
         throw new Error(`Unrecognized output type ${type}`);
@@ -68,7 +68,7 @@ export function deserializeOutput(readStream: ReadStream): ISigLockedSingleOutpu
  */
 export function serializeOutput(writeStream: WriteStream,
     object: ISigLockedSingleOutput): void {
-    if (object.type === 0) {
+    if (object.type === SIG_LOCKED_SINGLE_OUTPUT_TYPE) {
         serializeSigLockedSingleOutput(writeStream, object);
     } else {
         throw new Error(`Unrecognized output type ${(object as ITypeBase<unknown>).type}`);
@@ -87,7 +87,7 @@ export function deserializeSigLockedSingleOutput(readStream: ReadStream): ISigLo
     }
 
     const type = readStream.readByte("sigLockedSingleOutput.type");
-    if (type !== 0) {
+    if (type !== SIG_LOCKED_SINGLE_OUTPUT_TYPE) {
         throw new Error(`Type mismatch in sigLockedSingleOutput ${type}`);
     }
 
@@ -95,7 +95,7 @@ export function deserializeSigLockedSingleOutput(readStream: ReadStream): ISigLo
     const amount = readStream.readUInt64("sigLockedSingleOutput.amount");
 
     return {
-        type,
+        type: 0,
         address,
         amount: Number(amount)
     };

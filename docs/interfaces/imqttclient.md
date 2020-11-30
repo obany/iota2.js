@@ -37,7 +37,7 @@ Client interface definition for API communication.
 
 ### addressOutputs
 
-▸ **addressOutputs**(`address`: string, `callback`: (topic: string, data: [IAddressOutputs](iaddressoutputs.md)) => void): string
+▸ **addressOutputs**(`address`: string, `callback`: (topic: string, data: [IOutputResponse](ioutputresponse.md)) => void): string
 
 Subscribe to the address for output updates.
 
@@ -46,7 +46,7 @@ Subscribe to the address for output updates.
 Name | Type | Description |
 ------ | ------ | ------ |
 `address` | string | The address to monitor. |
-`callback` | (topic: string, data: [IAddressOutputs](iaddressoutputs.md)) => void | The callback which is called when new data arrives. |
+`callback` | (topic: string, data: [IOutputResponse](ioutputresponse.md)) => void | The callback which is called when new data arrives. |
 
 **Returns:** string
 
@@ -167,7 +167,7 @@ ___
 
 ### milestonesLatest
 
-▸ **milestonesLatest**(`callback`: (topic: string, data: [IMilestone](imilestone.md)) => void): string
+▸ **milestonesLatest**(`callback`: (topic: string, data: [IMilestoneResponse](imilestoneresponse.md)) => void): string
 
 Subscribe to the latest milestone updates.
 
@@ -175,7 +175,7 @@ Subscribe to the latest milestone updates.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`callback` | (topic: string, data: [IMilestone](imilestone.md)) => void | The callback which is called when new data arrives. |
+`callback` | (topic: string, data: [IMilestoneResponse](imilestoneresponse.md)) => void | The callback which is called when new data arrives. |
 
 **Returns:** string
 
@@ -185,7 +185,7 @@ ___
 
 ### milestonesSolid
 
-▸ **milestonesSolid**(`callback`: (topic: string, data: [IMilestone](imilestone.md)) => void): string
+▸ **milestonesSolid**(`callback`: (topic: string, data: [IMilestoneResponse](imilestoneresponse.md)) => void): string
 
 Subscribe to the latest solid milestone updates.
 
@@ -193,7 +193,7 @@ Subscribe to the latest solid milestone updates.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`callback` | (topic: string, data: [IMilestone](imilestone.md)) => void | The callback which is called when new data arrives. |
+`callback` | (topic: string, data: [IMilestoneResponse](imilestoneresponse.md)) => void | The callback which is called when new data arrives. |
 
 **Returns:** string
 
@@ -203,7 +203,7 @@ ___
 
 ### output
 
-▸ **output**(`outputId`: string, `callback`: (topic: string, data: [IOutput](ioutput.md)) => void): string
+▸ **output**(`outputId`: string, `callback`: (topic: string, data: [IOutputResponse](ioutputresponse.md)) => void): string
 
 Subscribe to updates for a specific output.
 
@@ -212,7 +212,7 @@ Subscribe to updates for a specific output.
 Name | Type | Description |
 ------ | ------ | ------ |
 `outputId` | string | The output to monitor. |
-`callback` | (topic: string, data: [IOutput](ioutput.md)) => void | The callback which is called when new data arrives. |
+`callback` | (topic: string, data: [IOutputResponse](ioutputresponse.md)) => void | The callback which is called when new data arrives. |
 
 **Returns:** string
 

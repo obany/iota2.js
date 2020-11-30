@@ -13,14 +13,3 @@ export const SMALL_TYPE_LENGTH: number = BYTE_SIZE;
 export const STRING_LENGTH: number = UINT16_SIZE;
 export const ARRAY_LENGTH: number = UINT16_SIZE;
 
-/**
- * Is the data hex format.
- * @param value The value to test.
- * @returns true if the string is hex.
- */
-export function isHex(value: string): boolean {
-    if (value.length % 2 === 1) {
-        return false;
-    }
-    return /[\da-f]/gi.test(value);
-}

@@ -1,7 +1,8 @@
 import { Ed25519 } from "../crypto/ed25519";
-import { IIndexationPayload } from "../models/IIndexationPayload";
-import { IMilestonePayload } from "../models/IMilestonePayload";
-import { ITransactionPayload } from "../models/ITransactionPayload";
+import { IIndexationPayload, INDEXATION_PAYLOAD_TYPE } from "../models/IIndexationPayload";
+import { IMilestonePayload, MILESTONE_PAYLOAD_TYPE } from "../models/IMilestonePayload";
+import { TRANSACTION_ESSENCE_TYPE } from "../models/ITransactionEssence";
+import { ITransactionPayload, TRANSACTION_PAYLOAD_TYPE } from "../models/ITransactionPayload";
 import { ITypeBase } from "../models/ITypeBase";
 import { ReadStream } from "../utils/readStream";
 import { WriteStream } from "../utils/writeStream";
@@ -41,11 +42,11 @@ export function deserializePayload(readStream: ReadStream):
     if (payloadLength > 0) {
         const payloadType = readStream.readUInt32("payload.type", false);
 
-        if (payloadType === 0) {
+        if (payloadType === TRANSACTION_PAYLOAD_TYPE) {
             payload = deserializeTransactionPayload(readStream);
-        } else if (payloadType === 1) {
+        } else if (payloadType === MILESTONE_PAYLOAD_TYPE) {
             payload = deserializeMilestonePayload(readStream);
-        } else if (payloadType === 2) {
+        } else if (payloadType === INDEXATION_PAYLOAD_TYPE) {
             payload = deserializeIndexationPayload(readStream);
         } else {
             throw new Error(`Unrecognized payload type ${payloadType}`);
@@ -69,12 +70,12 @@ export function serializePayload(writeStream: WriteStream,
 
     if (!object) {
         // No other data to write
-    } else if (object.type === 0) {
-        serializeTransactionPayload(writeStream, object);
-    } else if (object.type === 1) {
-        serializeMilestonePayload(writeStream, object);
-    } else if (object.type === 2) {
-        serializeIndexationPayload(writeStream, object);
+    } else if (object.type === TRANSACTION_PAYLOAD_TYPE) {
+        serializeTransactionPayload(writeStream, object as ITransactionPayload);
+    } else if (object.type === MILESTONE_PAYLOAD_TYPE) {
+        serializeMilestonePayload(writeStream, object as IMilestonePayload);
+    } else if (object.type === INDEXATION_PAYLOAD_TYPE) {
+        serializeIndexationPayload(writeStream, object as IIndexationPayload);
     } else {
         throw new Error(`Unrecognized transaction type ${(object as ITypeBase<unknown>).type}`);
     }
@@ -97,7 +98,7 @@ export function deserializeTransactionPayload(readStream: ReadStream): ITransact
     }
 
     const type = readStream.readUInt32("payloadTransaction.type");
-    if (type !== 0) {
+    if (type !== TRANSACTION_PAYLOAD_TYPE) {
         throw new Error(`Type mismatch in payloadTransaction ${type}`);
     }
 
@@ -105,7 +106,7 @@ export function deserializeTransactionPayload(readStream: ReadStream): ITransact
     let essence;
     let unlockBlocks;
 
-    if (essenceType === 0) {
+    if (essenceType === TRANSACTION_ESSENCE_TYPE) {
         essence = deserializeTransactionEssence(readStream);
         unlockBlocks = deserializeUnlockBlocks(readStream);
     } else {
@@ -113,7 +114,7 @@ export function deserializeTransactionPayload(readStream: ReadStream): ITransact
     }
 
     return {
-        type,
+        type: 0,
         essence,
         unlockBlocks
     };
@@ -128,7 +129,7 @@ export function serializeTransactionPayload(writeStream: WriteStream,
     object: ITransactionPayload): void {
     writeStream.writeUInt32("payloadMilestone.type", object.type);
 
-    if (object.type === 0) {
+    if (object.type === TRANSACTION_PAYLOAD_TYPE) {
         serializeTransactionEssence(writeStream, object.essence);
         serializeUnlockBlocks(writeStream, object.unlockBlocks);
     } else {
@@ -148,7 +149,7 @@ export function deserializeMilestonePayload(readStream: ReadStream): IMilestoneP
     }
 
     const type = readStream.readUInt32("payloadMilestone.type");
-    if (type !== 1) {
+    if (type !== MILESTONE_PAYLOAD_TYPE) {
         throw new Error(`Type mismatch in payloadMilestone ${type}`);
     }
     const index = readStream.readUInt32("payloadMilestone.index");
@@ -168,7 +169,7 @@ export function deserializeMilestonePayload(readStream: ReadStream): IMilestoneP
     }
 
     return {
-        type,
+        type: 1,
         index,
         timestamp: Number(timestamp),
         parent1,
@@ -215,7 +216,7 @@ export function deserializeIndexationPayload(readStream: ReadStream): IIndexatio
     }
 
     const type = readStream.readUInt32("payloadIndexation.type");
-    if (type !== 2) {
+    if (type !== INDEXATION_PAYLOAD_TYPE) {
         throw new Error(`Type mismatch in payloadIndexation ${type}`);
     }
     const index = readStream.readString("payloadIndexation.index");

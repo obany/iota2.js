@@ -1,7 +1,9 @@
+import { Ed25519Address } from "../addressTypes/ed25519Address";
 import { Bip32Path } from "../crypto/bip32Path";
-import { Ed25519Address } from "../crypto/ed25519Address";
 import { IClient } from "../models/IClient";
+import { ED25519_ADDRESS_TYPE } from "../models/IEd25519Address";
 import { ISeed } from "../models/ISeed";
+import { Bech32Helper } from "../utils/bech32Helper";
 import { Converter } from "../utils/converter";
 
 /**
@@ -37,8 +39,10 @@ export async function getUnspentAddresses(
         const addressKeyPair = seed.generateSeedFromPath(basePath).keyPair();
         basePath.pop();
 
-        const address = Converter.bytesToHex(Ed25519Address.publicKeyToAddress(addressKeyPair.publicKey));
-        const addressResponse = await client.address(address);
+        const ed25519Address = new Ed25519Address();
+        const addressBytes = ed25519Address.publicKeyToAddress(addressKeyPair.publicKey);
+        const addressHex = Converter.bytesToHex(addressBytes);
+        const addressResponse = await client.addressEd25519(addressHex);
 
         // If there are no outputs for the address we have reached the
         // end of the used addresses
@@ -46,7 +50,7 @@ export async function getUnspentAddresses(
             finished = true;
         } else {
             allUnspent.push({
-                address,
+                address: Bech32Helper.toBech32(ED25519_ADDRESS_TYPE, addressBytes),
                 index: localStartIndex,
                 balance: addressResponse.balance
             });

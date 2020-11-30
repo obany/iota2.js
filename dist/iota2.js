@@ -30,39 +30,6 @@
 		throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
 	}
 
-	var arrayHelper = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.ArrayHelper = void 0;
-	/* eslint-disable no-bitwise */
-	/**
-	 * Array helper methods.
-	 */
-	var ArrayHelper = /** @class */ (function () {
-	    function ArrayHelper() {
-	    }
-	    /**
-	     * Are the two array equals.
-	     * @param array1 The first array.
-	     * @param array2 The second arry.
-	     * @returns True if the arrays are equal.
-	     */
-	    ArrayHelper.equal = function (array1, array2) {
-	        if (!array1 || !array2 || array1.length !== array2.length) {
-	            return false;
-	        }
-	        for (var i = 0; i < array1.length; i++) {
-	            if (array1[i] !== array2[i]) {
-	                return false;
-	            }
-	        }
-	        return true;
-	    };
-	    return ArrayHelper;
-	}());
-	exports.ArrayHelper = ArrayHelper;
-
-	});
-
 	var blake2b = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Blake2b = void 0;
@@ -375,6 +342,39 @@
 
 	});
 
+	var arrayHelper = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.ArrayHelper = void 0;
+	/* eslint-disable no-bitwise */
+	/**
+	 * Array helper methods.
+	 */
+	var ArrayHelper = /** @class */ (function () {
+	    function ArrayHelper() {
+	    }
+	    /**
+	     * Are the two array equals.
+	     * @param array1 The first array.
+	     * @param array2 The second arry.
+	     * @returns True if the arrays are equal.
+	     */
+	    ArrayHelper.equal = function (array1, array2) {
+	        if (!array1 || !array2 || array1.length !== array2.length) {
+	            return false;
+	        }
+	        for (var i = 0; i < array1.length; i++) {
+	            if (array1[i] !== array2[i]) {
+	                return false;
+	            }
+	        }
+	        return true;
+	    };
+	    return ArrayHelper;
+	}());
+	exports.ArrayHelper = ArrayHelper;
+
+	});
+
 	var ed25519Address = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Ed25519Address = void 0;
@@ -391,7 +391,7 @@
 	     * @param publicKey The public key to convert.
 	     * @returns The address.
 	     */
-	    Ed25519Address.publicKeyToAddress = function (publicKey) {
+	    Ed25519Address.prototype.publicKeyToAddress = function (publicKey) {
 	        return blake2b.Blake2b.sum256(publicKey);
 	    };
 	    /**
@@ -400,8 +400,8 @@
 	     * @param address The address to verify.
 	     * @returns True if the data and address is verified.
 	     */
-	    Ed25519Address.verifyAddress = function (publicKey, address) {
-	        return arrayHelper.ArrayHelper.equal(Ed25519Address.publicKeyToAddress(publicKey), address);
+	    Ed25519Address.prototype.verifyAddress = function (publicKey, address) {
+	        return arrayHelper.ArrayHelper.equal(this.publicKeyToAddress(publicKey), address);
 	    };
 	    /**
 	     * Address size.
@@ -414,9 +414,19 @@
 
 	});
 
+	var IEd25519Address = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.ED25519_ADDRESS_TYPE = void 0;
+	/**
+	 * The global type for the address type.
+	 */
+	exports.ED25519_ADDRESS_TYPE = 1;
+
+	});
+
 	var common = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.isHex = exports.ARRAY_LENGTH = exports.STRING_LENGTH = exports.SMALL_TYPE_LENGTH = exports.TYPE_LENGTH = exports.MERKLE_PROOF_LENGTH = exports.TRANSACTION_ID_LENGTH = exports.MESSAGE_ID_LENGTH = exports.UINT64_SIZE = exports.UINT32_SIZE = exports.UINT16_SIZE = exports.BYTE_SIZE = void 0;
+	exports.ARRAY_LENGTH = exports.STRING_LENGTH = exports.SMALL_TYPE_LENGTH = exports.TYPE_LENGTH = exports.MERKLE_PROOF_LENGTH = exports.TRANSACTION_ID_LENGTH = exports.MESSAGE_ID_LENGTH = exports.UINT64_SIZE = exports.UINT32_SIZE = exports.UINT16_SIZE = exports.BYTE_SIZE = void 0;
 
 	exports.BYTE_SIZE = 1;
 	exports.UINT16_SIZE = 2;
@@ -429,24 +439,13 @@
 	exports.SMALL_TYPE_LENGTH = exports.BYTE_SIZE;
 	exports.STRING_LENGTH = exports.UINT16_SIZE;
 	exports.ARRAY_LENGTH = exports.UINT16_SIZE;
-	/**
-	 * Is the data hex format.
-	 * @param value The value to test.
-	 * @returns true if the string is hex.
-	 */
-	function isHex(value) {
-	    if (value.length % 2 === 1) {
-	        return false;
-	    }
-	    return /[\da-f]/gi.test(value);
-	}
-	exports.isHex = isHex;
 
 	});
 
 	var address = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.serializeEd25519Address = exports.deserializeEd25519Address = exports.serializeAddress = exports.deserializeAddress = exports.MIN_ED25519_ADDRESS_LENGTH = exports.MIN_ADDRESS_LENGTH = void 0;
+
 
 
 	exports.MIN_ADDRESS_LENGTH = common.SMALL_TYPE_LENGTH;
@@ -462,7 +461,7 @@
 	    }
 	    var type = readStream.readByte("address.type", false);
 	    var address;
-	    if (type === 1) {
+	    if (type === IEd25519Address.ED25519_ADDRESS_TYPE) {
 	        address = deserializeEd25519Address(readStream);
 	    }
 	    else {
@@ -477,7 +476,7 @@
 	 * @param object The object to serialize.
 	 */
 	function serializeAddress(writeStream, object) {
-	    if (object.type === 1) {
+	    if (object.type === IEd25519Address.ED25519_ADDRESS_TYPE) {
 	        serializeEd25519Address(writeStream, object);
 	    }
 	    else {
@@ -495,12 +494,12 @@
 	        throw new Error("Ed25519 address data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_ED25519_ADDRESS_LENGTH);
 	    }
 	    var type = readStream.readByte("ed25519Address.type");
-	    if (type !== 1) {
+	    if (type !== IEd25519Address.ED25519_ADDRESS_TYPE) {
 	        throw new Error("Type mismatch in ed25519Address " + type);
 	    }
 	    var address = readStream.readFixedHex("ed25519Address.address", ed25519Address.Ed25519Address.ADDRESS_LENGTH);
 	    return {
-	        type: type,
+	        type: 1,
 	        address: address
 	    };
 	}
@@ -518,9 +517,20 @@
 
 	});
 
+	var IUTXOInput = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.UTXO_INPUT_TYPE = void 0;
+	/**
+	 * The global type for the input.
+	 */
+	exports.UTXO_INPUT_TYPE = 0;
+
+	});
+
 	var input = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.serializeUTXOInput = exports.deserializeUTXOInput = exports.serializeInput = exports.deserializeInput = exports.serializeInputs = exports.deserializeInputs = exports.MIN_UTXO_INPUT_LENGTH = exports.MIN_INPUT_LENGTH = void 0;
+
 
 	exports.MIN_INPUT_LENGTH = common.SMALL_TYPE_LENGTH;
 	exports.MIN_UTXO_INPUT_LENGTH = exports.MIN_INPUT_LENGTH + common.TRANSACTION_ID_LENGTH + common.UINT16_SIZE;
@@ -561,7 +571,7 @@
 	    }
 	    var type = readStream.readByte("input.type", false);
 	    var input;
-	    if (type === 0) {
+	    if (type === IUTXOInput.UTXO_INPUT_TYPE) {
 	        input = deserializeUTXOInput(readStream);
 	    }
 	    else {
@@ -576,7 +586,7 @@
 	 * @param object The object to serialize.
 	 */
 	function serializeInput(writeStream, object) {
-	    if (object.type === 0) {
+	    if (object.type === IUTXOInput.UTXO_INPUT_TYPE) {
 	        serializeUTXOInput(writeStream, object);
 	    }
 	    else {
@@ -594,13 +604,13 @@
 	        throw new Error("UTXO Input data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_UTXO_INPUT_LENGTH);
 	    }
 	    var type = readStream.readByte("utxoInput.type");
-	    if (type !== 0) {
+	    if (type !== IUTXOInput.UTXO_INPUT_TYPE) {
 	        throw new Error("Type mismatch in utxoInput " + type);
 	    }
 	    var transactionId = readStream.readFixedHex("utxoInput.transactionId", common.TRANSACTION_ID_LENGTH);
 	    var transactionOutputIndex = readStream.readUInt16("utxoInput.transactionOutputIndex");
 	    return {
-	        type: type,
+	        type: 0,
 	        transactionId: transactionId,
 	        transactionOutputIndex: transactionOutputIndex
 	    };
@@ -4009,9 +4019,60 @@
 
 	});
 
+	var IIndexationPayload = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.INDEXATION_PAYLOAD_TYPE = void 0;
+	/**
+	 * The global type for the payload.
+	 */
+	exports.INDEXATION_PAYLOAD_TYPE = 2;
+
+	});
+
+	var IMilestonePayload = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.MILESTONE_PAYLOAD_TYPE = void 0;
+	/**
+	 * The global type for the payload.
+	 */
+	exports.MILESTONE_PAYLOAD_TYPE = 1;
+
+	});
+
+	var ITransactionEssence = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.TRANSACTION_ESSENCE_TYPE = void 0;
+	/**
+	 * The global type for the transaction essence.
+	 */
+	exports.TRANSACTION_ESSENCE_TYPE = 0;
+
+	});
+
+	var ITransactionPayload = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.TRANSACTION_PAYLOAD_TYPE = void 0;
+	/**
+	 * The global type for the payload.
+	 */
+	exports.TRANSACTION_PAYLOAD_TYPE = 0;
+
+	});
+
+	var ISigLockedSingleOutput = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.SIG_LOCKED_SINGLE_OUTPUT_TYPE = void 0;
+	/**
+	 * The global type for the sig locked single output.
+	 */
+	exports.SIG_LOCKED_SINGLE_OUTPUT_TYPE = 0;
+
+	});
+
 	var output = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.serializeSigLockedSingleOutput = exports.deserializeSigLockedSingleOutput = exports.serializeOutput = exports.deserializeOutput = exports.serializeOutputs = exports.deserializeOutputs = exports.MIN_SIG_LOCKED_OUTPUT_LENGTH = exports.MIN_OUTPUT_LENGTH = void 0;
+
 
 
 	exports.MIN_OUTPUT_LENGTH = common.SMALL_TYPE_LENGTH;
@@ -4053,7 +4114,7 @@
 	    }
 	    var type = readStream.readByte("output.type", false);
 	    var input;
-	    if (type === 0) {
+	    if (type === ISigLockedSingleOutput.SIG_LOCKED_SINGLE_OUTPUT_TYPE) {
 	        input = deserializeSigLockedSingleOutput(readStream);
 	    }
 	    else {
@@ -4068,7 +4129,7 @@
 	 * @param object The object to serialize.
 	 */
 	function serializeOutput(writeStream, object) {
-	    if (object.type === 0) {
+	    if (object.type === ISigLockedSingleOutput.SIG_LOCKED_SINGLE_OUTPUT_TYPE) {
 	        serializeSigLockedSingleOutput(writeStream, object);
 	    }
 	    else {
@@ -4086,13 +4147,13 @@
 	        throw new Error("Signature Locked Single Output data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_SIG_LOCKED_OUTPUT_LENGTH);
 	    }
 	    var type = readStream.readByte("sigLockedSingleOutput.type");
-	    if (type !== 0) {
+	    if (type !== ISigLockedSingleOutput.SIG_LOCKED_SINGLE_OUTPUT_TYPE) {
 	        throw new Error("Type mismatch in sigLockedSingleOutput " + type);
 	    }
 	    var address$1 = address.deserializeAddress(readStream);
 	    var amount = readStream.readUInt64("sigLockedSingleOutput.amount");
 	    return {
-	        type: type,
+	        type: 0,
 	        address: address$1,
 	        amount: Number(amount)
 	    };
@@ -4119,6 +4180,8 @@
 
 
 
+
+
 	exports.MIN_TRANSACTION_ESSENCE_LENGTH = common.SMALL_TYPE_LENGTH + (2 * common.ARRAY_LENGTH) + common.UINT32_SIZE;
 	/**
 	 * Deserialize the transaction essence from binary.
@@ -4130,17 +4193,17 @@
 	        throw new Error("Transaction essence data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_TRANSACTION_ESSENCE_LENGTH);
 	    }
 	    var type = readStream.readByte("transactionEssence.type");
-	    if (type !== 0) {
+	    if (type !== ITransactionEssence.TRANSACTION_ESSENCE_TYPE) {
 	        throw new Error("Type mismatch in transactionEssence " + type);
 	    }
 	    var inputs = input.deserializeInputs(readStream);
 	    var outputs = output.deserializeOutputs(readStream);
 	    var payload$1 = payload.deserializePayload(readStream);
-	    if (payload$1 && payload$1.type !== 2) {
+	    if (payload$1 && payload$1.type !== IIndexationPayload.INDEXATION_PAYLOAD_TYPE) {
 	        throw new Error("Transaction essence can only contain embedded Indexation Payload");
 	    }
 	    return {
-	        type: type,
+	        type: 0,
 	        inputs: inputs,
 	        outputs: outputs,
 	        payload: payload$1
@@ -4162,9 +4225,40 @@
 
 	});
 
+	var IReferenceUnlockBlock = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.REFERENCE_UNLOCK_BLOCK_TYPE = void 0;
+	/**
+	 * The global type for the unlock block.
+	 */
+	exports.REFERENCE_UNLOCK_BLOCK_TYPE = 1;
+
+	});
+
+	var ISignatureUnlockBlock = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.SIGNATURE_UNLOCK_BLOCK_TYPE = void 0;
+	/**
+	 * The global type for the unlock block.
+	 */
+	exports.SIGNATURE_UNLOCK_BLOCK_TYPE = 0;
+
+	});
+
+	var IEd25519Signature = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.ED25519_SIGNATURE_TYPE = void 0;
+	/**
+	 * The global type for the signature type.
+	 */
+	exports.ED25519_SIGNATURE_TYPE = 1;
+
+	});
+
 	var signature = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.serializeEd25519Signature = exports.deserializeEd25519Signature = exports.serializeSignature = exports.deserializeSignature = exports.MIN_ED25519_SIGNATURE_LENGTH = exports.MIN_SIGNATURE_LENGTH = void 0;
+
 
 
 	exports.MIN_SIGNATURE_LENGTH = common.SMALL_TYPE_LENGTH;
@@ -4180,7 +4274,7 @@
 	    }
 	    var type = readStream.readByte("signature.type", false);
 	    var input;
-	    if (type === 1) {
+	    if (type === IEd25519Signature.ED25519_SIGNATURE_TYPE) {
 	        input = deserializeEd25519Signature(readStream);
 	    }
 	    else {
@@ -4195,7 +4289,7 @@
 	 * @param object The object to serialize.
 	 */
 	function serializeSignature(writeStream, object) {
-	    if (object.type === 1) {
+	    if (object.type === IEd25519Signature.ED25519_SIGNATURE_TYPE) {
 	        serializeEd25519Signature(writeStream, object);
 	    }
 	    else {
@@ -4213,13 +4307,13 @@
 	        throw new Error("Ed25519 signature data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_ED25519_SIGNATURE_LENGTH);
 	    }
 	    var type = readStream.readByte("ed25519Signature.type");
-	    if (type !== 1) {
+	    if (type !== IEd25519Signature.ED25519_SIGNATURE_TYPE) {
 	        throw new Error("Type mismatch in ed25519Signature " + type);
 	    }
 	    var publicKey = readStream.readFixedHex("ed25519Signature.publicKey", ed25519.Ed25519.PUBLIC_KEY_SIZE);
 	    var signature = readStream.readFixedHex("ed25519Signature.signature", ed25519.Ed25519.SIGNATURE_SIZE);
 	    return {
-	        type: type,
+	        type: 1,
 	        publicKey: publicKey,
 	        signature: signature
 	    };
@@ -4242,6 +4336,8 @@
 	var unlockBlock = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.serializeReferenceUnlockBlock = exports.deserializeReferenceUnlockBlock = exports.serializeSignatureUnlockBlock = exports.deserializeSignatureUnlockBlock = exports.serializeUnlockBlock = exports.deserializeUnlockBlock = exports.serializeUnlockBlocks = exports.deserializeUnlockBlocks = exports.MIN_REFERENCE_UNLOCK_BLOCK_LENGTH = exports.MIN_SIGNATURE_UNLOCK_BLOCK_LENGTH = exports.MIN_UNLOCK_BLOCK_LENGTH = void 0;
+
+
 
 
 	exports.MIN_UNLOCK_BLOCK_LENGTH = common.SMALL_TYPE_LENGTH;
@@ -4284,10 +4380,10 @@
 	    }
 	    var type = readStream.readByte("unlockBlock.type", false);
 	    var unlockBlock;
-	    if (type === 0) {
+	    if (type === ISignatureUnlockBlock.SIGNATURE_UNLOCK_BLOCK_TYPE) {
 	        unlockBlock = deserializeSignatureUnlockBlock(readStream);
 	    }
-	    else if (type === 1) {
+	    else if (type === IReferenceUnlockBlock.REFERENCE_UNLOCK_BLOCK_TYPE) {
 	        unlockBlock = deserializeReferenceUnlockBlock(readStream);
 	    }
 	    else {
@@ -4302,10 +4398,10 @@
 	 * @param object The object to serialize.
 	 */
 	function serializeUnlockBlock(writeStream, object) {
-	    if (object.type === 0) {
+	    if (object.type === ISignatureUnlockBlock.SIGNATURE_UNLOCK_BLOCK_TYPE) {
 	        serializeSignatureUnlockBlock(writeStream, object);
 	    }
-	    else if (object.type === 1) {
+	    else if (object.type === IReferenceUnlockBlock.REFERENCE_UNLOCK_BLOCK_TYPE) {
 	        serializeReferenceUnlockBlock(writeStream, object);
 	    }
 	    else {
@@ -4323,12 +4419,12 @@
 	        throw new Error("Signature Unlock Block data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_SIGNATURE_UNLOCK_BLOCK_LENGTH);
 	    }
 	    var type = readStream.readByte("signatureUnlockBlock.type");
-	    if (type !== 0) {
+	    if (type !== ISignatureUnlockBlock.SIGNATURE_UNLOCK_BLOCK_TYPE) {
 	        throw new Error("Type mismatch in signatureUnlockBlock " + type);
 	    }
 	    var signature$1 = signature.deserializeSignature(readStream);
 	    return {
-	        type: type,
+	        type: 0,
 	        signature: signature$1
 	    };
 	}
@@ -4353,12 +4449,12 @@
 	        throw new Error("Reference Unlock Block data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_REFERENCE_UNLOCK_BLOCK_LENGTH);
 	    }
 	    var type = readStream.readByte("referenceUnlockBlock.type");
-	    if (type !== 1) {
+	    if (type !== IReferenceUnlockBlock.REFERENCE_UNLOCK_BLOCK_TYPE) {
 	        throw new Error("Type mismatch in referenceUnlockBlock " + type);
 	    }
 	    var reference = readStream.readUInt16("referenceUnlockBlock.reference");
 	    return {
-	        type: type,
+	        type: 1,
 	        reference: reference
 	    };
 	}
@@ -4379,6 +4475,10 @@
 	var payload = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.serializeIndexationPayload = exports.deserializeIndexationPayload = exports.serializeMilestonePayload = exports.deserializeMilestonePayload = exports.serializeTransactionPayload = exports.deserializeTransactionPayload = exports.serializePayload = exports.deserializePayload = exports.MIN_TRANSACTION_PAYLOAD_LENGTH = exports.MIN_INDEXATION_PAYLOAD_LENGTH = exports.MIN_MILESTONE_PAYLOAD_LENGTH = exports.MIN_PAYLOAD_LENGTH = void 0;
+
+
+
+
 
 
 
@@ -4406,13 +4506,13 @@
 	    var payload;
 	    if (payloadLength > 0) {
 	        var payloadType = readStream.readUInt32("payload.type", false);
-	        if (payloadType === 0) {
+	        if (payloadType === ITransactionPayload.TRANSACTION_PAYLOAD_TYPE) {
 	            payload = deserializeTransactionPayload(readStream);
 	        }
-	        else if (payloadType === 1) {
+	        else if (payloadType === IMilestonePayload.MILESTONE_PAYLOAD_TYPE) {
 	            payload = deserializeMilestonePayload(readStream);
 	        }
-	        else if (payloadType === 2) {
+	        else if (payloadType === IIndexationPayload.INDEXATION_PAYLOAD_TYPE) {
 	            payload = deserializeIndexationPayload(readStream);
 	        }
 	        else {
@@ -4433,13 +4533,13 @@
 	    var payloadLengthWriteIndex = writeStream.getWriteIndex();
 	    writeStream.writeUInt32("payload.length", 0);
 	    if (!object) ;
-	    else if (object.type === 0) {
+	    else if (object.type === ITransactionPayload.TRANSACTION_PAYLOAD_TYPE) {
 	        serializeTransactionPayload(writeStream, object);
 	    }
-	    else if (object.type === 1) {
+	    else if (object.type === IMilestonePayload.MILESTONE_PAYLOAD_TYPE) {
 	        serializeMilestonePayload(writeStream, object);
 	    }
-	    else if (object.type === 2) {
+	    else if (object.type === IIndexationPayload.INDEXATION_PAYLOAD_TYPE) {
 	        serializeIndexationPayload(writeStream, object);
 	    }
 	    else {
@@ -4461,13 +4561,13 @@
 	        throw new Error("Transaction Payload data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_TRANSACTION_PAYLOAD_LENGTH);
 	    }
 	    var type = readStream.readUInt32("payloadTransaction.type");
-	    if (type !== 0) {
+	    if (type !== ITransactionPayload.TRANSACTION_PAYLOAD_TYPE) {
 	        throw new Error("Type mismatch in payloadTransaction " + type);
 	    }
 	    var essenceType = readStream.readByte("payloadTransaction.essenceType", false);
 	    var essence;
 	    var unlockBlocks;
-	    if (essenceType === 0) {
+	    if (essenceType === ITransactionEssence.TRANSACTION_ESSENCE_TYPE) {
 	        essence = transaction.deserializeTransactionEssence(readStream);
 	        unlockBlocks = unlockBlock.deserializeUnlockBlocks(readStream);
 	    }
@@ -4475,7 +4575,7 @@
 	        throw new Error("Unrecognized transaction essence type " + type);
 	    }
 	    return {
-	        type: type,
+	        type: 0,
 	        essence: essence,
 	        unlockBlocks: unlockBlocks
 	    };
@@ -4488,7 +4588,7 @@
 	 */
 	function serializeTransactionPayload(writeStream, object) {
 	    writeStream.writeUInt32("payloadMilestone.type", object.type);
-	    if (object.type === 0) {
+	    if (object.type === ITransactionPayload.TRANSACTION_PAYLOAD_TYPE) {
 	        transaction.serializeTransactionEssence(writeStream, object.essence);
 	        unlockBlock.serializeUnlockBlocks(writeStream, object.unlockBlocks);
 	    }
@@ -4507,7 +4607,7 @@
 	        throw new Error("Milestone Payload data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_MILESTONE_PAYLOAD_LENGTH);
 	    }
 	    var type = readStream.readUInt32("payloadMilestone.type");
-	    if (type !== 1) {
+	    if (type !== IMilestonePayload.MILESTONE_PAYLOAD_TYPE) {
 	        throw new Error("Type mismatch in payloadMilestone " + type);
 	    }
 	    var index = readStream.readUInt32("payloadMilestone.index");
@@ -4526,7 +4626,7 @@
 	        signatures.push(readStream.readFixedHex("payloadMilestone.signature", ed25519.Ed25519.SIGNATURE_SIZE));
 	    }
 	    return {
-	        type: type,
+	        type: 1,
 	        index: index,
 	        timestamp: Number(timestamp),
 	        parent1: parent1,
@@ -4569,7 +4669,7 @@
 	        throw new Error("Indexation Payload data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_INDEXATION_PAYLOAD_LENGTH);
 	    }
 	    var type = readStream.readUInt32("payloadIndexation.type");
-	    if (type !== 2) {
+	    if (type !== IIndexationPayload.INDEXATION_PAYLOAD_TYPE) {
 	        throw new Error("Type mismatch in payloadIndexation " + type);
 	    }
 	    var index = readStream.readString("payloadIndexation.index");
@@ -4798,6 +4898,17 @@
 	     */
 	    Converter.hexToAscii = function (hex) {
 	        return Converter.bytesToAscii(Converter.hexToBytes(hex));
+	    };
+	    /**
+	     * Is the data hex format.
+	     * @param value The value to test.
+	     * @returns true if the string is hex.
+	     */
+	    Converter.isHex = function (value) {
+	        if (value.length % 2 === 1) {
+	            return false;
+	        }
+	        return /[\da-f]/gi.test(value);
 	    };
 	    /**
 	     * Build the static lookup tables.
@@ -5440,607 +5551,6 @@
 
 	});
 
-	var writeStream = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.WriteStream = void 0;
-	/* eslint-disable no-bitwise */
-
-
-
-	/**
-	 * Keep track of the write index within a stream.
-	 */
-	var WriteStream = /** @class */ (function () {
-	    /**
-	     * Create a new instance of ReadStream.
-	     */
-	    function WriteStream() {
-	        this._storage = new Uint8Array(WriteStream.CHUNK_SIZE);
-	        this._writeIndex = 0;
-	    }
-	    /**
-	     * Get the length of the stream.
-	     * @returns The stream length.
-	     */
-	    WriteStream.prototype.length = function () {
-	        return this._storage.length;
-	    };
-	    /**
-	     * How much unused data is there.
-	     * @returns The amount of unused data.
-	     */
-	    WriteStream.prototype.unused = function () {
-	        return this._storage.length - this._writeIndex;
-	    };
-	    /**
-	     * Get the final stream as bytes.
-	     * @returns The final stream.
-	     */
-	    WriteStream.prototype.finalBytes = function () {
-	        return this._storage.subarray(0, this._writeIndex);
-	    };
-	    /**
-	     * Get the final stream as hex.
-	     * @returns The final stream as hex.
-	     */
-	    WriteStream.prototype.finalHex = function () {
-	        return converter.Converter.bytesToHex(this._storage.subarray(0, this._writeIndex));
-	    };
-	    /**
-	     * Get the current write index.
-	     * @returns The current write index.
-	     */
-	    WriteStream.prototype.getWriteIndex = function () {
-	        return this._writeIndex;
-	    };
-	    /**
-	     * Set the current write index.
-	     * @param writeIndex The current write index.
-	     */
-	    WriteStream.prototype.setWriteIndex = function (writeIndex) {
-	        this._writeIndex = writeIndex;
-	    };
-	    /**
-	     * Write fixed length stream.
-	     * @param name The name of the data we are trying to write.
-	     * @param length The length of the data to write.
-	     * @param val The data to write.
-	     */
-	    WriteStream.prototype.writeFixedHex = function (name, length, val) {
-	        if (!common.isHex(val)) {
-	            throw new Error("The " + val + " should be in hex format");
-	        }
-	        // Hex should be twice the length as each byte is 2 ascii characters
-	        if (length * 2 !== val.length) {
-	            throw new Error(name + " length " + val.length + " does not match expected length " + length * 2);
-	        }
-	        this.expand(length);
-	        this._storage.set(converter.Converter.hexToBytes(val), this._writeIndex);
-	        this._writeIndex += length;
-	    };
-	    /**
-	     * Write fixed length stream.
-	     * @param name The name of the data we are trying to write.
-	     * @param length The length of the data to write.
-	     * @param val The data to write.
-	     */
-	    WriteStream.prototype.writeBytes = function (name, length, val) {
-	        this.expand(length);
-	        this._storage.set(val, this._writeIndex);
-	        this._writeIndex += length;
-	    };
-	    /**
-	     * Write a byte to the stream.
-	     * @param name The name of the data we are trying to write.
-	     * @param val The data to write.
-	     */
-	    WriteStream.prototype.writeByte = function (name, val) {
-	        this.expand(1);
-	        this._storage[this._writeIndex++] = val & 0xFF;
-	    };
-	    /**
-	     * Write a UInt16 to the stream.
-	     * @param name The name of the data we are trying to write.
-	     * @param val The data to write.
-	     */
-	    WriteStream.prototype.writeUInt16 = function (name, val) {
-	        this.expand(2);
-	        this._storage[this._writeIndex++] = val & 0xFF;
-	        this._storage[this._writeIndex++] = val >>> 8;
-	    };
-	    /**
-	     * Write a UInt32 to the stream.
-	     * @param name The name of the data we are trying to write.
-	     * @param val The data to write.
-	     */
-	    WriteStream.prototype.writeUInt32 = function (name, val) {
-	        this.expand(4);
-	        this._storage[this._writeIndex++] = val & 0xFF;
-	        this._storage[this._writeIndex++] = val >>> 8;
-	        this._storage[this._writeIndex++] = val >>> 16;
-	        this._storage[this._writeIndex++] = val >>> 24;
-	    };
-	    /**
-	     * Write a UInt64 to the stream.
-	     * @param name The name of the data we are trying to write.
-	     * @param val The data to write.
-	     */
-	    WriteStream.prototype.writeUInt64 = function (name, val) {
-	        this.expand(8);
-	        bigIntHelper.BigIntHelper.write8(val, this._storage, this._writeIndex);
-	        this._writeIndex += 8;
-	    };
-	    /**
-	     * Write a string to the stream.
-	     * @param name The name of the data we are trying to write.
-	     * @param val The data to write.
-	     * @returns The string.
-	     */
-	    WriteStream.prototype.writeString = function (name, val) {
-	        this.writeUInt16(name, val.length);
-	        this.expand(val.length);
-	        this._storage.set(converter.Converter.asciiToBytes(val), this._writeIndex);
-	        this._writeIndex += val.length;
-	        return val;
-	    };
-	    /**
-	     * Expand the storage if there is not enough spave.
-	     * @param additional The amount of space needed.
-	     */
-	    WriteStream.prototype.expand = function (additional) {
-	        if (this._writeIndex + additional > this._storage.byteLength) {
-	            var newArr = new Uint8Array(this._storage.length + WriteStream.CHUNK_SIZE);
-	            newArr.set(this._storage, 0);
-	            this._storage = newArr;
-	        }
-	    };
-	    /**
-	     * Chunk size to expand the storage.
-	     * @internal
-	     */
-	    WriteStream.CHUNK_SIZE = 4096;
-	    return WriteStream;
-	}());
-	exports.WriteStream = WriteStream;
-
-	});
-
-	var singleNodeClient = createCommonjsModule(function (module, exports) {
-	var __awaiter = (commonjsGlobal && commonjsGlobal.__awaiter) || function (thisArg, _arguments, P, generator) {
-	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-	    return new (P || (P = Promise))(function (resolve, reject) {
-	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-	        step((generator = generator.apply(thisArg, _arguments || [])).next());
-	    });
-	};
-	var __generator = (commonjsGlobal && commonjsGlobal.__generator) || function (thisArg, body) {
-	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-	    function verb(n) { return function (v) { return step([n, v]); }; }
-	    function step(op) {
-	        if (f) throw new TypeError("Generator is already executing.");
-	        while (_) try {
-	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-	            if (y = 0, t) op = [op[0] & 2, t.value];
-	            switch (op[0]) {
-	                case 0: case 1: t = op; break;
-	                case 4: _.label++; return { value: op[1], done: false };
-	                case 5: _.label++; y = op[1]; op = [0]; continue;
-	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-	                default:
-	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-	                    if (t[2]) _.ops.pop();
-	                    _.trys.pop(); continue;
-	            }
-	            op = body.call(thisArg, _);
-	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-	    }
-	};
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.SingleNodeClient = void 0;
-
-
-
-
-
-	/**
-	 * Client for API communication.
-	 */
-	var SingleNodeClient = /** @class */ (function () {
-	    /**
-	     * Create a new instance of client.
-	     * @param endpoint The endpoint.
-	     * @param powProvider Optional local POW provider.
-	     */
-	    function SingleNodeClient(endpoint, powProvider) {
-	        if (!/^https?:\/\/\w+(\.\w+)*(:\d+)?(\/.*)?$/.test(endpoint)) {
-	            throw new Error("The endpoint is not in the correct format");
-	        }
-	        this._endpoint = endpoint.replace(/\/+$/, "");
-	        this._powProvider = powProvider;
-	    }
-	    /**
-	     * Get the health of the node.
-	     * @returns True if the node is healthy.
-	     */
-	    SingleNodeClient.prototype.health = function () {
-	        return __awaiter(this, void 0, void 0, function () {
-	            var status;
-	            return __generator(this, function (_a) {
-	                switch (_a.label) {
-	                    case 0: return [4 /*yield*/, this.fetchStatus("/health")];
-	                    case 1:
-	                        status = _a.sent();
-	                        if (status === 200) {
-	                            return [2 /*return*/, true];
-	                        }
-	                        else if (status === 503) {
-	                            return [2 /*return*/, false];
-	                        }
-	                        throw new clientError.ClientError("Unexpected response code", "/health", status);
-	                }
-	            });
-	        });
-	    };
-	    /**
-	     * Get the info about the node.
-	     * @returns The node information.
-	     */
-	    SingleNodeClient.prototype.info = function () {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/info")];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the tips from the node.
-	     * @returns The tips.
-	     */
-	    SingleNodeClient.prototype.tips = function () {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/tips")];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the message data by id.
-	     * @param messageId The message to get the data for.
-	     * @returns The message data.
-	     */
-	    SingleNodeClient.prototype.message = function (messageId) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId)];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the message metadata by id.
-	     * @param messageId The message to get the metadata for.
-	     * @returns The message metadata.
-	     */
-	    SingleNodeClient.prototype.messageMetadata = function (messageId) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId + "/metadata")];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the message raw data by id.
-	     * @param messageId The message to get the data for.
-	     * @returns The message raw data.
-	     */
-	    SingleNodeClient.prototype.messageRaw = function (messageId) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchBinary("get", "/api/v1/messages/" + messageId + "/raw")];
-	            });
-	        });
-	    };
-	    /**
-	     * Submit message.
-	     * @param message The message to submit.
-	     * @returns The messageId.
-	     */
-	    SingleNodeClient.prototype.messageSubmit = function (message$1) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            var targetScore, writeStream$1, messageBytes, nonce, response;
-	            return __generator(this, function (_a) {
-	                switch (_a.label) {
-	                    case 0:
-	                        if (!(!message$1.nonce || message$1.nonce.length === 0)) return [3 /*break*/, 3];
-	                        if (!this._powProvider) return [3 /*break*/, 2];
-	                        targetScore = 100;
-	                        writeStream$1 = new writeStream.WriteStream();
-	                        message.serializeMessage(writeStream$1, message$1);
-	                        messageBytes = writeStream$1.finalBytes();
-	                        return [4 /*yield*/, this._powProvider.pow(messageBytes, targetScore)];
-	                    case 1:
-	                        nonce = _a.sent();
-	                        message$1.nonce = nonce.toString(10);
-	                        return [3 /*break*/, 3];
-	                    case 2:
-	                        message$1.nonce = "0";
-	                        _a.label = 3;
-	                    case 3: return [4 /*yield*/, this.fetchJson("post", "/api/v1/messages", message$1)];
-	                    case 4:
-	                        response = _a.sent();
-	                        return [2 /*return*/, response.messageId];
-	                }
-	            });
-	        });
-	    };
-	    /**
-	     * Submit message in raw format.
-	     * @param message The message to submit.
-	     * @returns The messageId.
-	     */
-	    SingleNodeClient.prototype.messageSubmitRaw = function (message) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            var targetScore, nonce, response;
-	            return __generator(this, function (_a) {
-	                switch (_a.label) {
-	                    case 0:
-	                        if (!(arrayHelper.ArrayHelper.equal(message.slice(-8), SingleNodeClient.NONCE_ZERO) && this._powProvider)) return [3 /*break*/, 2];
-	                        targetScore = 100;
-	                        return [4 /*yield*/, this._powProvider.pow(message, targetScore)];
-	                    case 1:
-	                        nonce = _a.sent();
-	                        bigIntHelper.BigIntHelper.write8(nonce, message, message.length - 8);
-	                        _a.label = 2;
-	                    case 2: return [4 /*yield*/, this.fetchBinary("post", "/api/v1/messages", message)];
-	                    case 3:
-	                        response = _a.sent();
-	                        return [2 /*return*/, response.messageId];
-	                }
-	            });
-	        });
-	    };
-	    /**
-	     * Find messages by index.
-	     * @param indexationKey The index value.
-	     * @returns The messageId.
-	     */
-	    SingleNodeClient.prototype.messagesFind = function (indexationKey) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages?index=" + encodeURIComponent(indexationKey))];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the children of a message.
-	     * @param messageId The id of the message to get the children for.
-	     * @returns The messages children.
-	     */
-	    SingleNodeClient.prototype.messageChildren = function (messageId) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId + "/children")];
-	            });
-	        });
-	    };
-	    /**
-	     * Find an output by its identifier.
-	     * @param outputId The id of the output to get.
-	     * @returns The output details.
-	     */
-	    SingleNodeClient.prototype.output = function (outputId) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/outputs/" + outputId)];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the address details.
-	     * @param address The address to get the details for.
-	     * @returns The address details.
-	     */
-	    SingleNodeClient.prototype.address = function (address) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/" + address)];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the address outputs.
-	     * @param address The address to get the outputs for.
-	     * @returns The address outputs.
-	     */
-	    SingleNodeClient.prototype.addressOutputs = function (address) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/" + address + "/outputs")];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the requested milestone.
-	     * @param index The index of the milestone to get.
-	     * @returns The milestone details.
-	     */
-	    SingleNodeClient.prototype.milestone = function (index) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/milestones/" + index)];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the list of peers.
-	     * @returns The list of peers.
-	     */
-	    SingleNodeClient.prototype.peers = function () {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/peers")];
-	            });
-	        });
-	    };
-	    /**
-	     * Add a new peer.
-	     * @param multiAddress The address of the peer to add.
-	     * @param alias An optional alias for the peer.
-	     * @returns The details for the created peer.
-	     */
-	    SingleNodeClient.prototype.peerAdd = function (multiAddress, alias) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("post", "/api/v1/peers", {
-	                        multiAddress: multiAddress,
-	                        alias: alias
-	                    })];
-	            });
-	        });
-	    };
-	    /**
-	     * Delete a peer.
-	     * @param peerId The peer to delete.
-	     * @returns Nothing.
-	     */
-	    SingleNodeClient.prototype.peerDelete = function (peerId) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-	                return [2 /*return*/, this.fetchJson("delete", "/api/v1/peers/" + peerId)];
-	            });
-	        });
-	    };
-	    /**
-	     * Get a peer.
-	     * @param peerId The peer to delete.
-	     * @returns The details for the created peer.
-	     */
-	    SingleNodeClient.prototype.peer = function (peerId) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/peers/" + peerId)];
-	            });
-	        });
-	    };
-	    /**
-	     * Perform a request and just return the status.
-	     * @param route The route of the request.
-	     * @returns The response.
-	     * @internal
-	     */
-	    SingleNodeClient.prototype.fetchStatus = function (route) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            var response;
-	            return __generator(this, function (_a) {
-	                switch (_a.label) {
-	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + route, {
-	                            method: "get"
-	                        })];
-	                    case 1:
-	                        response = _a.sent();
-	                        return [2 /*return*/, response.status];
-	                }
-	            });
-	        });
-	    };
-	    /**
-	     * Perform a request in json format.
-	     * @param method The http method.
-	     * @param route The route of the request.
-	     * @param requestData Request to send to the endpoint.
-	     * @returns The response.
-	     * @internal
-	     */
-	    SingleNodeClient.prototype.fetchJson = function (method, route, requestData) {
-	        var _a, _b, _c;
-	        return __awaiter(this, void 0, void 0, function () {
-	            var response, responseData;
-	            return __generator(this, function (_d) {
-	                switch (_d.label) {
-	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + route, {
-	                            method: method,
-	                            headers: {
-	                                "Content-Type": "application/json"
-	                            },
-	                            body: requestData ? JSON.stringify(requestData) : undefined
-	                        })];
-	                    case 1:
-	                        response = _d.sent();
-	                        return [4 /*yield*/, response.json()];
-	                    case 2:
-	                        responseData = _d.sent();
-	                        if (response.ok && !responseData.error) {
-	                            return [2 /*return*/, responseData.data];
-	                        }
-	                        throw new clientError.ClientError((_b = (_a = responseData.error) === null || _a === void 0 ? void 0 : _a.message) !== null && _b !== void 0 ? _b : response.statusText, route, response.status, (_c = responseData.error) === null || _c === void 0 ? void 0 : _c.code);
-	                }
-	            });
-	        });
-	    };
-	    /**
-	     * Perform a request for binary data.
-	     * @param method The http method.
-	     * @param route The route of the request.
-	     * @param requestData Request to send to the endpoint.
-	     * @returns The response.
-	     * @internal
-	     */
-	    SingleNodeClient.prototype.fetchBinary = function (method, route, requestData) {
-	        var _a, _b, _c;
-	        return __awaiter(this, void 0, void 0, function () {
-	            var response, responseData, _d;
-	            return __generator(this, function (_e) {
-	                switch (_e.label) {
-	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + route, {
-	                            method: method,
-	                            headers: {
-	                                "Content-Type": "application/octet-stream"
-	                            },
-	                            body: requestData
-	                        })];
-	                    case 1:
-	                        response = _e.sent();
-	                        if (!response.ok) return [3 /*break*/, 5];
-	                        if (!(method === "get")) return [3 /*break*/, 3];
-	                        _d = Uint8Array.bind;
-	                        return [4 /*yield*/, response.arrayBuffer()];
-	                    case 2: return [2 /*return*/, new (_d.apply(Uint8Array, [void 0, _e.sent()]))()];
-	                    case 3: return [4 /*yield*/, response.json()];
-	                    case 4:
-	                        responseData = _e.sent();
-	                        if (!(responseData === null || responseData === void 0 ? void 0 : responseData.error)) {
-	                            return [2 /*return*/, responseData === null || responseData === void 0 ? void 0 : responseData.data];
-	                        }
-	                        _e.label = 5;
-	                    case 5:
-	                        if (!!responseData) return [3 /*break*/, 7];
-	                        return [4 /*yield*/, response.json()];
-	                    case 6:
-	                        responseData = _e.sent();
-	                        _e.label = 7;
-	                    case 7: throw new clientError.ClientError((_b = (_a = responseData === null || responseData === void 0 ? void 0 : responseData.error) === null || _a === void 0 ? void 0 : _a.message) !== null && _b !== void 0 ? _b : response.statusText, route, response.status, (_c = responseData === null || responseData === void 0 ? void 0 : responseData.error) === null || _c === void 0 ? void 0 : _c.code);
-	                }
-	            });
-	        });
-	    };
-	    /**
-	     * A zero nonce.
-	     * @internal
-	     */
-	    SingleNodeClient.NONCE_ZERO = new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]);
-	    return SingleNodeClient;
-	}());
-	exports.SingleNodeClient = SingleNodeClient;
-
-	});
-
 	var bech32 = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Bech32 = void 0;
@@ -6283,6 +5793,713 @@
 	    return Bech32;
 	}());
 	exports.Bech32 = Bech32;
+
+	});
+
+	var bech32Helper = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.Bech32Helper = void 0;
+	/* eslint-disable no-bitwise */
+
+	/**
+	 * Convert address to bech32.
+	 */
+	var Bech32Helper = /** @class */ (function () {
+	    function Bech32Helper() {
+	    }
+	    /**
+	     * Encode an address to bech32.
+	     * @param addressType The address type to encode.
+	     * @param addressBytes The address bytes to encode.
+	     * @param humanReadablePart The human readable part to use.
+	     * @returns The array formated as hex.
+	     */
+	    Bech32Helper.toBech32 = function (addressType, addressBytes, humanReadablePart) {
+	        if (humanReadablePart === void 0) { humanReadablePart = Bech32Helper.BECH32_DEFAULT_HRP; }
+	        var addressData = new Uint8Array(1 + addressBytes.length);
+	        addressData[0] = addressType;
+	        addressData.set(addressBytes, 1);
+	        return bech32.Bech32.encode(humanReadablePart, addressData);
+	    };
+	    /**
+	     * Decode an address from bech32.
+	     * @param bech32Text The bech32 text to decode.
+	     * @param humanReadablePart The human readable part to use.
+	     * @returns The address type and address bytes or undefined if it cannot be decoded.
+	     */
+	    Bech32Helper.fromBech32 = function (bech32Text, humanReadablePart) {
+	        if (humanReadablePart === void 0) { humanReadablePart = Bech32Helper.BECH32_DEFAULT_HRP; }
+	        var decoded = bech32.Bech32.decode(bech32Text);
+	        if (decoded) {
+	            if (decoded.humanReadablePart !== humanReadablePart) {
+	                throw new Error("The hrp part of the address should be " + humanReadablePart + ", it is " + decoded.humanReadablePart);
+	            }
+	            if (decoded.data.length === 0) {
+	                throw new Error("The data part of the address should be at least length 1, it is 0");
+	            }
+	            var addressType = decoded.data[0];
+	            var addressBytes = decoded.data.slice(1);
+	            return {
+	                addressType: addressType,
+	                addressBytes: addressBytes
+	            };
+	        }
+	    };
+	    /**
+	     * Does the provided string look like it might be an bech32 address with matching hrp.
+	     * @param bech32Text The bech32 text to text.
+	     * @param humanReadablePart The human readable part to match.
+	     * @returns True.
+	     */
+	    Bech32Helper.matches = function (bech32Text, humanReadablePart) {
+	        if (humanReadablePart === void 0) { humanReadablePart = Bech32Helper.BECH32_DEFAULT_HRP; }
+	        return bech32.Bech32.matches(humanReadablePart, bech32Text);
+	    };
+	    /**
+	     * The human readable part of the bech32 addresses.
+	     */
+	    Bech32Helper.BECH32_DEFAULT_HRP = "iot";
+	    return Bech32Helper;
+	}());
+	exports.Bech32Helper = Bech32Helper;
+
+	});
+
+	var writeStream = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.WriteStream = void 0;
+	/* eslint-disable no-bitwise */
+
+
+	/**
+	 * Keep track of the write index within a stream.
+	 */
+	var WriteStream = /** @class */ (function () {
+	    /**
+	     * Create a new instance of ReadStream.
+	     */
+	    function WriteStream() {
+	        this._storage = new Uint8Array(WriteStream.CHUNK_SIZE);
+	        this._writeIndex = 0;
+	    }
+	    /**
+	     * Get the length of the stream.
+	     * @returns The stream length.
+	     */
+	    WriteStream.prototype.length = function () {
+	        return this._storage.length;
+	    };
+	    /**
+	     * How much unused data is there.
+	     * @returns The amount of unused data.
+	     */
+	    WriteStream.prototype.unused = function () {
+	        return this._storage.length - this._writeIndex;
+	    };
+	    /**
+	     * Get the final stream as bytes.
+	     * @returns The final stream.
+	     */
+	    WriteStream.prototype.finalBytes = function () {
+	        return this._storage.subarray(0, this._writeIndex);
+	    };
+	    /**
+	     * Get the final stream as hex.
+	     * @returns The final stream as hex.
+	     */
+	    WriteStream.prototype.finalHex = function () {
+	        return converter.Converter.bytesToHex(this._storage.subarray(0, this._writeIndex));
+	    };
+	    /**
+	     * Get the current write index.
+	     * @returns The current write index.
+	     */
+	    WriteStream.prototype.getWriteIndex = function () {
+	        return this._writeIndex;
+	    };
+	    /**
+	     * Set the current write index.
+	     * @param writeIndex The current write index.
+	     */
+	    WriteStream.prototype.setWriteIndex = function (writeIndex) {
+	        this._writeIndex = writeIndex;
+	    };
+	    /**
+	     * Write fixed length stream.
+	     * @param name The name of the data we are trying to write.
+	     * @param length The length of the data to write.
+	     * @param val The data to write.
+	     */
+	    WriteStream.prototype.writeFixedHex = function (name, length, val) {
+	        if (!converter.Converter.isHex(val)) {
+	            throw new Error("The " + val + " should be in hex format");
+	        }
+	        // Hex should be twice the length as each byte is 2 ascii characters
+	        if (length * 2 !== val.length) {
+	            throw new Error(name + " length " + val.length + " does not match expected length " + length * 2);
+	        }
+	        this.expand(length);
+	        this._storage.set(converter.Converter.hexToBytes(val), this._writeIndex);
+	        this._writeIndex += length;
+	    };
+	    /**
+	     * Write fixed length stream.
+	     * @param name The name of the data we are trying to write.
+	     * @param length The length of the data to write.
+	     * @param val The data to write.
+	     */
+	    WriteStream.prototype.writeBytes = function (name, length, val) {
+	        this.expand(length);
+	        this._storage.set(val, this._writeIndex);
+	        this._writeIndex += length;
+	    };
+	    /**
+	     * Write a byte to the stream.
+	     * @param name The name of the data we are trying to write.
+	     * @param val The data to write.
+	     */
+	    WriteStream.prototype.writeByte = function (name, val) {
+	        this.expand(1);
+	        this._storage[this._writeIndex++] = val & 0xFF;
+	    };
+	    /**
+	     * Write a UInt16 to the stream.
+	     * @param name The name of the data we are trying to write.
+	     * @param val The data to write.
+	     */
+	    WriteStream.prototype.writeUInt16 = function (name, val) {
+	        this.expand(2);
+	        this._storage[this._writeIndex++] = val & 0xFF;
+	        this._storage[this._writeIndex++] = val >>> 8;
+	    };
+	    /**
+	     * Write a UInt32 to the stream.
+	     * @param name The name of the data we are trying to write.
+	     * @param val The data to write.
+	     */
+	    WriteStream.prototype.writeUInt32 = function (name, val) {
+	        this.expand(4);
+	        this._storage[this._writeIndex++] = val & 0xFF;
+	        this._storage[this._writeIndex++] = val >>> 8;
+	        this._storage[this._writeIndex++] = val >>> 16;
+	        this._storage[this._writeIndex++] = val >>> 24;
+	    };
+	    /**
+	     * Write a UInt64 to the stream.
+	     * @param name The name of the data we are trying to write.
+	     * @param val The data to write.
+	     */
+	    WriteStream.prototype.writeUInt64 = function (name, val) {
+	        this.expand(8);
+	        bigIntHelper.BigIntHelper.write8(val, this._storage, this._writeIndex);
+	        this._writeIndex += 8;
+	    };
+	    /**
+	     * Write a string to the stream.
+	     * @param name The name of the data we are trying to write.
+	     * @param val The data to write.
+	     * @returns The string.
+	     */
+	    WriteStream.prototype.writeString = function (name, val) {
+	        this.writeUInt16(name, val.length);
+	        this.expand(val.length);
+	        this._storage.set(converter.Converter.asciiToBytes(val), this._writeIndex);
+	        this._writeIndex += val.length;
+	        return val;
+	    };
+	    /**
+	     * Expand the storage if there is not enough spave.
+	     * @param additional The amount of space needed.
+	     */
+	    WriteStream.prototype.expand = function (additional) {
+	        if (this._writeIndex + additional > this._storage.byteLength) {
+	            var newArr = new Uint8Array(this._storage.length + WriteStream.CHUNK_SIZE);
+	            newArr.set(this._storage, 0);
+	            this._storage = newArr;
+	        }
+	    };
+	    /**
+	     * Chunk size to expand the storage.
+	     * @internal
+	     */
+	    WriteStream.CHUNK_SIZE = 4096;
+	    return WriteStream;
+	}());
+	exports.WriteStream = WriteStream;
+
+	});
+
+	var singleNodeClient = createCommonjsModule(function (module, exports) {
+	var __awaiter = (commonjsGlobal && commonjsGlobal.__awaiter) || function (thisArg, _arguments, P, generator) {
+	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+	    return new (P || (P = Promise))(function (resolve, reject) {
+	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+	        step((generator = generator.apply(thisArg, _arguments || [])).next());
+	    });
+	};
+	var __generator = (commonjsGlobal && commonjsGlobal.__generator) || function (thisArg, body) {
+	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+	    function verb(n) { return function (v) { return step([n, v]); }; }
+	    function step(op) {
+	        if (f) throw new TypeError("Generator is already executing.");
+	        while (_) try {
+	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+	            if (y = 0, t) op = [op[0] & 2, t.value];
+	            switch (op[0]) {
+	                case 0: case 1: t = op; break;
+	                case 4: _.label++; return { value: op[1], done: false };
+	                case 5: _.label++; y = op[1]; op = [0]; continue;
+	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+	                default:
+	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+	                    if (t[2]) _.ops.pop();
+	                    _.trys.pop(); continue;
+	            }
+	            op = body.call(thisArg, _);
+	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+	    }
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.SingleNodeClient = void 0;
+
+
+
+
+
+
+
+	/**
+	 * Client for API communication.
+	 */
+	var SingleNodeClient = /** @class */ (function () {
+	    /**
+	     * Create a new instance of client.
+	     * @param endpoint The endpoint.
+	     * @param powProvider Optional local POW provider.
+	     */
+	    function SingleNodeClient(endpoint, powProvider) {
+	        if (!/^https?:\/\/\w+(\.\w+)*(:\d+)?(\/.*)?$/.test(endpoint)) {
+	            throw new Error("The endpoint is not in the correct format");
+	        }
+	        this._endpoint = endpoint.replace(/\/+$/, "");
+	        this._powProvider = powProvider;
+	    }
+	    /**
+	     * Get the health of the node.
+	     * @returns True if the node is healthy.
+	     */
+	    SingleNodeClient.prototype.health = function () {
+	        return __awaiter(this, void 0, void 0, function () {
+	            var status;
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0: return [4 /*yield*/, this.fetchStatus("/health")];
+	                    case 1:
+	                        status = _a.sent();
+	                        if (status === 200) {
+	                            return [2 /*return*/, true];
+	                        }
+	                        else if (status === 503) {
+	                            return [2 /*return*/, false];
+	                        }
+	                        throw new clientError.ClientError("Unexpected response code", "/health", status);
+	                }
+	            });
+	        });
+	    };
+	    /**
+	     * Get the info about the node.
+	     * @returns The node information.
+	     */
+	    SingleNodeClient.prototype.info = function () {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/info")];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the tips from the node.
+	     * @returns The tips.
+	     */
+	    SingleNodeClient.prototype.tips = function () {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/tips")];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the message data by id.
+	     * @param messageId The message to get the data for.
+	     * @returns The message data.
+	     */
+	    SingleNodeClient.prototype.message = function (messageId) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId)];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the message metadata by id.
+	     * @param messageId The message to get the metadata for.
+	     * @returns The message metadata.
+	     */
+	    SingleNodeClient.prototype.messageMetadata = function (messageId) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId + "/metadata")];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the message raw data by id.
+	     * @param messageId The message to get the data for.
+	     * @returns The message raw data.
+	     */
+	    SingleNodeClient.prototype.messageRaw = function (messageId) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchBinary("get", "/api/v1/messages/" + messageId + "/raw")];
+	            });
+	        });
+	    };
+	    /**
+	     * Submit message.
+	     * @param message The message to submit.
+	     * @returns The messageId.
+	     */
+	    SingleNodeClient.prototype.messageSubmit = function (message$1) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            var targetScore, writeStream$1, messageBytes, nonce, response;
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0:
+	                        if (!(!message$1.nonce || message$1.nonce.length === 0)) return [3 /*break*/, 3];
+	                        if (!this._powProvider) return [3 /*break*/, 2];
+	                        targetScore = 100;
+	                        writeStream$1 = new writeStream.WriteStream();
+	                        message.serializeMessage(writeStream$1, message$1);
+	                        messageBytes = writeStream$1.finalBytes();
+	                        return [4 /*yield*/, this._powProvider.pow(messageBytes, targetScore)];
+	                    case 1:
+	                        nonce = _a.sent();
+	                        message$1.nonce = nonce.toString(10);
+	                        return [3 /*break*/, 3];
+	                    case 2:
+	                        message$1.nonce = "0";
+	                        _a.label = 3;
+	                    case 3: return [4 /*yield*/, this.fetchJson("post", "/api/v1/messages", message$1)];
+	                    case 4:
+	                        response = _a.sent();
+	                        return [2 /*return*/, response.messageId];
+	                }
+	            });
+	        });
+	    };
+	    /**
+	     * Submit message in raw format.
+	     * @param message The message to submit.
+	     * @returns The messageId.
+	     */
+	    SingleNodeClient.prototype.messageSubmitRaw = function (message) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            var targetScore, nonce, response;
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0:
+	                        if (!(arrayHelper.ArrayHelper.equal(message.slice(-8), SingleNodeClient.NONCE_ZERO) && this._powProvider)) return [3 /*break*/, 2];
+	                        targetScore = 100;
+	                        return [4 /*yield*/, this._powProvider.pow(message, targetScore)];
+	                    case 1:
+	                        nonce = _a.sent();
+	                        bigIntHelper.BigIntHelper.write8(nonce, message, message.length - 8);
+	                        _a.label = 2;
+	                    case 2: return [4 /*yield*/, this.fetchBinary("post", "/api/v1/messages", message)];
+	                    case 3:
+	                        response = _a.sent();
+	                        return [2 /*return*/, response.messageId];
+	                }
+	            });
+	        });
+	    };
+	    /**
+	     * Find messages by index.
+	     * @param indexationKey The index value.
+	     * @returns The messageId.
+	     */
+	    SingleNodeClient.prototype.messagesFind = function (indexationKey) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages?index=" + encodeURIComponent(indexationKey))];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the children of a message.
+	     * @param messageId The id of the message to get the children for.
+	     * @returns The messages children.
+	     */
+	    SingleNodeClient.prototype.messageChildren = function (messageId) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId + "/children")];
+	            });
+	        });
+	    };
+	    /**
+	     * Find an output by its identifier.
+	     * @param outputId The id of the output to get.
+	     * @returns The output details.
+	     */
+	    SingleNodeClient.prototype.output = function (outputId) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/outputs/" + outputId)];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the address details.
+	     * @param addressBech32 The address to get the details for.
+	     * @returns The address details.
+	     */
+	    SingleNodeClient.prototype.address = function (addressBech32) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                if (!bech32Helper.Bech32Helper.matches(addressBech32)) {
+	                    throw new Error("The supplied address does not appear to be bech32 format");
+	                }
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/" + addressBech32)];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the address outputs.
+	     * @param addressBech32 The address to get the outputs for.
+	     * @returns The address outputs.
+	     */
+	    SingleNodeClient.prototype.addressOutputs = function (addressBech32) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                if (!bech32Helper.Bech32Helper.matches(addressBech32)) {
+	                    throw new Error("The supplied address does not appear to be bech32 format");
+	                }
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/" + addressBech32 + "/outputs")];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the address detail using ed25519 address.
+	     * @param addressEd25519 The address to get the details for.
+	     * @returns The address details.
+	     */
+	    SingleNodeClient.prototype.addressEd25519 = function (addressEd25519) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                if (!converter.Converter.isHex(addressEd25519)) {
+	                    throw new Error("The supplied address does not appear to be hex format");
+	                }
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/ed25519/" + addressEd25519)];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the address outputs using ed25519 address.
+	     * @param addressEd25519 The address to get the outputs for.
+	     * @returns The address outputs.
+	     */
+	    SingleNodeClient.prototype.addressEd25519Outputs = function (addressEd25519) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                if (!converter.Converter.isHex(addressEd25519)) {
+	                    throw new Error("The supplied address does not appear to be hex format");
+	                }
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/ed25519/" + addressEd25519 + "/outputs")];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the requested milestone.
+	     * @param index The index of the milestone to get.
+	     * @returns The milestone details.
+	     */
+	    SingleNodeClient.prototype.milestone = function (index) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/milestones/" + index)];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the list of peers.
+	     * @returns The list of peers.
+	     */
+	    SingleNodeClient.prototype.peers = function () {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/peers")];
+	            });
+	        });
+	    };
+	    /**
+	     * Add a new peer.
+	     * @param multiAddress The address of the peer to add.
+	     * @param alias An optional alias for the peer.
+	     * @returns The details for the created peer.
+	     */
+	    SingleNodeClient.prototype.peerAdd = function (multiAddress, alias) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("post", "/api/v1/peers", {
+	                        multiAddress: multiAddress,
+	                        alias: alias
+	                    })];
+	            });
+	        });
+	    };
+	    /**
+	     * Delete a peer.
+	     * @param peerId The peer to delete.
+	     * @returns Nothing.
+	     */
+	    SingleNodeClient.prototype.peerDelete = function (peerId) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+	                return [2 /*return*/, this.fetchJson("delete", "/api/v1/peers/" + peerId)];
+	            });
+	        });
+	    };
+	    /**
+	     * Get a peer.
+	     * @param peerId The peer to delete.
+	     * @returns The details for the created peer.
+	     */
+	    SingleNodeClient.prototype.peer = function (peerId) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/peers/" + peerId)];
+	            });
+	        });
+	    };
+	    /**
+	     * Perform a request and just return the status.
+	     * @param route The route of the request.
+	     * @returns The response.
+	     * @internal
+	     */
+	    SingleNodeClient.prototype.fetchStatus = function (route) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            var response;
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + route, {
+	                            method: "get"
+	                        })];
+	                    case 1:
+	                        response = _a.sent();
+	                        return [2 /*return*/, response.status];
+	                }
+	            });
+	        });
+	    };
+	    /**
+	     * Perform a request in json format.
+	     * @param method The http method.
+	     * @param route The route of the request.
+	     * @param requestData Request to send to the endpoint.
+	     * @returns The response.
+	     * @internal
+	     */
+	    SingleNodeClient.prototype.fetchJson = function (method, route, requestData) {
+	        var _a, _b, _c;
+	        return __awaiter(this, void 0, void 0, function () {
+	            var response, responseData;
+	            return __generator(this, function (_d) {
+	                switch (_d.label) {
+	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + route, {
+	                            method: method,
+	                            headers: {
+	                                "Content-Type": "application/json"
+	                            },
+	                            body: requestData ? JSON.stringify(requestData) : undefined
+	                        })];
+	                    case 1:
+	                        response = _d.sent();
+	                        return [4 /*yield*/, response.json()];
+	                    case 2:
+	                        responseData = _d.sent();
+	                        if (response.ok && !responseData.error) {
+	                            return [2 /*return*/, responseData.data];
+	                        }
+	                        throw new clientError.ClientError((_b = (_a = responseData.error) === null || _a === void 0 ? void 0 : _a.message) !== null && _b !== void 0 ? _b : response.statusText, route, response.status, (_c = responseData.error) === null || _c === void 0 ? void 0 : _c.code);
+	                }
+	            });
+	        });
+	    };
+	    /**
+	     * Perform a request for binary data.
+	     * @param method The http method.
+	     * @param route The route of the request.
+	     * @param requestData Request to send to the endpoint.
+	     * @returns The response.
+	     * @internal
+	     */
+	    SingleNodeClient.prototype.fetchBinary = function (method, route, requestData) {
+	        var _a, _b, _c;
+	        return __awaiter(this, void 0, void 0, function () {
+	            var response, responseData, _d;
+	            return __generator(this, function (_e) {
+	                switch (_e.label) {
+	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + route, {
+	                            method: method,
+	                            headers: {
+	                                "Content-Type": "application/octet-stream"
+	                            },
+	                            body: requestData
+	                        })];
+	                    case 1:
+	                        response = _e.sent();
+	                        if (!response.ok) return [3 /*break*/, 5];
+	                        if (!(method === "get")) return [3 /*break*/, 3];
+	                        _d = Uint8Array.bind;
+	                        return [4 /*yield*/, response.arrayBuffer()];
+	                    case 2: return [2 /*return*/, new (_d.apply(Uint8Array, [void 0, _e.sent()]))()];
+	                    case 3: return [4 /*yield*/, response.json()];
+	                    case 4:
+	                        responseData = _e.sent();
+	                        if (!(responseData === null || responseData === void 0 ? void 0 : responseData.error)) {
+	                            return [2 /*return*/, responseData === null || responseData === void 0 ? void 0 : responseData.data];
+	                        }
+	                        _e.label = 5;
+	                    case 5:
+	                        if (!!responseData) return [3 /*break*/, 7];
+	                        return [4 /*yield*/, response.json()];
+	                    case 6:
+	                        responseData = _e.sent();
+	                        _e.label = 7;
+	                    case 7: throw new clientError.ClientError((_b = (_a = responseData === null || responseData === void 0 ? void 0 : responseData.error) === null || _a === void 0 ? void 0 : _a.message) !== null && _b !== void 0 ? _b : response.statusText, route, response.status, (_c = responseData === null || responseData === void 0 ? void 0 : responseData.error) === null || _c === void 0 ? void 0 : _c.code);
+	                }
+	            });
+	        });
+	    };
+	    /**
+	     * A zero nonce.
+	     * @internal
+	     */
+	    SingleNodeClient.NONCE_ZERO = new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]);
+	    return SingleNodeClient;
+	}());
+	exports.SingleNodeClient = SingleNodeClient;
 
 	});
 
@@ -6602,78 +6819,6 @@
 
 	});
 
-	var ed25519Seed = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.Ed25519Seed = void 0;
-
-
-
-	/**
-	 * Class to help with seeds.
-	 */
-	var Ed25519Seed = /** @class */ (function () {
-	    function Ed25519Seed() {
-	        /**
-	         * The secret key for the seed.
-	         * @internal
-	         */
-	        this._secretKey = new Uint8Array();
-	    }
-	    /**
-	     * Create a seed from the bytes.
-	     * @param bytes The binary representation of the seed.
-	     * @returns The seed.
-	     */
-	    Ed25519Seed.fromBytes = function (bytes) {
-	        var seed = new Ed25519Seed();
-	        seed._secretKey = bytes;
-	        return seed;
-	    };
-	    /**
-	     * Generate a new random seed.
-	     * @returns The random seed.
-	     */
-	    Ed25519Seed.random = function () {
-	        return Ed25519Seed.fromBytes(randomHelper.RandomHelper.generate(Ed25519Seed.SEED_SIZE_BYTES));
-	    };
-	    /**
-	     * Get the key pair from the seed.
-	     * @returns The key pair.
-	     */
-	    Ed25519Seed.prototype.keyPair = function () {
-	        var signKeyPair = ed25519.Ed25519.keyPairFromSeed(this._secretKey);
-	        return {
-	            publicKey: signKeyPair.publicKey,
-	            privateKey: signKeyPair.privateKey
-	        };
-	    };
-	    /**
-	     * Generate a new seed from the path.
-	     * @param path The path to generate the seed for.
-	     * @returns The generated seed.
-	     */
-	    Ed25519Seed.prototype.generateSeedFromPath = function (path) {
-	        var keys = slip0010.Slip0010.derivePath(this._secretKey, path);
-	        return Ed25519Seed.fromBytes(keys.privateKey);
-	    };
-	    /**
-	     * Return the key as bytes.
-	     * @returns The key as bytes.
-	     */
-	    Ed25519Seed.prototype.toBytes = function () {
-	        return this._secretKey;
-	    };
-	    /**
-	     * SeedSize is the size, in bytes, of private key seeds.
-	     * @internal
-	     */
-	    Ed25519Seed.SEED_SIZE_BYTES = 32;
-	    return Ed25519Seed;
-	}());
-	exports.Ed25519Seed = Ed25519Seed;
-
-	});
-
 	var zip215 = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Zip215 = void 0;
@@ -6788,6 +6933,8 @@
 	exports.getUnspentAddresses = void 0;
 
 
+
+
 	/**
 	 * Get all the unspent addresses.
 	 * @param client The client to send the transfer with.
@@ -6799,7 +6946,7 @@
 	 */
 	function getUnspentAddresses(client, seed, basePath, startIndex, countLimit) {
 	    return __awaiter(this, void 0, void 0, function () {
-	        var localStartIndex, localCountLimit, finished, allUnspent, addressKeyPair, address, addressResponse;
+	        var localStartIndex, localCountLimit, finished, allUnspent, addressKeyPair, ed25519Address$1, addressBytes, addressHex, addressResponse;
 	        return __generator(this, function (_a) {
 	            switch (_a.label) {
 	                case 0:
@@ -6812,8 +6959,10 @@
 	                    basePath.push(localStartIndex);
 	                    addressKeyPair = seed.generateSeedFromPath(basePath).keyPair();
 	                    basePath.pop();
-	                    address = converter.Converter.bytesToHex(ed25519Address.Ed25519Address.publicKeyToAddress(addressKeyPair.publicKey));
-	                    return [4 /*yield*/, client.address(address)];
+	                    ed25519Address$1 = new ed25519Address.Ed25519Address();
+	                    addressBytes = ed25519Address$1.publicKeyToAddress(addressKeyPair.publicKey);
+	                    addressHex = converter.Converter.bytesToHex(addressBytes);
+	                    return [4 /*yield*/, client.addressEd25519(addressHex)];
 	                case 2:
 	                    addressResponse = _a.sent();
 	                    // If there are no outputs for the address we have reached the
@@ -6823,7 +6972,7 @@
 	                    }
 	                    else {
 	                        allUnspent.push({
-	                            address: address,
+	                            address: bech32Helper.Bech32Helper.toBech32(IEd25519Address.ED25519_ADDRESS_TYPE, addressBytes),
 	                            index: localStartIndex,
 	                            balance: addressResponse.balance
 	                        });
@@ -7340,6 +7489,7 @@
 
 
 
+
 	/**
 	 * Send a transfer from the balance on the seed.
 	 * @param client The client to send the transfer with.
@@ -7394,20 +7544,25 @@
 	    var outputsWithSerialization = [];
 	    for (var _i = 0, outputs_1 = outputs; _i < outputs_1.length; _i++) {
 	        var output$1 = outputs_1[_i];
-	        var sigLockedOutput = {
-	            type: 0,
-	            address: {
-	                type: 1,
-	                address: output$1.address
-	            },
-	            amount: output$1.amount
-	        };
-	        var writeStream$1 = new writeStream.WriteStream();
-	        output.serializeOutput(writeStream$1, sigLockedOutput);
-	        outputsWithSerialization.push({
-	            output: sigLockedOutput,
-	            serialized: writeStream$1.finalHex()
-	        });
+	        if (output$1.addressType === IEd25519Address.ED25519_ADDRESS_TYPE) {
+	            var sigLockedOutput = {
+	                type: 0,
+	                address: {
+	                    type: 1,
+	                    address: output$1.address
+	                },
+	                amount: output$1.amount
+	            };
+	            var writeStream$1 = new writeStream.WriteStream();
+	            output.serializeOutput(writeStream$1, sigLockedOutput);
+	            outputsWithSerialization.push({
+	                output: sigLockedOutput,
+	                serialized: writeStream$1.finalHex()
+	            });
+	        }
+	        else {
+	            throw new Error("Unrecognized output address type " + output$1.addressType);
+	        }
 	    }
 	    var inputsAndSignatureKeyPairsSerialized = inputsAndSignatureKeyPairs.map(function (i) {
 	        var writeStream$1 = new writeStream.WriteStream();
@@ -7508,7 +7663,9 @@
 	    }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.calculateInputs = exports.send = void 0;
+	exports.calculateInputs = exports.sendEd25519 = exports.send = void 0;
+
+
 
 
 
@@ -7517,18 +7674,28 @@
 	 * @param client The client to send the transfer with.
 	 * @param seed The seed to use for address generation.
 	 * @param basePath The base path to start looking for addresses.
-	 * @param address The address to send the funds to.
+	 * @param addressBech32 The address to send the funds to in bech32 format.
 	 * @param amount The amount to send.
 	 * @param startIndex The start index for the wallet count address, defaults to 0.
 	 * @returns The id of the message created and the contructed message.
 	 */
-	function send(client, seed, basePath, address, amount, startIndex) {
+	function send(client, seed, basePath, addressBech32, amount, startIndex) {
 	    return __awaiter(this, void 0, void 0, function () {
-	        var outputs, inputsAndKey, response;
+	        var bech32Details, outputs, inputsAndKey, response;
 	        return __generator(this, function (_a) {
 	            switch (_a.label) {
 	                case 0:
-	                    outputs = [{ address: address, amount: amount }];
+	                    bech32Details = bech32Helper.Bech32Helper.fromBech32(addressBech32);
+	                    if (!bech32Details) {
+	                        throw new Error("Unable to decode bech32 address");
+	                    }
+	                    outputs = [
+	                        {
+	                            address: converter.Converter.bytesToHex(bech32Details.addressBytes),
+	                            addressType: bech32Details.addressType,
+	                            amount: amount
+	                        }
+	                    ];
 	                    return [4 /*yield*/, calculateInputs(client, seed, basePath, outputs, startIndex)];
 	                case 1:
 	                    inputsAndKey = _a.sent();
@@ -7545,6 +7712,38 @@
 	}
 	exports.send = send;
 	/**
+	 * Send a transfer from the balance on the seed.
+	 * @param client The client to send the transfer with.
+	 * @param seed The seed to use for address generation.
+	 * @param basePath The base path to start looking for addresses.
+	 * @param addressEd25519 The address to send the funds to in ed25519 format.
+	 * @param amount The amount to send.
+	 * @param startIndex The start index for the wallet count address, defaults to 0.
+	 * @returns The id of the message created and the contructed message.
+	 */
+	function sendEd25519(client, seed, basePath, addressEd25519, amount, startIndex) {
+	    return __awaiter(this, void 0, void 0, function () {
+	        var outputs, inputsAndKey, response;
+	        return __generator(this, function (_a) {
+	            switch (_a.label) {
+	                case 0:
+	                    outputs = [{ address: addressEd25519, addressType: IEd25519Address.ED25519_ADDRESS_TYPE, amount: amount }];
+	                    return [4 /*yield*/, calculateInputs(client, seed, basePath, outputs, startIndex)];
+	                case 1:
+	                    inputsAndKey = _a.sent();
+	                    return [4 /*yield*/, sendAdvanced_1.sendAdvanced(client, inputsAndKey, outputs)];
+	                case 2:
+	                    response = _a.sent();
+	                    return [2 /*return*/, {
+	                            messageId: response.messageId,
+	                            message: response.message
+	                        }];
+	            }
+	        });
+	    });
+	}
+	exports.sendEd25519 = sendEd25519;
+	/**
 	 * Calculate the inputs from the seed and basePath.
 	 * @param client The client to send the transfer with.
 	 * @param seed The seed to use for address generation.
@@ -7555,7 +7754,7 @@
 	 */
 	function calculateInputs(client, seed, basePath, outputs, startIndex) {
 	    return __awaiter(this, void 0, void 0, function () {
-	        var requiredBalance, localStartIndex, consumedBalance, inputsAndSignatureKeyPairs, finished, addressKeyPair, address, addressOutputIds, _i, _a, addressOutputId, addressOutput, input;
+	        var requiredBalance, localStartIndex, consumedBalance, inputsAndSignatureKeyPairs, finished, addressKeyPair, ed25519Address$1, address, addressOutputIds, _i, _a, addressOutputId, addressOutput, input;
 	        return __generator(this, function (_b) {
 	            switch (_b.label) {
 	                case 0:
@@ -7569,8 +7768,9 @@
 	                    basePath.push(localStartIndex);
 	                    addressKeyPair = seed.generateSeedFromPath(basePath).keyPair();
 	                    basePath.pop();
-	                    address = converter.Converter.bytesToHex(ed25519Address.Ed25519Address.publicKeyToAddress(addressKeyPair.publicKey));
-	                    return [4 /*yield*/, client.addressOutputs(address)];
+	                    ed25519Address$1 = new ed25519Address.Ed25519Address();
+	                    address = converter.Converter.bytesToHex(ed25519Address$1.publicKeyToAddress(addressKeyPair.publicKey));
+	                    return [4 /*yield*/, client.addressEd25519Outputs(address)];
 	                case 2:
 	                    addressOutputIds = _b.sent();
 	                    if (!(addressOutputIds.count === 0)) return [3 /*break*/, 3];
@@ -7607,7 +7807,8 @@
 	                                if (consumedBalance - requiredBalance > 0) {
 	                                    outputs.push({
 	                                        amount: consumedBalance - requiredBalance,
-	                                        address: address
+	                                        address: addressOutput.output.address.address,
+	                                        addressType: addressOutput.output.address.type
 	                                    });
 	                                }
 	                                finished = true;
@@ -7721,57 +7922,37 @@
 
 	});
 
-	var IAddress = createCommonjsModule(function (module, exports) {
+	var IAddressOutputsResponse = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
 
-	var IAddressOutputs = createCommonjsModule(function (module, exports) {
+	var IAddressResponse = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
 
-	var IChildren = createCommonjsModule(function (module, exports) {
+	var IChildrenResponse = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
 
-	var IGossipMetrics = createCommonjsModule(function (module, exports) {
+	var IMessageIdResponse = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
 
-	var IInfo = createCommonjsModule(function (module, exports) {
+	var IMessagesResponse = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
 
-	var IMessageId = createCommonjsModule(function (module, exports) {
+	var IMilestoneResponse = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
 
-	var IMessageMetadata = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IMessages = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IMilestone = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IOutput = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IPeer = createCommonjsModule(function (module, exports) {
+	var IOutputResponse = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
@@ -7781,12 +7962,12 @@
 
 	});
 
-	var ITips = createCommonjsModule(function (module, exports) {
+	var ITipsResponse = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
 
-	var ledgerInclusionState = createCommonjsModule(function (module, exports) {
+	var IAddress = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
@@ -7796,17 +7977,7 @@
 
 	});
 
-	var IEd25519Address = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IEd25519Signature = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var IIndexationPayload = createCommonjsModule(function (module, exports) {
+	var IGossipMetrics = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
@@ -7821,7 +7992,7 @@
 
 	});
 
-	var IMilestonePayload = createCommonjsModule(function (module, exports) {
+	var IMessageMetadata = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
@@ -7836,12 +8007,17 @@
 
 	});
 
-	var IPowProvider = createCommonjsModule(function (module, exports) {
+	var INodeInfo = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
 
-	var IReferenceUnlockBlock = createCommonjsModule(function (module, exports) {
+	var IPeer = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IPowProvider = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
@@ -7851,32 +8027,12 @@
 
 	});
 
-	var ISigLockedSingleOutput = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var ISignatureUnlockBlock = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var ITransactionEssence = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
-	var ITransactionPayload = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-	});
-
 	var ITypeBase = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
 
-	var IUTXOInput = createCommonjsModule(function (module, exports) {
+	var ledgerInclusionState = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
@@ -8163,78 +8319,77 @@
 
 	});
 
-	var bech32Helper = createCommonjsModule(function (module, exports) {
+	var ed25519Seed = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.Bech32Helper = void 0;
-	/* eslint-disable no-bitwise */
+	exports.Ed25519Seed = exports.ED25519_SEED_TYPE = void 0;
+
 
 	/**
-	 * Convert address to bech32.
+	 * The global type for the seed.
 	 */
-	var Bech32Helper = /** @class */ (function () {
-	    function Bech32Helper() {
+	exports.ED25519_SEED_TYPE = 1;
+	/**
+	 * Class to help with seeds.
+	 */
+	var Ed25519Seed = /** @class */ (function () {
+	    /**
+	     * Create a new instance of Ed25519Seed.
+	     * @param secretKeyBytes The bytes.
+	     */
+	    function Ed25519Seed(secretKeyBytes) {
+	        this._secretKey = secretKeyBytes !== null && secretKeyBytes !== void 0 ? secretKeyBytes : new Uint8Array();
 	    }
 	    /**
-	     * Encode an address to bech32.
-	     * @param addressType The address type to encode.
-	     * @param addressBytes The address bytes to encode.
-	     * @param humanReadablePart The human readable part to use.
-	     * @returns The array formated as hex.
+	     * Get the key pair from the seed.
+	     * @returns The key pair.
 	     */
-	    Bech32Helper.toBech32 = function (addressType, addressBytes, humanReadablePart) {
-	        if (humanReadablePart === void 0) { humanReadablePart = Bech32Helper.BECH32_DEFAULT_HRP; }
-	        var addressData = new Uint8Array(1 + addressBytes.length);
-	        addressData[0] = addressType;
-	        addressData.set(addressBytes, 1);
-	        return bech32.Bech32.encode(humanReadablePart, addressData);
+	    Ed25519Seed.prototype.keyPair = function () {
+	        var signKeyPair = ed25519.Ed25519.keyPairFromSeed(this._secretKey);
+	        return {
+	            publicKey: signKeyPair.publicKey,
+	            privateKey: signKeyPair.privateKey
+	        };
 	    };
 	    /**
-	     * Decode an address from bech32.
-	     * @param bech32Text The bech32 text to decode.
-	     * @param humanReadablePart The human readable part to use.
-	     * @returns The address type and address bytes or undefined if it cannot be decoded.
+	     * Generate a new seed from the path.
+	     * @param path The path to generate the seed for.
+	     * @returns The generated seed.
 	     */
-	    Bech32Helper.fromBech32 = function (bech32Text, humanReadablePart) {
-	        if (humanReadablePart === void 0) { humanReadablePart = Bech32Helper.BECH32_DEFAULT_HRP; }
-	        var decoded = bech32.Bech32.decode(bech32Text);
-	        if (decoded) {
-	            if (decoded.humanReadablePart !== humanReadablePart) {
-	                throw new Error("The hrp part of the address should be " + humanReadablePart + ", it is " + decoded.humanReadablePart);
-	            }
-	            if (decoded.data.length === 0) {
-	                throw new Error("The data part of the address should be at least length 1, it is 0");
-	            }
-	            var addressType = decoded.data[0];
-	            var addressBytes = decoded.data.slice(1);
-	            return {
-	                addressType: addressType,
-	                addressBytes: addressBytes
-	            };
-	        }
+	    Ed25519Seed.prototype.generateSeedFromPath = function (path) {
+	        var keys = slip0010.Slip0010.derivePath(this._secretKey, path);
+	        return new Ed25519Seed(keys.privateKey);
 	    };
 	    /**
-	     * Does the provided string look like it might be an bech32 address with matching hrp.
-	     * @param bech32Text The bech32 text to text.
-	     * @param humanReadablePart The human readable part to match.
-	     * @returns True.
+	     * Return the key as bytes.
+	     * @returns The key as bytes.
 	     */
-	    Bech32Helper.matches = function (bech32Text, humanReadablePart) {
-	        if (humanReadablePart === void 0) { humanReadablePart = Bech32Helper.BECH32_DEFAULT_HRP; }
-	        return bech32.Bech32.matches(humanReadablePart, bech32Text);
+	    Ed25519Seed.prototype.toBytes = function () {
+	        return this._secretKey;
 	    };
 	    /**
-	     * The human readable part of the bech32 addresses.
+	     * SeedSize is the size, in bytes, of private key seeds.
+	     * @internal
 	     */
-	    Bech32Helper.BECH32_DEFAULT_HRP = "iot";
-	    return Bech32Helper;
+	    Ed25519Seed.SEED_SIZE_BYTES = 32;
+	    return Ed25519Seed;
 	}());
-	exports.Bech32Helper = Bech32Helper;
+	exports.Ed25519Seed = Ed25519Seed;
 
 	});
 
 	var logging = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.logUnlockBlock = exports.logOutput = exports.logInput = exports.logSignature = exports.logAddress = exports.logPayload = exports.logMessage = exports.setLogger = void 0;
+	exports.logUnlockBlock = exports.logOutput = exports.logInput = exports.logSignature = exports.logAddress = exports.logPayload = exports.logMessageMetadata = exports.logMessage = exports.logTips = exports.logInfo = exports.setLogger = void 0;
+
+
+
+
+
+
+
+
+
+
 
 	/**
 	 * The logger used by the log methods.
@@ -8254,6 +8409,32 @@
 	}
 	exports.setLogger = setLogger;
 	/**
+	 * Log the node information.
+	 * @param prefix The prefix for the output.
+	 * @param info The info to log.
+	 */
+	function logInfo(prefix, info) {
+	    logger(prefix + "\tName:", info.name);
+	    logger(prefix + "\tVersion:", info.version);
+	    logger(prefix + "\tNetwork Id:", info.networkId);
+	    logger(prefix + "\tIs Healthy:", info.isHealthy);
+	    logger(prefix + "\tLatest Milestone Index:", info.latestMilestoneIndex);
+	    logger(prefix + "\tSolid Milestone Index:", info.solidMilestoneIndex);
+	    logger(prefix + "\tPruning Index:", info.pruningIndex);
+	    logger(prefix + "\tFeatures:", info.features);
+	}
+	exports.logInfo = logInfo;
+	/**
+	 * Log the tips information.
+	 * @param prefix The prefix for the output.
+	 * @param tips The tips to log.
+	 */
+	function logTips(prefix, tips) {
+	    logger(prefix + "\tTip 1 Message Id:", tips.tip1MessageId);
+	    logger(prefix + "\tTip 2 Message Id:", tips.tip2MessageId);
+	}
+	exports.logTips = logTips;
+	/**
 	 * Log a message to the console.
 	 * @param prefix The prefix for the output.
 	 * @param message The message to log.
@@ -8269,16 +8450,40 @@
 	}
 	exports.logMessage = logMessage;
 	/**
+	 * Log the message metadata to the console.
+	 * @param prefix The prefix for the output.
+	 * @param messageMetadata The messageMetadata to log.
+	 */
+	function logMessageMetadata(prefix, messageMetadata) {
+	    console.log(prefix + "\tMessage Id:", messageMetadata.messageId);
+	    console.log(prefix + "\tParent 1 Message Id:", messageMetadata.parent1MessageId);
+	    console.log(prefix + "\tParent 2 Message Id:", messageMetadata.parent2MessageId);
+	    if (messageMetadata.isSolid !== undefined) {
+	        console.log(prefix + "\tIs Solid:", messageMetadata.isSolid);
+	    }
+	    if (messageMetadata.referencedByMilestoneIndex !== undefined) {
+	        console.log(prefix + "\tReferenced By Milestone Index:", messageMetadata.referencedByMilestoneIndex);
+	    }
+	    console.log(prefix + "\tLedger Inclusion State:", messageMetadata.ledgerInclusionState);
+	    if (messageMetadata.shouldPromote !== undefined) {
+	        console.log(prefix + "\tShould Promote:", messageMetadata.shouldPromote);
+	    }
+	    if (messageMetadata.shouldReattach !== undefined) {
+	        console.log(prefix + "\tShould Reattach:", messageMetadata.shouldReattach);
+	    }
+	}
+	exports.logMessageMetadata = logMessageMetadata;
+	/**
 	 * Log a message to the console.
 	 * @param prefix The prefix for the output.
 	 * @param unknownPayload The payload.
 	 */
 	function logPayload(prefix, unknownPayload) {
 	    if (unknownPayload) {
-	        if (unknownPayload.type === 0) {
+	        if (unknownPayload.type === ITransactionPayload.TRANSACTION_PAYLOAD_TYPE) {
 	            var payload = unknownPayload;
 	            logger(prefix + "Transaction Payload");
-	            if (payload.essence.type === 0) {
+	            if (payload.essence.type === ITransactionEssence.TRANSACTION_ESSENCE_TYPE) {
 	                if (payload.essence.inputs) {
 	                    logger(prefix + "\tInputs:", payload.essence.inputs.length);
 	                    for (var _i = 0, _a = payload.essence.inputs; _i < _a.length; _i++) {
@@ -8303,7 +8508,7 @@
 	                }
 	            }
 	        }
-	        else if (unknownPayload.type === 1) {
+	        else if (unknownPayload.type === IMilestonePayload.MILESTONE_PAYLOAD_TYPE) {
 	            var payload = unknownPayload;
 	            logger(prefix + "Milestone Payload");
 	            logger(prefix + "\tIndex:", payload.index);
@@ -8311,7 +8516,7 @@
 	            logger(prefix + "\tInclusion Merkle Proof:", payload.inclusionMerkleProof);
 	            logger(prefix + "\tSignatures:", payload.signatures);
 	        }
-	        else if (unknownPayload.type === 2) {
+	        else if (unknownPayload.type === IIndexationPayload.INDEXATION_PAYLOAD_TYPE) {
 	            var payload = unknownPayload;
 	            logger(prefix + "Indexation Payload");
 	            logger(prefix + "\tIndex:", payload.index);
@@ -8327,7 +8532,7 @@
 	 */
 	function logAddress(prefix, unknownAddress) {
 	    if (unknownAddress) {
-	        if (unknownAddress.type === 1) {
+	        if (unknownAddress.type === IEd25519Address.ED25519_ADDRESS_TYPE) {
 	            var address = unknownAddress;
 	            logger(prefix + "Ed25519 Address");
 	            logger(prefix + "\tAddress:", address.address);
@@ -8342,7 +8547,7 @@
 	 */
 	function logSignature(prefix, unknownSignature) {
 	    if (unknownSignature) {
-	        if (unknownSignature.type === 1) {
+	        if (unknownSignature.type === IEd25519Signature.ED25519_SIGNATURE_TYPE) {
 	            var signature = unknownSignature;
 	            logger(prefix + "Ed25519 Signature");
 	            logger(prefix + "\tPublic Key:", signature.publicKey);
@@ -8358,7 +8563,7 @@
 	 */
 	function logInput(prefix, unknownInput) {
 	    if (unknownInput) {
-	        if (unknownInput.type === 0) {
+	        if (unknownInput.type === IUTXOInput.UTXO_INPUT_TYPE) {
 	            var input = unknownInput;
 	            logger(prefix + "UTXO Input");
 	            logger(prefix + "\tTransaction Id:", input.transactionId);
@@ -8374,7 +8579,7 @@
 	 */
 	function logOutput(prefix, unknownOutput) {
 	    if (unknownOutput) {
-	        if (unknownOutput.type === 0) {
+	        if (unknownOutput.type === ISigLockedSingleOutput.SIG_LOCKED_SINGLE_OUTPUT_TYPE) {
 	            var output = unknownOutput;
 	            logger(prefix + "Signature Locked Single Output");
 	            logAddress(prefix + "\t\t", output.address);
@@ -8390,12 +8595,12 @@
 	 */
 	function logUnlockBlock(prefix, unknownUnlockBlock) {
 	    if (unknownUnlockBlock) {
-	        if (unknownUnlockBlock.type === 0) {
+	        if (unknownUnlockBlock.type === ISignatureUnlockBlock.SIGNATURE_UNLOCK_BLOCK_TYPE) {
 	            var unlockBlock = unknownUnlockBlock;
 	            logger(prefix + "\tSignature Unlock Block");
 	            logSignature(prefix + "\t\t\t", unlockBlock.signature);
 	        }
-	        else if (unknownUnlockBlock.type === 1) {
+	        else if (unknownUnlockBlock.type === IReferenceUnlockBlock.REFERENCE_UNLOCK_BLOCK_TYPE) {
 	            var unlockBlock = unknownUnlockBlock;
 	            logger(prefix + "\tReference Unlock Block");
 	            logger(prefix + "\t\tReference:", unlockBlock.reference);
@@ -8452,6 +8657,9 @@
 
 
 
+
+
+
 	/**
 	 * Helper methods for messages.
 	 */
@@ -8467,7 +8675,7 @@
 	    MessageHelper.validateTransaction = function (client, message) {
 	        var _a, _b;
 	        return __awaiter(this, void 0, void 0, function () {
-	            var invalid, txsForAddresses, i, sigUnlockBlock, address, outputs, _i, _c, outputId, output$1, inputCount, inputTotal, _d, _e, input$1, unlockBlockCount, outputTotal, _f, _g, output$1, serializedInputs, _h, _j, input$1, writeStream$1, sortedInputs, inputsAreSorted, i, serializedOutputs, _k, _l, output$1, writeStream$1, sortedOutputs, outputsAreSorted, i, binaryEssence, essenceFinal, unlockBlocksFull, i, refUnlockBlock, i, sigUnlockBlock, verified, err_1;
+	            var invalid, txsForAddresses, i, sigUnlockBlock, address, addr, outputs, _i, _c, outputId, output$1, inputCount, inputTotal, _d, _e, input$1, unlockBlockCount, outputTotal, _f, _g, output$1, serializedInputs, _h, _j, input$1, writeStream$1, sortedInputs, inputsAreSorted, i, serializedOutputs, _k, _l, output$1, writeStream$1, sortedOutputs, outputsAreSorted, i, binaryEssence, essenceFinal, unlockBlocksFull, i, refUnlockBlock, i, verified, err_1;
 	            return __generator(this, function (_m) {
 	                switch (_m.label) {
 	                    case 0:
@@ -8510,10 +8718,12 @@
 	                        _m.label = 7;
 	                    case 7:
 	                        if (!(i < message.payload.unlockBlocks.length)) return [3 /*break*/, 13];
-	                        if (!(message.payload.unlockBlocks[i].type === 0)) return [3 /*break*/, 12];
+	                        if (!(message.payload.unlockBlocks[i].type === ISignatureUnlockBlock.SIGNATURE_UNLOCK_BLOCK_TYPE)) return [3 /*break*/, 12];
 	                        sigUnlockBlock = message.payload.unlockBlocks[i];
-	                        address = ed25519Address.Ed25519Address.publicKeyToAddress(converter.Converter.hexToBytes(sigUnlockBlock.signature.publicKey));
-	                        return [4 /*yield*/, client.addressOutputs(converter.Converter.bytesToHex(address))];
+	                        if (!(sigUnlockBlock.signature.type === IEd25519Address.ED25519_ADDRESS_TYPE)) return [3 /*break*/, 12];
+	                        address = new ed25519Address.Ed25519Address();
+	                        addr = address.publicKeyToAddress(converter.Converter.hexToBytes(sigUnlockBlock.signature.publicKey));
+	                        return [4 /*yield*/, client.addressEd25519Outputs(converter.Converter.bytesToHex(addr))];
 	                    case 8:
 	                        outputs = _m.sent();
 	                        _i = 0, _c = outputs.outputIds;
@@ -8617,10 +8827,10 @@
 	                            essenceFinal = binaryEssence.finalBytes();
 	                            unlockBlocksFull = [];
 	                            for (i = 0; i < message.payload.unlockBlocks.length; i++) {
-	                                if (message.payload.unlockBlocks[i].type === 0) {
+	                                if (message.payload.unlockBlocks[i].type === ISignatureUnlockBlock.SIGNATURE_UNLOCK_BLOCK_TYPE) {
 	                                    unlockBlocksFull.push(message.payload.unlockBlocks[i]);
 	                                }
-	                                else if (message.payload.unlockBlocks[i].type === 1) {
+	                                else if (message.payload.unlockBlocks[i].type === IReferenceUnlockBlock.REFERENCE_UNLOCK_BLOCK_TYPE) {
 	                                    refUnlockBlock = message.payload.unlockBlocks[i];
 	                                    if (refUnlockBlock.reference < 0 ||
 	                                        refUnlockBlock.reference > message.payload.unlockBlocks.length - 1) {
@@ -8638,10 +8848,11 @@
 	                                }
 	                            }
 	                            for (i = 0; i < sortedInputs.length; i++) {
-	                                sigUnlockBlock = unlockBlocksFull[i];
-	                                verified = ed25519.Ed25519.verify(converter.Converter.hexToBytes(sigUnlockBlock.signature.publicKey), essenceFinal, converter.Converter.hexToBytes(sigUnlockBlock.signature.signature));
-	                                if (!verified) {
-	                                    invalid.push("Signature for unlock block " + i + " is incorrect.");
+	                                if (unlockBlocksFull[i].type === IEd25519Address.ED25519_ADDRESS_TYPE) {
+	                                    verified = ed25519.Ed25519.verify(converter.Converter.hexToBytes(unlockBlocksFull[i].signature.publicKey), essenceFinal, converter.Converter.hexToBytes(unlockBlocksFull[i].signature.signature));
+	                                    if (!verified) {
+	                                        invalid.push("Signature for unlock block " + i + " is incorrect.");
+	                                    }
 	                                }
 	                            }
 	                        }
@@ -8675,6 +8886,7 @@
 	    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
+	__exportStar(ed25519Address, exports);
 	__exportStar(address, exports);
 	__exportStar(common, exports);
 	__exportStar(input, exports);
@@ -8692,8 +8904,6 @@
 	__exportStar(blake2b, exports);
 	__exportStar(curl, exports);
 	__exportStar(ed25519, exports);
-	__exportStar(ed25519Address, exports);
-	__exportStar(ed25519Seed, exports);
 	__exportStar(hmacSha512, exports);
 	__exportStar(sha512, exports);
 	__exportStar(slip0010, exports);
@@ -8708,29 +8918,29 @@
 	__exportStar(send_1, exports);
 	__exportStar(sendAdvanced_1, exports);
 	__exportStar(sendData_1, exports);
-	__exportStar(IAddress, exports);
-	__exportStar(IAddressOutputs, exports);
-	__exportStar(IChildren, exports);
-	__exportStar(IGossipMetrics, exports);
-	__exportStar(IInfo, exports);
-	__exportStar(IMessageId, exports);
-	__exportStar(IMessageMetadata, exports);
-	__exportStar(IMessages, exports);
-	__exportStar(IMilestone, exports);
-	__exportStar(IOutput, exports);
-	__exportStar(IPeer, exports);
+	__exportStar(IAddressOutputsResponse, exports);
+	__exportStar(IAddressResponse, exports);
+	__exportStar(IChildrenResponse, exports);
+	__exportStar(IMessageIdResponse, exports);
+	__exportStar(IMessagesResponse, exports);
+	__exportStar(IMilestoneResponse, exports);
+	__exportStar(IOutputResponse, exports);
 	__exportStar(IResponse, exports);
-	__exportStar(ITips, exports);
-	__exportStar(ledgerInclusionState, exports);
+	__exportStar(ITipsResponse, exports);
+	__exportStar(IAddress, exports);
 	__exportStar(IClient, exports);
 	__exportStar(IEd25519Address, exports);
 	__exportStar(IEd25519Signature, exports);
+	__exportStar(IGossipMetrics, exports);
 	__exportStar(IIndexationPayload, exports);
 	__exportStar(IKeyPair, exports);
 	__exportStar(IMessage, exports);
+	__exportStar(IMessageMetadata, exports);
 	__exportStar(IMilestonePayload, exports);
 	__exportStar(IMqttClient, exports);
 	__exportStar(IMqttStatus, exports);
+	__exportStar(INodeInfo, exports);
+	__exportStar(IPeer, exports);
 	__exportStar(IPowProvider, exports);
 	__exportStar(IReferenceUnlockBlock, exports);
 	__exportStar(ISeed, exports);
@@ -8740,7 +8950,9 @@
 	__exportStar(ITransactionPayload, exports);
 	__exportStar(ITypeBase, exports);
 	__exportStar(IUTXOInput, exports);
+	__exportStar(ledgerInclusionState, exports);
 	__exportStar(localPowProvider, exports);
+	__exportStar(ed25519Seed, exports);
 	__exportStar(arrayHelper, exports);
 	__exportStar(bech32Helper, exports);
 	__exportStar(bigIntHelper, exports);

@@ -1,5 +1,5 @@
-import { IReferenceUnlockBlock } from "../models/IReferenceUnlockBlock";
-import { ISignatureUnlockBlock } from "../models/ISignatureUnlockBlock";
+import { IReferenceUnlockBlock, REFERENCE_UNLOCK_BLOCK_TYPE } from "../models/IReferenceUnlockBlock";
+import { ISignatureUnlockBlock, SIGNATURE_UNLOCK_BLOCK_TYPE } from "../models/ISignatureUnlockBlock";
 import { ITypeBase } from "../models/ITypeBase";
 import { ReadStream } from "../utils/readStream";
 import { WriteStream } from "../utils/writeStream";
@@ -53,9 +53,9 @@ export function deserializeUnlockBlock(readStream: ReadStream): IReferenceUnlock
     const type = readStream.readByte("unlockBlock.type", false);
     let unlockBlock;
 
-    if (type === 0) {
+    if (type === SIGNATURE_UNLOCK_BLOCK_TYPE) {
         unlockBlock = deserializeSignatureUnlockBlock(readStream);
-    } else if (type === 1) {
+    } else if (type === REFERENCE_UNLOCK_BLOCK_TYPE) {
         unlockBlock = deserializeReferenceUnlockBlock(readStream);
     } else {
         throw new Error(`Unrecognized unlock block type ${type}`);
@@ -71,10 +71,10 @@ export function deserializeUnlockBlock(readStream: ReadStream): IReferenceUnlock
  */
 export function serializeUnlockBlock(writeStream: WriteStream,
     object: IReferenceUnlockBlock | ISignatureUnlockBlock): void {
-    if (object.type === 0) {
-        serializeSignatureUnlockBlock(writeStream, object);
-    } else if (object.type === 1) {
-        serializeReferenceUnlockBlock(writeStream, object);
+    if (object.type === SIGNATURE_UNLOCK_BLOCK_TYPE) {
+        serializeSignatureUnlockBlock(writeStream, object as ISignatureUnlockBlock);
+    } else if (object.type === REFERENCE_UNLOCK_BLOCK_TYPE) {
+        serializeReferenceUnlockBlock(writeStream, object as IReferenceUnlockBlock);
     } else {
         throw new Error(`Unrecognized unlock block type ${(object as ITypeBase<unknown>).type}`);
     }
@@ -92,14 +92,14 @@ export function deserializeSignatureUnlockBlock(readStream: ReadStream): ISignat
     }
 
     const type = readStream.readByte("signatureUnlockBlock.type");
-    if (type !== 0) {
+    if (type !== SIGNATURE_UNLOCK_BLOCK_TYPE) {
         throw new Error(`Type mismatch in signatureUnlockBlock ${type}`);
     }
 
     const signature = deserializeSignature(readStream);
 
     return {
-        type,
+        type: 0,
         signature
     };
 }
@@ -127,14 +127,14 @@ export function deserializeReferenceUnlockBlock(readStream: ReadStream): IRefere
     }
 
     const type = readStream.readByte("referenceUnlockBlock.type");
-    if (type !== 1) {
+    if (type !== REFERENCE_UNLOCK_BLOCK_TYPE) {
         throw new Error(`Type mismatch in referenceUnlockBlock ${type}`);
     }
 
     const reference = readStream.readUInt16("referenceUnlockBlock.reference");
 
     return {
-        type,
+        type: 1,
         reference
     };
 }
