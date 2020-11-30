@@ -17,6 +17,7 @@ export declare function sendAdvanced(client: IClient, inputsAndSignatureKeyPairs
     addressKeyPair: IKeyPair;
 }[], outputs: {
     address: string;
+    addressType: number;
     amount: number;
 }[], indexationKey?: string, indexationData?: Uint8Array): Promise<{
     messageId: string;
@@ -35,5 +36,6 @@ export declare function buildTransactionPayload(inputsAndSignatureKeyPairs: {
     addressKeyPair: IKeyPair;
 }[], outputs: {
     address: string;
+    addressType: number;
     amount: number;
 }[], indexationKey?: string, indexationData?: Uint8Array): ITransactionPayload;

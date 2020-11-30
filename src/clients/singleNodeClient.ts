@@ -1,21 +1,23 @@
 import { serializeMessage } from "../binary/message";
-import { IAddress } from "../models/api/IAddress";
-import { IAddressOutputs } from "../models/api/IAddressOutputs";
-import { IChildren } from "../models/api/IChildren";
-import { IInfo } from "../models/api/IInfo";
-import { IMessageId } from "../models/api/IMessageId";
-import { IMessageMetadata } from "../models/api/IMessageMetadata";
-import { IMessages } from "../models/api/IMessages";
-import { IMilestone } from "../models/api/IMilestone";
-import { IOutput } from "../models/api/IOutput";
-import { IPeer } from "../models/api/IPeer";
+import { IAddressOutputsResponse } from "../models/api/IAddressOutputsResponse";
+import { IAddressResponse } from "../models/api/IAddressResponse";
+import { IChildrenResponse } from "../models/api/IChildrenResponse";
+import { IMessageIdResponse } from "../models/api/IMessageIdResponse";
+import { IMessagesResponse } from "../models/api/IMessagesResponse";
+import { IMilestoneResponse } from "../models/api/IMilestoneResponse";
+import { IOutputResponse } from "../models/api/IOutputResponse";
 import { IResponse } from "../models/api/IResponse";
-import { ITips } from "../models/api/ITips";
+import { ITipsResponse } from "../models/api/ITipsResponse";
 import { IClient } from "../models/IClient";
 import { IMessage } from "../models/IMessage";
+import { IMessageMetadata } from "../models/IMessageMetadata";
+import { INodeInfo } from "../models/INodeInfo";
+import { IPeer } from "../models/IPeer";
 import { IPowProvider } from "../models/IPowProvider";
 import { ArrayHelper } from "../utils/arrayHelper";
+import { Bech32Helper } from "../utils/bech32Helper";
 import { BigIntHelper } from "../utils/bigIntHelper";
+import { Converter } from "../utils/converter";
 import { WriteStream } from "../utils/writeStream";
 import { ClientError } from "./clientError";
 
@@ -74,16 +76,16 @@ export class SingleNodeClient implements IClient {
      * Get the info about the node.
      * @returns The node information.
      */
-    public async info(): Promise<IInfo> {
-        return this.fetchJson<never, IInfo>("get", "/api/v1/info");
+    public async info(): Promise<INodeInfo> {
+        return this.fetchJson<never, INodeInfo>("get", "/api/v1/info");
     }
 
     /**
      * Get the tips from the node.
      * @returns The tips.
      */
-    public async tips(): Promise<ITips> {
-        return this.fetchJson<never, ITips>("get", "/api/v1/tips");
+    public async tips(): Promise<ITipsResponse> {
+        return this.fetchJson<never, ITipsResponse>("get", "/api/v1/tips");
     }
 
     /**
@@ -133,7 +135,7 @@ export class SingleNodeClient implements IClient {
             }
         }
 
-        const response = await this.fetchJson<IMessage, IMessageId>("post", "/api/v1/messages", message);
+        const response = await this.fetchJson<IMessage, IMessageIdResponse>("post", "/api/v1/messages", message);
 
         return response.messageId;
     }
@@ -151,9 +153,9 @@ export class SingleNodeClient implements IClient {
             BigIntHelper.write8(nonce, message, message.length - 8);
         }
 
-        const response = await this.fetchBinary<IMessageId>("post", "/api/v1/messages", message);
+        const response = await this.fetchBinary<IMessageIdResponse>("post", "/api/v1/messages", message);
 
-        return (response as IMessageId).messageId;
+        return (response as IMessageIdResponse).messageId;
     }
 
     /**
@@ -161,8 +163,8 @@ export class SingleNodeClient implements IClient {
      * @param indexationKey The index value.
      * @returns The messageId.
      */
-    public async messagesFind(indexationKey: string): Promise<IMessages> {
-        return this.fetchJson<unknown, IMessages>(
+    public async messagesFind(indexationKey: string): Promise<IMessagesResponse> {
+        return this.fetchJson<unknown, IMessagesResponse>(
             "get",
             `/api/v1/messages?index=${encodeURIComponent(indexationKey)}`
         );
@@ -173,8 +175,8 @@ export class SingleNodeClient implements IClient {
      * @param messageId The id of the message to get the children for.
      * @returns The messages children.
      */
-    public async messageChildren(messageId: string): Promise<IChildren> {
-        return this.fetchJson<unknown, IChildren>(
+    public async messageChildren(messageId: string): Promise<IChildrenResponse> {
+        return this.fetchJson<unknown, IChildrenResponse>(
             "get",
             `/api/v1/messages/${messageId}/children`
         );
@@ -185,8 +187,8 @@ export class SingleNodeClient implements IClient {
      * @param outputId The id of the output to get.
      * @returns The output details.
      */
-    public async output(outputId: string): Promise<IOutput> {
-        return this.fetchJson<unknown, IOutput>(
+    public async output(outputId: string): Promise<IOutputResponse> {
+        return this.fetchJson<unknown, IOutputResponse>(
             "get",
             `/api/v1/outputs/${outputId}`
         );
@@ -194,25 +196,61 @@ export class SingleNodeClient implements IClient {
 
     /**
      * Get the address details.
-     * @param address The address to get the details for.
+     * @param addressBech32 The address to get the details for.
      * @returns The address details.
      */
-    public async address(address: string): Promise<IAddress> {
-        return this.fetchJson<unknown, IAddress>(
+    public async address(addressBech32: string): Promise<IAddressResponse> {
+        if (!Bech32Helper.matches(addressBech32)) {
+            throw new Error("The supplied address does not appear to be bech32 format");
+        }
+        return this.fetchJson<unknown, IAddressResponse>(
             "get",
-            `/api/v1/addresses/${address}`
+            `/api/v1/addresses/${addressBech32}`
         );
     }
 
     /**
      * Get the address outputs.
-     * @param address The address to get the outputs for.
+     * @param addressBech32 The address to get the outputs for.
      * @returns The address outputs.
      */
-    public async addressOutputs(address: string): Promise<IAddressOutputs> {
-        return this.fetchJson<unknown, IAddressOutputs>(
+    public async addressOutputs(addressBech32: string): Promise<IAddressOutputsResponse> {
+        if (!Bech32Helper.matches(addressBech32)) {
+            throw new Error("The supplied address does not appear to be bech32 format");
+        }
+        return this.fetchJson<unknown, IAddressOutputsResponse>(
             "get",
-            `/api/v1/addresses/${address}/outputs`
+            `/api/v1/addresses/${addressBech32}/outputs`
+        );
+    }
+
+    /**
+     * Get the address detail using ed25519 address.
+     * @param addressEd25519 The address to get the details for.
+     * @returns The address details.
+     */
+    public async addressEd25519(addressEd25519: string): Promise<IAddressResponse> {
+        if (!Converter.isHex(addressEd25519)) {
+            throw new Error("The supplied address does not appear to be hex format");
+        }
+        return this.fetchJson<unknown, IAddressResponse>(
+            "get",
+            `/api/v1/addresses/ed25519/${addressEd25519}`
+        );
+    }
+
+    /**
+     * Get the address outputs using ed25519 address.
+     * @param addressEd25519 The address to get the outputs for.
+     * @returns The address outputs.
+     */
+    public async addressEd25519Outputs(addressEd25519: string): Promise<IAddressOutputsResponse> {
+        if (!Converter.isHex(addressEd25519)) {
+            throw new Error("The supplied address does not appear to be hex format");
+        }
+        return this.fetchJson<unknown, IAddressOutputsResponse>(
+            "get",
+            `/api/v1/addresses/ed25519/${addressEd25519}/outputs`
         );
     }
 
@@ -221,8 +259,8 @@ export class SingleNodeClient implements IClient {
      * @param index The index of the milestone to get.
      * @returns The milestone details.
      */
-    public async milestone(index: number): Promise<IMilestone> {
-        return this.fetchJson<unknown, IMilestone>(
+    public async milestone(index: number): Promise<IMilestoneResponse> {
+        return this.fetchJson<unknown, IMilestoneResponse>(
             "get",
             `/api/v1/milestones/${index}`
         );

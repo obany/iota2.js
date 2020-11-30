@@ -1,4 +1,7 @@
+import { ITipsResponse } from "../models/api/ITipsResponse";
 import { IMessage } from "../models/IMessage";
+import { IMessageMetadata } from "../models/IMessageMetadata";
+import { INodeInfo } from "../models/INodeInfo";
 import { ITypeBase } from "../models/ITypeBase";
 /**
  * Set the logger for output.
@@ -6,11 +9,29 @@ import { ITypeBase } from "../models/ITypeBase";
  */
 export declare function setLogger(log: (message: string, data?: unknown) => void): void;
 /**
+ * Log the node information.
+ * @param prefix The prefix for the output.
+ * @param info The info to log.
+ */
+export declare function logInfo(prefix: string, info: INodeInfo): void;
+/**
+ * Log the tips information.
+ * @param prefix The prefix for the output.
+ * @param tips The tips to log.
+ */
+export declare function logTips(prefix: string, tips: ITipsResponse): void;
+/**
  * Log a message to the console.
  * @param prefix The prefix for the output.
  * @param message The message to log.
  */
 export declare function logMessage(prefix: string, message: IMessage): void;
+/**
+ * Log the message metadata to the console.
+ * @param prefix The prefix for the output.
+ * @param messageMetadata The messageMetadata to log.
+ */
+export declare function logMessageMetadata(prefix: string, messageMetadata: IMessageMetadata): void;
 /**
  * Log a message to the console.
  * @param prefix The prefix for the output.

@@ -1,5 +1,9 @@
 import { ITypeBase } from "./ITypeBase";
 /**
+ * The global type for the payload.
+ */
+export declare const MILESTONE_PAYLOAD_TYPE: number;
+/**
  * Milestone payload.
  */
 export interface IMilestonePayload extends ITypeBase<1> {

@@ -3,6 +3,7 @@ import { serializeOutput } from "../binary/output";
 import { serializeTransactionEssence } from "../binary/transaction";
 import { Ed25519 } from "../crypto/ed25519";
 import { IClient } from "../models/IClient";
+import { ED25519_ADDRESS_TYPE } from "../models/IEd25519Address";
 import { IKeyPair } from "../models/IKeyPair";
 import { IMessage } from "../models/IMessage";
 import { IReferenceUnlockBlock } from "../models/IReferenceUnlockBlock";
@@ -29,7 +30,7 @@ export async function sendAdvanced(
         input: IUTXOInput;
         addressKeyPair: IKeyPair;
     }[],
-    outputs: { address: string; amount: number }[],
+    outputs: { address: string; addressType: number; amount: number }[],
     indexationKey?: string,
     indexationData?: Uint8Array): Promise<{
         messageId: string;
@@ -67,7 +68,7 @@ export function buildTransactionPayload(
         input: IUTXOInput;
         addressKeyPair: IKeyPair;
     }[],
-    outputs: { address: string; amount: number }[],
+    outputs: { address: string; addressType: number; amount: number }[],
     indexationKey?: string,
     indexationData?: Uint8Array): ITransactionPayload {
     if (!inputsAndSignatureKeyPairs || inputsAndSignatureKeyPairs.length === 0) {
@@ -83,20 +84,24 @@ export function buildTransactionPayload(
     }[] = [];
 
     for (const output of outputs) {
-        const sigLockedOutput: ISigLockedSingleOutput = {
-            type: 0,
-            address: {
-                type: 1,
-                address: output.address
-            },
-            amount: output.amount
-        };
-        const writeStream = new WriteStream();
-        serializeOutput(writeStream, sigLockedOutput);
-        outputsWithSerialization.push({
-            output: sigLockedOutput,
-            serialized: writeStream.finalHex()
-        });
+        if (output.addressType === ED25519_ADDRESS_TYPE) {
+            const sigLockedOutput: ISigLockedSingleOutput = {
+                type: 0,
+                address: {
+                    type: 1,
+                    address: output.address
+                },
+                amount: output.amount
+            };
+            const writeStream = new WriteStream();
+            serializeOutput(writeStream, sigLockedOutput);
+            outputsWithSerialization.push({
+                output: sigLockedOutput,
+                serialized: writeStream.finalHex()
+            });
+        } else {
+            throw new Error(`Unrecognized output address type ${output.addressType}`);
+        }
     }
 
     const inputsAndSignatureKeyPairsSerialized: {

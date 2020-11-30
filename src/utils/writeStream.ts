@@ -1,5 +1,4 @@
 /* eslint-disable no-bitwise */
-import { isHex } from "../binary/common";
 import { BigIntHelper } from "./bigIntHelper";
 import { Converter } from "./converter";
 
@@ -88,7 +87,7 @@ export class WriteStream {
      * @param val The data to write.
      */
     public writeFixedHex(name: string, length: number, val: string): void {
-        if (!isHex(val)) {
+        if (!Converter.isHex(val)) {
             throw new Error(`The ${val} should be in hex format`);
         }
 

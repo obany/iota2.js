@@ -40,24 +40,26 @@ run()
 
 These methods are implemented on the API client.
 
-* health()
-* info()
-* tips()
-* message(messageId)
-* messageMetadata(messageId)
-* messageRaw(messageId)
-* messageSubmit(message)
-* messageSubmitRaw(message)
-* messageChildren(messageId)
-* messagesFind(index)
-* output(outputId)
-* address(address)
-* addressOutputs(address)
-* milestone(index)
-* peers()
-* peerAdd()
-* peerDelete()
-* peer()
+* health() - Is the node healthy.
+* info() - Get the information about a node.
+* tips() - The tips for the tangle.
+* message(messageId) - Get a message.
+* messageMetadata(messageId) - Get the metadata for a message.
+* messageRaw(messageId) - Get the raw message bytes.
+* messageSubmit(message) - Submit a new message to the tangle.
+* messageSubmitRaw(message) - Submit a new message to the tangle as bytes.
+* messageChildren(messageId) - Find the children of a message.
+* messagesFind(index) - Find messages by indexation key.
+* output(outputId) - Get an output by id.
+* address(address) - Get an address details using bech32 address.
+* addressOutputs(address) - Get address outputs using bech32 address.
+* addressEd25519(address) - Get address details using ed25519 address.
+* addressEd25519Outputs(address) - Get address outputs using ed25519 address.
+* milestone(index) - Get the milestone details.
+* peers() - Get a list of peers.
+* peerAdd() - Add a peer.
+* peerDelete() - Delete a peer.
+* peer() - Get the details of a peer.
 
 ## High level operations
 
@@ -68,9 +70,10 @@ There are also high level operations which make use of the API level methods:
 * getUnspentAddresses - Given a seed, path, and start index find all the unspent addresses.
 * promote - Promote a message by attaching an empty message to it.
 * reattach - Reattach a message using the message id.
-* retry - Looks at the metadata for a message and promotes or retries if it should.
+* retry - Looks at the metadata for a message and promotes or retries depending on it's state.
 * retrieveData - Given a message id return the index and data from it.
-* send - Given a seed, path, destination address and amount, make a single transfer.
+* send - Given a seed, path, destination address in bech32 format and amount, make a single transfer.
+* sendEd25519 - Given a seed, path, destination address in ed25519 format and amount, make a single transfer.
 * sendAdvanced - Given a set of inputs with keypairs seed, path, list of destinations make multiple transfers, can also include index data.
 * sendData - Given index and data create a new data message.
 

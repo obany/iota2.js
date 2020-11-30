@@ -4,49 +4,56 @@
 
 # Interface: IAddress
 
-Address details.
+Interface defining address.
 
 ## Hierarchy
 
 * **IAddress**
 
+## Implemented by
+
+* [Ed25519Address](../classes/ed25519address.md)
+
 ## Index
 
-### Properties
+### Methods
 
-* [address](iaddress.md#address)
-* [balance](iaddress.md#balance)
-* [count](iaddress.md#count)
-* [maxResults](iaddress.md#maxresults)
+* [publicKeyToAddress](iaddress.md#publickeytoaddress)
+* [verifyAddress](iaddress.md#verifyaddress)
 
-## Properties
+## Methods
 
-### address
+### publicKeyToAddress
 
-•  **address**: string
+▸ **publicKeyToAddress**(`publicKey`: Uint8Array): Uint8Array
 
-The address the details are for.
+Convert the public key to an address.
 
-___
+#### Parameters:
 
-### balance
+Name | Type | Description |
+------ | ------ | ------ |
+`publicKey` | Uint8Array | The public key to convert. |
 
-•  **balance**: number
+**Returns:** Uint8Array
 
-The balance of the address.
-
-___
-
-### count
-
-•  **count**: number
-
-The number of items returned.
+The address.
 
 ___
 
-### maxResults
+### verifyAddress
 
-•  **maxResults**: number
+▸ **verifyAddress**(`publicKey`: Uint8Array, `address`: Uint8Array): boolean
 
-The max number of results returned.
+Use the public key to validate the address.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`publicKey` | Uint8Array | The public key to verify with. |
+`address` | Uint8Array | The address to verify. |
+
+**Returns:** boolean
+
+True if the data and address is verified.

@@ -1,10 +1,9 @@
 import * as mqtt from "mqtt";
 import { deserializeMessage } from "../binary/message";
-import { IAddressOutputs } from "../models/api/IAddressOutputs";
-import { IMessageMetadata } from "../models/api/IMessageMetadata";
-import { IMilestone } from "../models/api/IMilestone";
-import { IOutput } from "../models/api/IOutput";
+import { IMilestoneResponse } from "../models/api/IMilestoneResponse";
+import { IOutputResponse } from "../models/api/IOutputResponse";
 import { IMessage } from "../models/IMessage";
+import { IMessageMetadata } from "../models/IMessageMetadata";
 import { IMqttClient } from "../models/IMqttClient";
 import { IMqttStatus } from "../models/IMqttStatus";
 import { Converter } from "../utils/converter";
@@ -100,7 +99,7 @@ export class MqttClient implements IMqttClient {
      * @returns A subscription Id which can be used to unsubscribe.
      */
     public milestonesLatest(
-        callback: (topic: string, data: IMilestone) => void): string {
+        callback: (topic: string, data: IMilestoneResponse) => void): string {
         return this.internalSubscribe("milestones/latest", true, callback);
     }
 
@@ -110,7 +109,7 @@ export class MqttClient implements IMqttClient {
      * @returns A subscription Id which can be used to unsubscribe.
      */
     public milestonesSolid(
-        callback: (topic: string, data: IMilestone) => void): string {
+        callback: (topic: string, data: IMilestoneResponse) => void): string {
         return this.internalSubscribe("milestones/solid", true, callback);
     }
 
@@ -132,7 +131,7 @@ export class MqttClient implements IMqttClient {
      * @returns A subscription Id which can be used to unsubscribe.
      */
     public output(outputId: string,
-        callback: (topic: string, data: IOutput) => void): string {
+        callback: (topic: string, data: IOutputResponse) => void): string {
         return this.internalSubscribe(`outputs/${outputId}`, true, callback);
     }
 
@@ -143,7 +142,7 @@ export class MqttClient implements IMqttClient {
      * @returns A subscription Id which can be used to unsubscribe.
      */
     public addressOutputs(address: string,
-        callback: (topic: string, data: IAddressOutputs) => void): string {
+        callback: (topic: string, data: IOutputResponse) => void): string {
         return this.internalSubscribe(`addresses/${address}/outputs`, true, callback);
     }
 

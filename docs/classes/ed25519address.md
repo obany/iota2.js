@@ -10,6 +10,10 @@ Class to help with Ed25519 Signature scheme.
 
 * **Ed25519Address**
 
+## Implements
+
+* [IAddress](../interfaces/iaddress.md)
+
 ## Index
 
 ### Methods
@@ -21,7 +25,9 @@ Class to help with Ed25519 Signature scheme.
 
 ### publicKeyToAddress
 
-▸ `Static`**publicKeyToAddress**(`publicKey`: Uint8Array): Uint8Array
+▸ **publicKeyToAddress**(`publicKey`: Uint8Array): Uint8Array
+
+*Implementation of [IAddress](../interfaces/iaddress.md)*
 
 Convert the public key to an address.
 
@@ -39,7 +45,9 @@ ___
 
 ### verifyAddress
 
-▸ `Static`**verifyAddress**(`publicKey`: Uint8Array, `address`: Uint8Array): boolean
+▸ **verifyAddress**(`publicKey`: Uint8Array, `address`: Uint8Array): boolean
+
+*Implementation of [IAddress](../interfaces/iaddress.md)*
 
 Use the public key to validate the address.
 

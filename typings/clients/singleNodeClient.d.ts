@@ -1,15 +1,15 @@
-import { IAddress } from "../models/api/IAddress";
-import { IAddressOutputs } from "../models/api/IAddressOutputs";
-import { IChildren } from "../models/api/IChildren";
-import { IInfo } from "../models/api/IInfo";
-import { IMessageMetadata } from "../models/api/IMessageMetadata";
-import { IMessages } from "../models/api/IMessages";
-import { IMilestone } from "../models/api/IMilestone";
-import { IOutput } from "../models/api/IOutput";
-import { IPeer } from "../models/api/IPeer";
-import { ITips } from "../models/api/ITips";
+import { IAddressOutputsResponse } from "../models/api/IAddressOutputsResponse";
+import { IAddressResponse } from "../models/api/IAddressResponse";
+import { IChildrenResponse } from "../models/api/IChildrenResponse";
+import { IMessagesResponse } from "../models/api/IMessagesResponse";
+import { IMilestoneResponse } from "../models/api/IMilestoneResponse";
+import { IOutputResponse } from "../models/api/IOutputResponse";
+import { ITipsResponse } from "../models/api/ITipsResponse";
 import { IClient } from "../models/IClient";
 import { IMessage } from "../models/IMessage";
+import { IMessageMetadata } from "../models/IMessageMetadata";
+import { INodeInfo } from "../models/INodeInfo";
+import { IPeer } from "../models/IPeer";
 import { IPowProvider } from "../models/IPowProvider";
 /**
  * Client for API communication.
@@ -30,12 +30,12 @@ export declare class SingleNodeClient implements IClient {
      * Get the info about the node.
      * @returns The node information.
      */
-    info(): Promise<IInfo>;
+    info(): Promise<INodeInfo>;
     /**
      * Get the tips from the node.
      * @returns The tips.
      */
-    tips(): Promise<ITips>;
+    tips(): Promise<ITipsResponse>;
     /**
      * Get the message data by id.
      * @param messageId The message to get the data for.
@@ -71,37 +71,49 @@ export declare class SingleNodeClient implements IClient {
      * @param indexationKey The index value.
      * @returns The messageId.
      */
-    messagesFind(indexationKey: string): Promise<IMessages>;
+    messagesFind(indexationKey: string): Promise<IMessagesResponse>;
     /**
      * Get the children of a message.
      * @param messageId The id of the message to get the children for.
      * @returns The messages children.
      */
-    messageChildren(messageId: string): Promise<IChildren>;
+    messageChildren(messageId: string): Promise<IChildrenResponse>;
     /**
      * Find an output by its identifier.
      * @param outputId The id of the output to get.
      * @returns The output details.
      */
-    output(outputId: string): Promise<IOutput>;
+    output(outputId: string): Promise<IOutputResponse>;
     /**
      * Get the address details.
-     * @param address The address to get the details for.
+     * @param addressBech32 The address to get the details for.
      * @returns The address details.
      */
-    address(address: string): Promise<IAddress>;
+    address(addressBech32: string): Promise<IAddressResponse>;
     /**
      * Get the address outputs.
-     * @param address The address to get the outputs for.
+     * @param addressBech32 The address to get the outputs for.
      * @returns The address outputs.
      */
-    addressOutputs(address: string): Promise<IAddressOutputs>;
+    addressOutputs(addressBech32: string): Promise<IAddressOutputsResponse>;
+    /**
+     * Get the address detail using ed25519 address.
+     * @param addressEd25519 The address to get the details for.
+     * @returns The address details.
+     */
+    addressEd25519(addressEd25519: string): Promise<IAddressResponse>;
+    /**
+     * Get the address outputs using ed25519 address.
+     * @param addressEd25519 The address to get the outputs for.
+     * @returns The address outputs.
+     */
+    addressEd25519Outputs(addressEd25519: string): Promise<IAddressOutputsResponse>;
     /**
      * Get the requested milestone.
      * @param index The index of the milestone to get.
      * @returns The milestone details.
      */
-    milestone(index: number): Promise<IMilestone>;
+    milestone(index: number): Promise<IMilestoneResponse>;
     /**
      * Get the list of peers.
      * @returns The list of peers.

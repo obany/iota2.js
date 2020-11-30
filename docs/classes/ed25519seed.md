@@ -16,13 +16,31 @@ Class to help with seeds.
 
 ## Index
 
+### Constructors
+
+* [constructor](ed25519seed.md#constructor)
+
 ### Methods
 
 * [generateSeedFromPath](ed25519seed.md#generateseedfrompath)
 * [keyPair](ed25519seed.md#keypair)
 * [toBytes](ed25519seed.md#tobytes)
-* [fromBytes](ed25519seed.md#frombytes)
-* [random](ed25519seed.md#random)
+
+## Constructors
+
+### constructor
+
+\+ **new Ed25519Seed**(`secretKeyBytes?`: Uint8Array): [Ed25519Seed](ed25519seed.md)
+
+Create a new instance of Ed25519Seed.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`secretKeyBytes?` | Uint8Array | The bytes.  |
+
+**Returns:** [Ed25519Seed](ed25519seed.md)
 
 ## Methods
 
@@ -71,33 +89,3 @@ Return the key as bytes.
 **Returns:** Uint8Array
 
 The key as bytes.
-
-___
-
-### fromBytes
-
-▸ `Static`**fromBytes**(`bytes`: Uint8Array): [Ed25519Seed](ed25519seed.md)
-
-Create a seed from the bytes.
-
-#### Parameters:
-
-Name | Type | Description |
------- | ------ | ------ |
-`bytes` | Uint8Array | The binary representation of the seed. |
-
-**Returns:** [Ed25519Seed](ed25519seed.md)
-
-The seed.
-
-___
-
-### random
-
-▸ `Static`**random**(): [Ed25519Seed](ed25519seed.md)
-
-Generate a new random seed.
-
-**Returns:** [Ed25519Seed](ed25519seed.md)
-
-The random seed.

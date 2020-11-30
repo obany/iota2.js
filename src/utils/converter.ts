@@ -129,6 +129,19 @@ export class Converter {
     }
 
     /**
+     * Is the data hex format.
+     * @param value The value to test.
+     * @returns true if the string is hex.
+     */
+    public static isHex(value: string): boolean {
+        if (value.length % 2 === 1) {
+            return false;
+        }
+        return /[\da-f]/gi.test(value);
+    }
+
+
+    /**
      * Build the static lookup tables.
      * @internal
      */

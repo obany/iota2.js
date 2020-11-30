@@ -1,5 +1,5 @@
-import { Ed25519Address } from "../crypto/ed25519Address";
-import { IEd25519Address } from "../models/IEd25519Address";
+import { Ed25519Address } from "../addressTypes/ed25519Address";
+import { ED25519_ADDRESS_TYPE, IEd25519Address } from "../models/IEd25519Address";
 import { ReadStream } from "../utils/readStream";
 import { WriteStream } from "../utils/writeStream";
 import { SMALL_TYPE_LENGTH } from "./common";
@@ -21,7 +21,7 @@ export function deserializeAddress(readStream: ReadStream): IEd25519Address {
     const type = readStream.readByte("address.type", false);
     let address;
 
-    if (type === 1) {
+    if (type === ED25519_ADDRESS_TYPE) {
         address = deserializeEd25519Address(readStream);
     } else {
         throw new Error(`Unrecognized address type ${type}`);
@@ -36,7 +36,7 @@ export function deserializeAddress(readStream: ReadStream): IEd25519Address {
  * @param object The object to serialize.
  */
 export function serializeAddress(writeStream: WriteStream, object: IEd25519Address): void {
-    if (object.type === 1) {
+    if (object.type === ED25519_ADDRESS_TYPE) {
         serializeEd25519Address(writeStream, object);
     } else {
         throw new Error(`Unrecognized address type ${object.type}`);
@@ -55,14 +55,14 @@ export function deserializeEd25519Address(readStream: ReadStream): IEd25519Addre
     }
 
     const type = readStream.readByte("ed25519Address.type");
-    if (type !== 1) {
+    if (type !== ED25519_ADDRESS_TYPE) {
         throw new Error(`Type mismatch in ed25519Address ${type}`);
     }
 
     const address = readStream.readFixedHex("ed25519Address.address", Ed25519Address.ADDRESS_LENGTH);
 
     return {
-        type,
+        type: 1,
         address
     };
 }

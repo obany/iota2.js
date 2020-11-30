@@ -1,8 +1,7 @@
-import { IAddressOutputs } from "./api/IAddressOutputs";
-import { IMessageMetadata } from "./api/IMessageMetadata";
-import { IMilestone } from "./api/IMilestone";
-import { IOutput } from "./api/IOutput";
+import { IMilestoneResponse } from "./api/IMilestoneResponse";
+import { IOutputResponse } from "./api/IOutputResponse";
 import { IMessage } from "./IMessage";
+import { IMessageMetadata } from "./IMessageMetadata";
 import { IMqttStatus } from "./IMqttStatus";
 /**
  * Client interface definition for API communication.
@@ -13,13 +12,13 @@ export interface IMqttClient {
      * @param callback The callback which is called when new data arrives.
      * @returns A subscription Id which can be used to unsubscribe.
      */
-    milestonesLatest(callback: (topic: string, data: IMilestone) => void): string;
+    milestonesLatest(callback: (topic: string, data: IMilestoneResponse) => void): string;
     /**
      * Subscribe to the latest solid milestone updates.
      * @param callback The callback which is called when new data arrives.
      * @returns A subscription Id which can be used to unsubscribe.
      */
-    milestonesSolid(callback: (topic: string, data: IMilestone) => void): string;
+    milestonesSolid(callback: (topic: string, data: IMilestoneResponse) => void): string;
     /**
      * Subscribe to metadata updates for a specific message.
      * @param messageId The message to monitor.
@@ -33,14 +32,14 @@ export interface IMqttClient {
      * @param callback The callback which is called when new data arrives.
      * @returns A subscription Id which can be used to unsubscribe.
      */
-    output(outputId: string, callback: (topic: string, data: IOutput) => void): string;
+    output(outputId: string, callback: (topic: string, data: IOutputResponse) => void): string;
     /**
      * Subscribe to the address for output updates.
      * @param address The address to monitor.
      * @param callback The callback which is called when new data arrives.
      * @returns A subscription Id which can be used to unsubscribe.
      */
-    addressOutputs(address: string, callback: (topic: string, data: IAddressOutputs) => void): string;
+    addressOutputs(address: string, callback: (topic: string, data: IOutputResponse) => void): string;
     /**
      * Subscribe to get all messages in binary form.
      * @param callback The callback which is called when new data arrives.

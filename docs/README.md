@@ -41,24 +41,25 @@
 ### Interfaces
 
 * [IAddress](interfaces/iaddress.md)
-* [IAddressOutputs](interfaces/iaddressoutputs.md)
-* [IChildren](interfaces/ichildren.md)
+* [IAddressOutputsResponse](interfaces/iaddressoutputsresponse.md)
+* [IAddressResponse](interfaces/iaddressresponse.md)
+* [IChildrenResponse](interfaces/ichildrenresponse.md)
 * [IClient](interfaces/iclient.md)
 * [IEd25519Address](interfaces/ied25519address.md)
 * [IEd25519Signature](interfaces/ied25519signature.md)
 * [IGossipMetrics](interfaces/igossipmetrics.md)
 * [IIndexationPayload](interfaces/iindexationpayload.md)
-* [IInfo](interfaces/iinfo.md)
 * [IKeyPair](interfaces/ikeypair.md)
 * [IMessage](interfaces/imessage.md)
-* [IMessageId](interfaces/imessageid.md)
+* [IMessageIdResponse](interfaces/imessageidresponse.md)
 * [IMessageMetadata](interfaces/imessagemetadata.md)
-* [IMessages](interfaces/imessages.md)
-* [IMilestone](interfaces/imilestone.md)
+* [IMessagesResponse](interfaces/imessagesresponse.md)
 * [IMilestonePayload](interfaces/imilestonepayload.md)
+* [IMilestoneResponse](interfaces/imilestoneresponse.md)
 * [IMqttClient](interfaces/imqttclient.md)
 * [IMqttStatus](interfaces/imqttstatus.md)
-* [IOutput](interfaces/ioutput.md)
+* [INodeInfo](interfaces/inodeinfo.md)
+* [IOutputResponse](interfaces/ioutputresponse.md)
 * [IPeer](interfaces/ipeer.md)
 * [IPowProvider](interfaces/ipowprovider.md)
 * [IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md)
@@ -66,7 +67,7 @@
 * [ISeed](interfaces/iseed.md)
 * [ISigLockedSingleOutput](interfaces/isiglockedsingleoutput.md)
 * [ISignatureUnlockBlock](interfaces/isignatureunlockblock.md)
-* [ITips](interfaces/itips.md)
+* [ITipsResponse](interfaces/itipsresponse.md)
 * [ITransactionEssence](interfaces/itransactionessence.md)
 * [ITransactionPayload](interfaces/itransactionpayload.md)
 * [ITypeBase](interfaces/itypebase.md)
@@ -79,6 +80,17 @@
 ### Variables
 
 * [BIG\_1\_SHIFTL\_20](README.md#big_1_shiftl_20)
+* [ED25519\_ADDRESS\_TYPE](README.md#ed25519_address_type)
+* [ED25519\_SEED\_TYPE](README.md#ed25519_seed_type)
+* [ED25519\_SIGNATURE\_TYPE](README.md#ed25519_signature_type)
+* [INDEXATION\_PAYLOAD\_TYPE](README.md#indexation_payload_type)
+* [MILESTONE\_PAYLOAD\_TYPE](README.md#milestone_payload_type)
+* [REFERENCE\_UNLOCK\_BLOCK\_TYPE](README.md#reference_unlock_block_type)
+* [SIGNATURE\_UNLOCK\_BLOCK\_TYPE](README.md#signature_unlock_block_type)
+* [SIG\_LOCKED\_SINGLE\_OUTPUT\_TYPE](README.md#sig_locked_single_output_type)
+* [TRANSACTION\_ESSENCE\_TYPE](README.md#transaction_essence_type)
+* [TRANSACTION\_PAYLOAD\_TYPE](README.md#transaction_payload_type)
+* [UTXO\_INPUT\_TYPE](README.md#utxo_input_type)
 
 ### Functions
 
@@ -107,13 +119,15 @@
 * [getBalance](README.md#getbalance)
 * [getUnspentAddress](README.md#getunspentaddress)
 * [getUnspentAddresses](README.md#getunspentaddresses)
-* [isHex](README.md#ishex)
 * [logAddress](README.md#logaddress)
+* [logInfo](README.md#loginfo)
 * [logInput](README.md#loginput)
 * [logMessage](README.md#logmessage)
+* [logMessageMetadata](README.md#logmessagemetadata)
 * [logOutput](README.md#logoutput)
 * [logPayload](README.md#logpayload)
 * [logSignature](README.md#logsignature)
+* [logTips](README.md#logtips)
 * [logUnlockBlock](README.md#logunlockblock)
 * [logger](README.md#logger)
 * [promote](README.md#promote)
@@ -126,6 +140,7 @@
 * [send](README.md#send)
 * [sendAdvanced](README.md#sendadvanced)
 * [sendData](README.md#senddata)
+* [sendEd25519](README.md#sended25519)
 * [serializeAddress](README.md#serializeaddress)
 * [serializeEd25519Address](README.md#serializeed25519address)
 * [serializeEd25519Signature](README.md#serializeed25519signature)
@@ -166,11 +181,99 @@ This is a port of the Go code from https://github.com/hdevalence/ed25519consensu
 which is an extension of https://github.com/golang/crypto/tree/master/ed25519
 which in a port of the “ref10” implementation of ed25519 from SUPERCOP
 
+___
+
+### ED25519\_ADDRESS\_TYPE
+
+• `Const` **ED25519\_ADDRESS\_TYPE**: number = 1
+
+The global type for the address type.
+
+___
+
+### ED25519\_SEED\_TYPE
+
+• `Const` **ED25519\_SEED\_TYPE**: number = 1
+
+The global type for the seed.
+
+___
+
+### ED25519\_SIGNATURE\_TYPE
+
+• `Const` **ED25519\_SIGNATURE\_TYPE**: number = 1
+
+The global type for the signature type.
+
+___
+
+### INDEXATION\_PAYLOAD\_TYPE
+
+• `Const` **INDEXATION\_PAYLOAD\_TYPE**: number = 2
+
+The global type for the payload.
+
+___
+
+### MILESTONE\_PAYLOAD\_TYPE
+
+• `Const` **MILESTONE\_PAYLOAD\_TYPE**: number = 1
+
+The global type for the payload.
+
+___
+
+### REFERENCE\_UNLOCK\_BLOCK\_TYPE
+
+• `Const` **REFERENCE\_UNLOCK\_BLOCK\_TYPE**: number = 1
+
+The global type for the unlock block.
+
+___
+
+### SIGNATURE\_UNLOCK\_BLOCK\_TYPE
+
+• `Const` **SIGNATURE\_UNLOCK\_BLOCK\_TYPE**: number = 0
+
+The global type for the unlock block.
+
+___
+
+### SIG\_LOCKED\_SINGLE\_OUTPUT\_TYPE
+
+• `Const` **SIG\_LOCKED\_SINGLE\_OUTPUT\_TYPE**: number = 0
+
+The global type for the sig locked single output.
+
+___
+
+### TRANSACTION\_ESSENCE\_TYPE
+
+• `Const` **TRANSACTION\_ESSENCE\_TYPE**: number = 0
+
+The global type for the transaction essence.
+
+___
+
+### TRANSACTION\_PAYLOAD\_TYPE
+
+• `Const` **TRANSACTION\_PAYLOAD\_TYPE**: number = 0
+
+The global type for the payload.
+
+___
+
+### UTXO\_INPUT\_TYPE
+
+• `Const` **UTXO\_INPUT\_TYPE**: number = 0
+
+The global type for the input.
+
 ## Functions
 
 ### buildTransactionPayload
 
-▸ **buildTransactionPayload**(`inputsAndSignatureKeyPairs`: { addressKeyPair: [IKeyPair](interfaces/ikeypair.md) ; input: [IUTXOInput](interfaces/iutxoinput.md)  }[], `outputs`: { address: string ; amount: number  }[], `indexationKey?`: undefined \| string, `indexationData?`: Uint8Array): [ITransactionPayload](interfaces/itransactionpayload.md)
+▸ **buildTransactionPayload**(`inputsAndSignatureKeyPairs`: { addressKeyPair: [IKeyPair](interfaces/ikeypair.md) ; input: [IUTXOInput](interfaces/iutxoinput.md)  }[], `outputs`: { address: string ; addressType: number ; amount: number  }[], `indexationKey?`: undefined \| string, `indexationData?`: Uint8Array): [ITransactionPayload](interfaces/itransactionpayload.md)
 
 Build a transaction payload.
 
@@ -179,7 +282,7 @@ Build a transaction payload.
 Name | Type | Description |
 ------ | ------ | ------ |
 `inputsAndSignatureKeyPairs` | { addressKeyPair: [IKeyPair](interfaces/ikeypair.md) ; input: [IUTXOInput](interfaces/iutxoinput.md)  }[] | The inputs with the signature key pairs needed to sign transfers. |
-`outputs` | { address: string ; amount: number  }[] | The outputs to send. |
+`outputs` | { address: string ; addressType: number ; amount: number  }[] | The outputs to send. |
 `indexationKey?` | undefined \| string | Optional indexation key. |
 `indexationData?` | Uint8Array | Optional index data. |
 
@@ -191,7 +294,7 @@ ___
 
 ### calculateInputs
 
-▸ **calculateInputs**(`client`: [IClient](interfaces/iclient.md), `seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `outputs`: { address: string ; amount: number  }[], `startIndex?`: undefined \| number): Promise\<{ addressKeyPair: [IKeyPair](interfaces/ikeypair.md) ; input: [IUTXOInput](interfaces/iutxoinput.md)  }[]>
+▸ **calculateInputs**(`client`: [IClient](interfaces/iclient.md), `seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `outputs`: { address: string ; addressType: number ; amount: number  }[], `startIndex?`: undefined \| number): Promise\<{ addressKeyPair: [IKeyPair](interfaces/ikeypair.md) ; input: [IUTXOInput](interfaces/iutxoinput.md)  }[]>
 
 Calculate the inputs from the seed and basePath.
 
@@ -202,7 +305,7 @@ Name | Type | Description |
 `client` | [IClient](interfaces/iclient.md) | The client to send the transfer with. |
 `seed` | [ISeed](interfaces/iseed.md) | The seed to use for address generation. |
 `basePath` | [Bip32Path](classes/bip32path.md) | The base path to start looking for addresses. |
-`outputs` | { address: string ; amount: number  }[] | The outputs to send. |
+`outputs` | { address: string ; addressType: number ; amount: number  }[] | The outputs to send. |
 `startIndex?` | undefined \| number | The start index for the wallet count address, defaults to 0. |
 
 **Returns:** Promise\<{ addressKeyPair: [IKeyPair](interfaces/ikeypair.md) ; input: [IUTXOInput](interfaces/iutxoinput.md)  }[]>
@@ -635,24 +738,6 @@ All the unspent addresses.
 
 ___
 
-### isHex
-
-▸ **isHex**(`value`: string): boolean
-
-Is the data hex format.
-
-#### Parameters:
-
-Name | Type | Description |
------- | ------ | ------ |
-`value` | string | The value to test. |
-
-**Returns:** boolean
-
-true if the string is hex.
-
-___
-
 ### logAddress
 
 ▸ **logAddress**(`prefix`: string, `unknownAddress?`: [ITypeBase](interfaces/itypebase.md)\<unknown>): void
@@ -665,6 +750,23 @@ Name | Type | Description |
 ------ | ------ | ------ |
 `prefix` | string | The prefix for the output. |
 `unknownAddress?` | [ITypeBase](interfaces/itypebase.md)\<unknown> | The address to log.  |
+
+**Returns:** void
+
+___
+
+### logInfo
+
+▸ **logInfo**(`prefix`: string, `info`: [INodeInfo](interfaces/inodeinfo.md)): void
+
+Log the node information.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`prefix` | string | The prefix for the output. |
+`info` | [INodeInfo](interfaces/inodeinfo.md) | The info to log.  |
 
 **Returns:** void
 
@@ -699,6 +801,23 @@ Name | Type | Description |
 ------ | ------ | ------ |
 `prefix` | string | The prefix for the output. |
 `message` | [IMessage](interfaces/imessage.md) | The message to log.  |
+
+**Returns:** void
+
+___
+
+### logMessageMetadata
+
+▸ **logMessageMetadata**(`prefix`: string, `messageMetadata`: [IMessageMetadata](interfaces/imessagemetadata.md)): void
+
+Log the message metadata to the console.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`prefix` | string | The prefix for the output. |
+`messageMetadata` | [IMessageMetadata](interfaces/imessagemetadata.md) | The messageMetadata to log.  |
 
 **Returns:** void
 
@@ -750,6 +869,23 @@ Name | Type | Description |
 ------ | ------ | ------ |
 `prefix` | string | The prefix for the output. |
 `unknownSignature?` | [ITypeBase](interfaces/itypebase.md)\<unknown> | The signature to log.  |
+
+**Returns:** void
+
+___
+
+### logTips
+
+▸ **logTips**(`prefix`: string, `tips`: [ITipsResponse](interfaces/itipsresponse.md)): void
+
+Log the tips information.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`prefix` | string | The prefix for the output. |
+`tips` | [ITipsResponse](interfaces/itipsresponse.md) | The tips to log.  |
 
 **Returns:** void
 
@@ -933,7 +1069,7 @@ ___
 
 ### send
 
-▸ **send**(`client`: [IClient](interfaces/iclient.md), `seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `address`: string, `amount`: number, `startIndex?`: undefined \| number): Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+▸ **send**(`client`: [IClient](interfaces/iclient.md), `seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `addressBech32`: string, `amount`: number, `startIndex?`: undefined \| number): Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
 
 Send a transfer from the balance on the seed.
 
@@ -944,7 +1080,7 @@ Name | Type | Description |
 `client` | [IClient](interfaces/iclient.md) | The client to send the transfer with. |
 `seed` | [ISeed](interfaces/iseed.md) | The seed to use for address generation. |
 `basePath` | [Bip32Path](classes/bip32path.md) | The base path to start looking for addresses. |
-`address` | string | The address to send the funds to. |
+`addressBech32` | string | The address to send the funds to in bech32 format. |
 `amount` | number | The amount to send. |
 `startIndex?` | undefined \| number | The start index for the wallet count address, defaults to 0. |
 
@@ -956,7 +1092,7 @@ ___
 
 ### sendAdvanced
 
-▸ **sendAdvanced**(`client`: [IClient](interfaces/iclient.md), `inputsAndSignatureKeyPairs`: { addressKeyPair: [IKeyPair](interfaces/ikeypair.md) ; input: [IUTXOInput](interfaces/iutxoinput.md)  }[], `outputs`: { address: string ; amount: number  }[], `indexationKey?`: undefined \| string, `indexationData?`: Uint8Array): Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+▸ **sendAdvanced**(`client`: [IClient](interfaces/iclient.md), `inputsAndSignatureKeyPairs`: { addressKeyPair: [IKeyPair](interfaces/ikeypair.md) ; input: [IUTXOInput](interfaces/iutxoinput.md)  }[], `outputs`: { address: string ; addressType: number ; amount: number  }[], `indexationKey?`: undefined \| string, `indexationData?`: Uint8Array): Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
 
 Send a transfer from the balance on the seed.
 
@@ -966,7 +1102,7 @@ Name | Type | Description |
 ------ | ------ | ------ |
 `client` | [IClient](interfaces/iclient.md) | The client to send the transfer with. |
 `inputsAndSignatureKeyPairs` | { addressKeyPair: [IKeyPair](interfaces/ikeypair.md) ; input: [IUTXOInput](interfaces/iutxoinput.md)  }[] | The inputs with the signature key pairs needed to sign transfers. |
-`outputs` | { address: string ; amount: number  }[] | The outputs to send. |
+`outputs` | { address: string ; addressType: number ; amount: number  }[] | The outputs to send. |
 `indexationKey?` | undefined \| string | Optional indexation key. |
 `indexationData?` | Uint8Array | Optional index data. |
 
@@ -993,6 +1129,29 @@ Name | Type | Description |
 **Returns:** Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
 
 The id of the message created and the message.
+
+___
+
+### sendEd25519
+
+▸ **sendEd25519**(`client`: [IClient](interfaces/iclient.md), `seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `addressEd25519`: string, `amount`: number, `startIndex?`: undefined \| number): Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+
+Send a transfer from the balance on the seed.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`client` | [IClient](interfaces/iclient.md) | The client to send the transfer with. |
+`seed` | [ISeed](interfaces/iseed.md) | The seed to use for address generation. |
+`basePath` | [Bip32Path](classes/bip32path.md) | The base path to start looking for addresses. |
+`addressEd25519` | string | The address to send the funds to in ed25519 format. |
+`amount` | number | The amount to send. |
+`startIndex?` | undefined \| number | The start index for the wallet count address, defaults to 0. |
+
+**Returns:** Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+
+The id of the message created and the contructed message.
 
 ___
 

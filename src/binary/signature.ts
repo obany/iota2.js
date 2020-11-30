@@ -1,5 +1,5 @@
 import { Ed25519 } from "../crypto/ed25519";
-import { IEd25519Signature } from "../models/IEd25519Signature";
+import { ED25519_SIGNATURE_TYPE, IEd25519Signature } from "../models/IEd25519Signature";
 import { ReadStream } from "../utils/readStream";
 import { WriteStream } from "../utils/writeStream";
 import { SMALL_TYPE_LENGTH } from "./common";
@@ -22,7 +22,7 @@ export function deserializeSignature(readStream: ReadStream): IEd25519Signature 
     const type = readStream.readByte("signature.type", false);
     let input;
 
-    if (type === 1) {
+    if (type === ED25519_SIGNATURE_TYPE) {
         input = deserializeEd25519Signature(readStream);
     } else {
         throw new Error(`Unrecognized signature type ${type}`);
@@ -38,7 +38,7 @@ export function deserializeSignature(readStream: ReadStream): IEd25519Signature 
  */
 export function serializeSignature(writeStream: WriteStream,
     object: IEd25519Signature): void {
-    if (object.type === 1) {
+    if (object.type === ED25519_SIGNATURE_TYPE) {
         serializeEd25519Signature(writeStream, object);
     } else {
         throw new Error(`Unrecognized signature type ${object.type}`);
@@ -57,7 +57,7 @@ export function deserializeEd25519Signature(readStream: ReadStream): IEd25519Sig
     }
 
     const type = readStream.readByte("ed25519Signature.type");
-    if (type !== 1) {
+    if (type !== ED25519_SIGNATURE_TYPE) {
         throw new Error(`Type mismatch in ed25519Signature ${type}`);
     }
 
@@ -65,7 +65,7 @@ export function deserializeEd25519Signature(readStream: ReadStream): IEd25519Sig
     const signature = readStream.readFixedHex("ed25519Signature.signature", Ed25519.SIGNATURE_SIZE);
 
     return {
-        type,
+        type: 1,
         publicKey,
         signature
     };
