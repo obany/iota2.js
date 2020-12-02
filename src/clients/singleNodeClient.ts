@@ -38,6 +38,12 @@ export class SingleNodeClient implements IClient {
     private readonly _endpoint: string;
 
     /**
+     * The base path for the API.
+     * @internal
+     */
+    private readonly _basePath: string;
+
+    /**
      * Optional POW provider to be used for messages with nonce=0/undefined.
      * @internal
      */
@@ -46,13 +52,15 @@ export class SingleNodeClient implements IClient {
     /**
      * Create a new instance of client.
      * @param endpoint The endpoint.
+     * @param basePath for the API defaults to /api/v1/
      * @param powProvider Optional local POW provider.
      */
-    constructor(endpoint: string, powProvider?: IPowProvider) {
+    constructor(endpoint: string, basePath?: string, powProvider?: IPowProvider) {
         if (!/^https?:\/\/\w+(\.\w+)*(:\d+)?(\/.*)?$/.test(endpoint)) {
             throw new Error("The endpoint is not in the correct format");
         }
         this._endpoint = endpoint.replace(/\/+$/, "");
+        this._basePath = basePath ?? "/api/v1/";
         this._powProvider = powProvider;
     }
 
@@ -77,7 +85,7 @@ export class SingleNodeClient implements IClient {
      * @returns The node information.
      */
     public async info(): Promise<INodeInfo> {
-        return this.fetchJson<never, INodeInfo>("get", "/api/v1/info");
+        return this.fetchJson<never, INodeInfo>("get", "info");
     }
 
     /**
@@ -85,7 +93,7 @@ export class SingleNodeClient implements IClient {
      * @returns The tips.
      */
     public async tips(): Promise<ITipsResponse> {
-        return this.fetchJson<never, ITipsResponse>("get", "/api/v1/tips");
+        return this.fetchJson<never, ITipsResponse>("get", "tips");
     }
 
     /**
@@ -94,7 +102,7 @@ export class SingleNodeClient implements IClient {
      * @returns The message data.
      */
     public async message(messageId: string): Promise<IMessage> {
-        return this.fetchJson<never, IMessage>("get", `/api/v1/messages/${messageId}`);
+        return this.fetchJson<never, IMessage>("get", `messages/${messageId}`);
     }
 
     /**
@@ -103,7 +111,7 @@ export class SingleNodeClient implements IClient {
      * @returns The message metadata.
      */
     public async messageMetadata(messageId: string): Promise<IMessageMetadata> {
-        return this.fetchJson<never, IMessageMetadata>("get", `/api/v1/messages/${messageId}/metadata`);
+        return this.fetchJson<never, IMessageMetadata>("get", `messages/${messageId}/metadata`);
     }
 
     /**
@@ -112,7 +120,7 @@ export class SingleNodeClient implements IClient {
      * @returns The message raw data.
      */
     public async messageRaw(messageId: string): Promise<Uint8Array> {
-        return this.fetchBinary("get", `/api/v1/messages/${messageId}/raw`);
+        return this.fetchBinary("get", `messages/${messageId}/raw`);
     }
 
     /**
@@ -135,7 +143,7 @@ export class SingleNodeClient implements IClient {
             }
         }
 
-        const response = await this.fetchJson<IMessage, IMessageIdResponse>("post", "/api/v1/messages", message);
+        const response = await this.fetchJson<IMessage, IMessageIdResponse>("post", "messages", message);
 
         return response.messageId;
     }
@@ -153,7 +161,7 @@ export class SingleNodeClient implements IClient {
             BigIntHelper.write8(nonce, message, message.length - 8);
         }
 
-        const response = await this.fetchBinary<IMessageIdResponse>("post", "/api/v1/messages", message);
+        const response = await this.fetchBinary<IMessageIdResponse>("post", "messages", message);
 
         return (response as IMessageIdResponse).messageId;
     }
@@ -166,7 +174,7 @@ export class SingleNodeClient implements IClient {
     public async messagesFind(indexationKey: string): Promise<IMessagesResponse> {
         return this.fetchJson<unknown, IMessagesResponse>(
             "get",
-            `/api/v1/messages?index=${encodeURIComponent(indexationKey)}`
+            `messages?index=${encodeURIComponent(indexationKey)}`
         );
     }
 
@@ -178,7 +186,7 @@ export class SingleNodeClient implements IClient {
     public async messageChildren(messageId: string): Promise<IChildrenResponse> {
         return this.fetchJson<unknown, IChildrenResponse>(
             "get",
-            `/api/v1/messages/${messageId}/children`
+            `messages/${messageId}/children`
         );
     }
 
@@ -190,7 +198,7 @@ export class SingleNodeClient implements IClient {
     public async output(outputId: string): Promise<IOutputResponse> {
         return this.fetchJson<unknown, IOutputResponse>(
             "get",
-            `/api/v1/outputs/${outputId}`
+            `outputs/${outputId}`
         );
     }
 
@@ -205,7 +213,7 @@ export class SingleNodeClient implements IClient {
         }
         return this.fetchJson<unknown, IAddressResponse>(
             "get",
-            `/api/v1/addresses/${addressBech32}`
+            `addresses/${addressBech32}`
         );
     }
 
@@ -220,7 +228,7 @@ export class SingleNodeClient implements IClient {
         }
         return this.fetchJson<unknown, IAddressOutputsResponse>(
             "get",
-            `/api/v1/addresses/${addressBech32}/outputs`
+            `addresses/${addressBech32}/outputs`
         );
     }
 
@@ -235,7 +243,7 @@ export class SingleNodeClient implements IClient {
         }
         return this.fetchJson<unknown, IAddressResponse>(
             "get",
-            `/api/v1/addresses/ed25519/${addressEd25519}`
+            `addresses/ed25519/${addressEd25519}`
         );
     }
 
@@ -250,7 +258,7 @@ export class SingleNodeClient implements IClient {
         }
         return this.fetchJson<unknown, IAddressOutputsResponse>(
             "get",
-            `/api/v1/addresses/ed25519/${addressEd25519}/outputs`
+            `addresses/ed25519/${addressEd25519}/outputs`
         );
     }
 
@@ -262,7 +270,7 @@ export class SingleNodeClient implements IClient {
     public async milestone(index: number): Promise<IMilestoneResponse> {
         return this.fetchJson<unknown, IMilestoneResponse>(
             "get",
-            `/api/v1/milestones/${index}`
+            `milestones/${index}`
         );
     }
 
@@ -273,7 +281,7 @@ export class SingleNodeClient implements IClient {
     public async peers(): Promise<IPeer[]> {
         return this.fetchJson<unknown, IPeer[]>(
             "get",
-            "/api/v1/peers"
+            "peers"
         );
     }
 
@@ -289,7 +297,7 @@ export class SingleNodeClient implements IClient {
             alias?: string;
         }, IPeer>(
             "post",
-            "/api/v1/peers",
+            "peers",
             {
                 multiAddress,
                 alias
@@ -306,7 +314,7 @@ export class SingleNodeClient implements IClient {
         // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
         return this.fetchJson<unknown, void>(
             "delete",
-            `/api/v1/peers/${peerId}`
+            `peers/${peerId}`
         );
     }
 
@@ -318,7 +326,7 @@ export class SingleNodeClient implements IClient {
     public async peer(peerId: string): Promise<IPeer> {
         return this.fetchJson<unknown, IPeer>(
             "get",
-            `/api/v1/peers/${peerId}`
+            `peers/${peerId}`
         );
     }
 
@@ -349,7 +357,7 @@ export class SingleNodeClient implements IClient {
      */
     private async fetchJson<T, U>(method: "get" | "post" | "delete", route: string, requestData?: T): Promise<U> {
         const response = await fetch(
-            `${this._endpoint}${route}`,
+            `${this._endpoint}${this._basePath}${route}`,
             {
                 method,
                 headers: {
@@ -386,7 +394,7 @@ export class SingleNodeClient implements IClient {
         route: string,
         requestData?: Uint8Array): Promise<Uint8Array | T> {
         const response = await fetch(
-            `${this._endpoint}${route}`,
+            `${this._endpoint}${this._basePath}${route}`,
             {
                 method,
                 headers: {

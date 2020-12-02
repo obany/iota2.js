@@ -18,9 +18,10 @@ export declare class SingleNodeClient implements IClient {
     /**
      * Create a new instance of client.
      * @param endpoint The endpoint.
+     * @param basePath for the API defaults to /api/v1/
      * @param powProvider Optional local POW provider.
      */
-    constructor(endpoint: string, powProvider?: IPowProvider);
+    constructor(endpoint: string, basePath?: string, powProvider?: IPowProvider);
     /**
      * Get the health of the node.
      * @returns True if the node is healthy.

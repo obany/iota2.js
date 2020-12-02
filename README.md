@@ -103,7 +103,7 @@ The example is included for reference purposes, but should not be used as it is 
 You can experiment using it or any other PoW implementation by passing it to the constructor of a SingleNodeClient.
 
 ```js
-const client = new SingleNodeClient("http://localhost:14265", new LocalPowProvider());
+const client = new SingleNodeClient("http://localhost:14265", undefined, new LocalPowProvider());
 ```
 
 ## More Examples

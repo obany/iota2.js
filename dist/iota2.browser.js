@@ -6081,13 +6081,15 @@
 	    /**
 	     * Create a new instance of client.
 	     * @param endpoint The endpoint.
+	     * @param basePath for the API defaults to /api/v1/
 	     * @param powProvider Optional local POW provider.
 	     */
-	    function SingleNodeClient(endpoint, powProvider) {
+	    function SingleNodeClient(endpoint, basePath, powProvider) {
 	        if (!/^https?:\/\/\w+(\.\w+)*(:\d+)?(\/.*)?$/.test(endpoint)) {
 	            throw new Error("The endpoint is not in the correct format");
 	        }
 	        this._endpoint = endpoint.replace(/\/+$/, "");
+	        this._basePath = basePath !== null && basePath !== void 0 ? basePath : "/api/v1/";
 	        this._powProvider = powProvider;
 	    }
 	    /**
@@ -6120,7 +6122,7 @@
 	    SingleNodeClient.prototype.info = function () {
 	        return __awaiter(this, void 0, void 0, function () {
 	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/info")];
+	                return [2 /*return*/, this.fetchJson("get", "info")];
 	            });
 	        });
 	    };
@@ -6131,7 +6133,7 @@
 	    SingleNodeClient.prototype.tips = function () {
 	        return __awaiter(this, void 0, void 0, function () {
 	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/tips")];
+	                return [2 /*return*/, this.fetchJson("get", "tips")];
 	            });
 	        });
 	    };
@@ -6143,7 +6145,7 @@
 	    SingleNodeClient.prototype.message = function (messageId) {
 	        return __awaiter(this, void 0, void 0, function () {
 	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId)];
+	                return [2 /*return*/, this.fetchJson("get", "messages/" + messageId)];
 	            });
 	        });
 	    };
@@ -6155,7 +6157,7 @@
 	    SingleNodeClient.prototype.messageMetadata = function (messageId) {
 	        return __awaiter(this, void 0, void 0, function () {
 	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId + "/metadata")];
+	                return [2 /*return*/, this.fetchJson("get", "messages/" + messageId + "/metadata")];
 	            });
 	        });
 	    };
@@ -6167,7 +6169,7 @@
 	    SingleNodeClient.prototype.messageRaw = function (messageId) {
 	        return __awaiter(this, void 0, void 0, function () {
 	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchBinary("get", "/api/v1/messages/" + messageId + "/raw")];
+	                return [2 /*return*/, this.fetchBinary("get", "messages/" + messageId + "/raw")];
 	            });
 	        });
 	    };
@@ -6196,7 +6198,7 @@
 	                    case 2:
 	                        message$1.nonce = "0";
 	                        _a.label = 3;
-	                    case 3: return [4 /*yield*/, this.fetchJson("post", "/api/v1/messages", message$1)];
+	                    case 3: return [4 /*yield*/, this.fetchJson("post", "messages", message$1)];
 	                    case 4:
 	                        response = _a.sent();
 	                        return [2 /*return*/, response.messageId];
@@ -6222,7 +6224,7 @@
 	                        nonce = _a.sent();
 	                        bigIntHelper.BigIntHelper.write8(nonce, message, message.length - 8);
 	                        _a.label = 2;
-	                    case 2: return [4 /*yield*/, this.fetchBinary("post", "/api/v1/messages", message)];
+	                    case 2: return [4 /*yield*/, this.fetchBinary("post", "messages", message)];
 	                    case 3:
 	                        response = _a.sent();
 	                        return [2 /*return*/, response.messageId];
@@ -6238,7 +6240,7 @@
 	    SingleNodeClient.prototype.messagesFind = function (indexationKey) {
 	        return __awaiter(this, void 0, void 0, function () {
 	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages?index=" + encodeURIComponent(indexationKey))];
+	                return [2 /*return*/, this.fetchJson("get", "messages?index=" + encodeURIComponent(indexationKey))];
 	            });
 	        });
 	    };
@@ -6250,7 +6252,7 @@
 	    SingleNodeClient.prototype.messageChildren = function (messageId) {
 	        return __awaiter(this, void 0, void 0, function () {
 	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId + "/children")];
+	                return [2 /*return*/, this.fetchJson("get", "messages/" + messageId + "/children")];
 	            });
 	        });
 	    };
@@ -6262,7 +6264,7 @@
 	    SingleNodeClient.prototype.output = function (outputId) {
 	        return __awaiter(this, void 0, void 0, function () {
 	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/outputs/" + outputId)];
+	                return [2 /*return*/, this.fetchJson("get", "outputs/" + outputId)];
 	            });
 	        });
 	    };
@@ -6277,7 +6279,7 @@
 	                if (!bech32Helper.Bech32Helper.matches(addressBech32)) {
 	                    throw new Error("The supplied address does not appear to be bech32 format");
 	                }
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/" + addressBech32)];
+	                return [2 /*return*/, this.fetchJson("get", "addresses/" + addressBech32)];
 	            });
 	        });
 	    };
@@ -6292,7 +6294,7 @@
 	                if (!bech32Helper.Bech32Helper.matches(addressBech32)) {
 	                    throw new Error("The supplied address does not appear to be bech32 format");
 	                }
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/" + addressBech32 + "/outputs")];
+	                return [2 /*return*/, this.fetchJson("get", "addresses/" + addressBech32 + "/outputs")];
 	            });
 	        });
 	    };
@@ -6307,7 +6309,7 @@
 	                if (!converter.Converter.isHex(addressEd25519)) {
 	                    throw new Error("The supplied address does not appear to be hex format");
 	                }
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/ed25519/" + addressEd25519)];
+	                return [2 /*return*/, this.fetchJson("get", "addresses/ed25519/" + addressEd25519)];
 	            });
 	        });
 	    };
@@ -6322,7 +6324,7 @@
 	                if (!converter.Converter.isHex(addressEd25519)) {
 	                    throw new Error("The supplied address does not appear to be hex format");
 	                }
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/ed25519/" + addressEd25519 + "/outputs")];
+	                return [2 /*return*/, this.fetchJson("get", "addresses/ed25519/" + addressEd25519 + "/outputs")];
 	            });
 	        });
 	    };
@@ -6334,7 +6336,7 @@
 	    SingleNodeClient.prototype.milestone = function (index) {
 	        return __awaiter(this, void 0, void 0, function () {
 	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/milestones/" + index)];
+	                return [2 /*return*/, this.fetchJson("get", "milestones/" + index)];
 	            });
 	        });
 	    };
@@ -6345,7 +6347,7 @@
 	    SingleNodeClient.prototype.peers = function () {
 	        return __awaiter(this, void 0, void 0, function () {
 	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/peers")];
+	                return [2 /*return*/, this.fetchJson("get", "peers")];
 	            });
 	        });
 	    };
@@ -6358,7 +6360,7 @@
 	    SingleNodeClient.prototype.peerAdd = function (multiAddress, alias) {
 	        return __awaiter(this, void 0, void 0, function () {
 	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("post", "/api/v1/peers", {
+	                return [2 /*return*/, this.fetchJson("post", "peers", {
 	                        multiAddress: multiAddress,
 	                        alias: alias
 	                    })];
@@ -6374,7 +6376,7 @@
 	        return __awaiter(this, void 0, void 0, function () {
 	            return __generator(this, function (_a) {
 	                // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-	                return [2 /*return*/, this.fetchJson("delete", "/api/v1/peers/" + peerId)];
+	                return [2 /*return*/, this.fetchJson("delete", "peers/" + peerId)];
 	            });
 	        });
 	    };
@@ -6386,7 +6388,7 @@
 	    SingleNodeClient.prototype.peer = function (peerId) {
 	        return __awaiter(this, void 0, void 0, function () {
 	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/peers/" + peerId)];
+	                return [2 /*return*/, this.fetchJson("get", "peers/" + peerId)];
 	            });
 	        });
 	    };
@@ -6425,7 +6427,7 @@
 	            var response, responseData;
 	            return __generator(this, function (_d) {
 	                switch (_d.label) {
-	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + route, {
+	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + this._basePath + route, {
 	                            method: method,
 	                            headers: {
 	                                "Content-Type": "application/json"
@@ -6459,7 +6461,7 @@
 	            var response, responseData, _d;
 	            return __generator(this, function (_e) {
 	                switch (_e.label) {
-	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + route, {
+	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + this._basePath + route, {
 	                            method: method,
 	                            headers: {
 	                                "Content-Type": "application/octet-stream"
