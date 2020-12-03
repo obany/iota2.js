@@ -79,21 +79,21 @@ export function logMessage(prefix: string, message: IMessage): void {
  * @param messageMetadata The messageMetadata to log.
  */
 export function logMessageMetadata(prefix: string, messageMetadata: IMessageMetadata): void {
-    console.log(`${prefix}\tMessage Id:`, messageMetadata.messageId);
-    console.log(`${prefix}\tParent 1 Message Id:`, messageMetadata.parent1MessageId);
-    console.log(`${prefix}\tParent 2 Message Id:`, messageMetadata.parent2MessageId);
+    logger(`${prefix}\tMessage Id:`, messageMetadata.messageId);
+    logger(`${prefix}\tParent 1 Message Id:`, messageMetadata.parent1MessageId);
+    logger(`${prefix}\tParent 2 Message Id:`, messageMetadata.parent2MessageId);
     if (messageMetadata.isSolid !== undefined) {
-        console.log(`${prefix}\tIs Solid:`, messageMetadata.isSolid);
+        logger(`${prefix}\tIs Solid:`, messageMetadata.isSolid);
     }
     if (messageMetadata.referencedByMilestoneIndex !== undefined) {
-        console.log(`${prefix}\tReferenced By Milestone Index:`, messageMetadata.referencedByMilestoneIndex);
+        logger(`${prefix}\tReferenced By Milestone Index:`, messageMetadata.referencedByMilestoneIndex);
     }
-    console.log(`${prefix}\tLedger Inclusion State:`, messageMetadata.ledgerInclusionState);
+    logger(`${prefix}\tLedger Inclusion State:`, messageMetadata.ledgerInclusionState);
     if (messageMetadata.shouldPromote !== undefined) {
-        console.log(`${prefix}\tShould Promote:`, messageMetadata.shouldPromote);
+        logger(`${prefix}\tShould Promote:`, messageMetadata.shouldPromote);
     }
     if (messageMetadata.shouldReattach !== undefined) {
-        console.log(`${prefix}\tShould Reattach:`, messageMetadata.shouldReattach);
+        logger(`${prefix}\tShould Reattach:`, messageMetadata.shouldReattach);
     }
 }
 
