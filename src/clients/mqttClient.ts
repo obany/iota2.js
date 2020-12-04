@@ -137,13 +137,24 @@ export class MqttClient implements IMqttClient {
 
     /**
      * Subscribe to the address for output updates.
-     * @param address The address to monitor.
+     * @param addressBech32 The address to monitor.
      * @param callback The callback which is called when new data arrives.
      * @returns A subscription Id which can be used to unsubscribe.
      */
-    public addressOutputs(address: string,
+    public addressOutputs(addressBech32: string,
         callback: (topic: string, data: IOutputResponse) => void): string {
-        return this.internalSubscribe(`addresses/${address}/outputs`, true, callback);
+        return this.internalSubscribe(`addresses/${addressBech32}/outputs`, true, callback);
+    }
+
+    /**
+     * Subscribe to the ed25519 address for output updates.
+     * @param addressEd25519 The address to monitor.
+     * @param callback The callback which is called when new data arrives.
+     * @returns A subscription Id which can be used to unsubscribe.
+     */
+    public addressEd25519Outputs(addressEd25519: string,
+        callback: (topic: string, data: IOutputResponse) => void): string {
+        return this.internalSubscribe(`addresses/ed25519/${addressEd25519}/outputs`, true, callback);
     }
 
     /**

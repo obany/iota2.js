@@ -5192,12 +5192,21 @@
 	    };
 	    /**
 	     * Subscribe to the address for output updates.
-	     * @param address The address to monitor.
+	     * @param addressBech32 The address to monitor.
 	     * @param callback The callback which is called when new data arrives.
 	     * @returns A subscription Id which can be used to unsubscribe.
 	     */
-	    MqttClient.prototype.addressOutputs = function (address, callback) {
-	        return this.internalSubscribe("addresses/" + address + "/outputs", true, callback);
+	    MqttClient.prototype.addressOutputs = function (addressBech32, callback) {
+	        return this.internalSubscribe("addresses/" + addressBech32 + "/outputs", true, callback);
+	    };
+	    /**
+	     * Subscribe to the ed25519 address for output updates.
+	     * @param addressEd25519 The address to monitor.
+	     * @param callback The callback which is called when new data arrives.
+	     * @returns A subscription Id which can be used to unsubscribe.
+	     */
+	    MqttClient.prototype.addressEd25519Outputs = function (addressEd25519, callback) {
+	        return this.internalSubscribe("addresses/ed25519/" + addressEd25519 + "/outputs", true, callback);
 	    };
 	    /**
 	     * Subscribe to get all messages in binary form.

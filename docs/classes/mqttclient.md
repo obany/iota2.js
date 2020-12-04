@@ -22,6 +22,7 @@ MQTT Client implementation for pub/sub communication.
 
 ### Methods
 
+* [addressEd25519Outputs](mqttclient.md#addressed25519outputs)
 * [addressOutputs](mqttclient.md#addressoutputs)
 * [index](mqttclient.md#index)
 * [indexRaw](mqttclient.md#indexraw)
@@ -56,9 +57,28 @@ Name | Type | Default value | Description |
 
 ## Methods
 
+### addressEd25519Outputs
+
+▸ **addressEd25519Outputs**(`addressEd25519`: string, `callback`: (topic: string, data: [IOutputResponse](../interfaces/ioutputresponse.md)) => void): string
+
+Subscribe to the ed25519 address for output updates.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`addressEd25519` | string | The address to monitor. |
+`callback` | (topic: string, data: [IOutputResponse](../interfaces/ioutputresponse.md)) => void | The callback which is called when new data arrives. |
+
+**Returns:** string
+
+A subscription Id which can be used to unsubscribe.
+
+___
+
 ### addressOutputs
 
-▸ **addressOutputs**(`address`: string, `callback`: (topic: string, data: [IOutputResponse](../interfaces/ioutputresponse.md)) => void): string
+▸ **addressOutputs**(`addressBech32`: string, `callback`: (topic: string, data: [IOutputResponse](../interfaces/ioutputresponse.md)) => void): string
 
 Subscribe to the address for output updates.
 
@@ -66,7 +86,7 @@ Subscribe to the address for output updates.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`address` | string | The address to monitor. |
+`addressBech32` | string | The address to monitor. |
 `callback` | (topic: string, data: [IOutputResponse](../interfaces/ioutputresponse.md)) => void | The callback which is called when new data arrives. |
 
 **Returns:** string
