@@ -192,6 +192,7 @@ export function serializeMilestonePayload(writeStream: WriteStream,
     writeStream.writeUInt64("payloadMilestone.timestamp", BigInt(object.timestamp));
     writeStream.writeFixedHex("payloadMilestone.parent1", MESSAGE_ID_LENGTH, object.parent1);
     writeStream.writeFixedHex("payloadMilestone.parent2", MESSAGE_ID_LENGTH, object.parent2);
+
     writeStream.writeFixedHex("payloadMilestone.inclusionMerkleProof",
         MERKLE_PROOF_LENGTH, object.inclusionMerkleProof);
     writeStream.writeByte("payloadMilestone.publicKeysCount", object.publicKeys.length);

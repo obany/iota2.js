@@ -433,7 +433,7 @@
 	exports.UINT64_SIZE = 8;
 	exports.MESSAGE_ID_LENGTH = blake2b.Blake2b.SIZE_256;
 	exports.TRANSACTION_ID_LENGTH = blake2b.Blake2b.SIZE_256;
-	exports.MERKLE_PROOF_LENGTH = 64;
+	exports.MERKLE_PROOF_LENGTH = blake2b.Blake2b.SIZE_256;
 	exports.TYPE_LENGTH = exports.UINT32_SIZE;
 	exports.SMALL_TYPE_LENGTH = exports.BYTE_SIZE;
 	exports.STRING_LENGTH = exports.UINT16_SIZE;
@@ -8526,7 +8526,10 @@
 	            logger(prefix + "Milestone Payload");
 	            logger(prefix + "\tIndex:", payload.index);
 	            logger(prefix + "\tTimestamp:", payload.timestamp);
+	            logger(prefix + "\tParent 1:", payload.parent1);
+	            logger(prefix + "\tParent 2:", payload.parent2);
 	            logger(prefix + "\tInclusion Merkle Proof:", payload.inclusionMerkleProof);
+	            logger(prefix + "\tPublic Keys:", payload.publicKeys);
 	            logger(prefix + "\tSignatures:", payload.signatures);
 	        }
 	        else if (unknownPayload.type === IIndexationPayload.INDEXATION_PAYLOAD_TYPE) {
