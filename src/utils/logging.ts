@@ -85,6 +85,9 @@ export function logMessageMetadata(prefix: string, messageMetadata: IMessageMeta
     if (messageMetadata.isSolid !== undefined) {
         logger(`${prefix}\tIs Solid:`, messageMetadata.isSolid);
     }
+    if (messageMetadata.milestoneIndex !== undefined) {
+        logger(`${prefix}\tMilestone Index:`, messageMetadata.milestoneIndex);
+    }
     if (messageMetadata.referencedByMilestoneIndex !== undefined) {
         logger(`${prefix}\tReferenced By Milestone Index:`, messageMetadata.referencedByMilestoneIndex);
     }

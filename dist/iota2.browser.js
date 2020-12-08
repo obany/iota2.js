@@ -5857,7 +5857,7 @@
 	     * Does the provided string look like it might be an bech32 address with matching hrp.
 	     * @param bech32Text The bech32 text to text.
 	     * @param humanReadablePart The human readable part to match.
-	     * @returns True.
+	     * @returns True if the passed address matches the pattern for a bech32 address.
 	     */
 	    Bech32Helper.matches = function (bech32Text, humanReadablePart) {
 	        if (humanReadablePart === void 0) { humanReadablePart = Bech32Helper.BECH32_DEFAULT_HRP; }
@@ -8470,6 +8470,9 @@
 	    logger(prefix + "\tParent 2 Message Id:", messageMetadata.parent2MessageId);
 	    if (messageMetadata.isSolid !== undefined) {
 	        logger(prefix + "\tIs Solid:", messageMetadata.isSolid);
+	    }
+	    if (messageMetadata.milestoneIndex !== undefined) {
+	        logger(prefix + "\tMilestone Index:", messageMetadata.milestoneIndex);
 	    }
 	    if (messageMetadata.referencedByMilestoneIndex !== undefined) {
 	        logger(prefix + "\tReferenced By Milestone Index:", messageMetadata.referencedByMilestoneIndex);

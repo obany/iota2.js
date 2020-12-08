@@ -62,7 +62,7 @@ export class Bech32Helper {
      * Does the provided string look like it might be an bech32 address with matching hrp.
      * @param bech32Text The bech32 text to text.
      * @param humanReadablePart The human readable part to match.
-     * @returns True.
+     * @returns True if the passed address matches the pattern for a bech32 address.
      */
     public static matches(bech32Text?: string, humanReadablePart: string = Bech32Helper.BECH32_DEFAULT_HRP): boolean {
         return Bech32.matches(humanReadablePart, bech32Text);

@@ -66,7 +66,7 @@ Name | Type | Default value | Description |
 
 **Returns:** boolean
 
-True.
+True if the passed address matches the pattern for a bech32 address.
 
 ___
 

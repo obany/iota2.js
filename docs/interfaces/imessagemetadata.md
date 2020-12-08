@@ -17,6 +17,7 @@ Response from the metadata endpoint.
 * [isSolid](imessagemetadata.md#issolid)
 * [ledgerInclusionState](imessagemetadata.md#ledgerinclusionstate)
 * [messageId](imessagemetadata.md#messageid)
+* [milestoneIndex](imessagemetadata.md#milestoneindex)
 * [parent1MessageId](imessagemetadata.md#parent1messageid)
 * [parent2MessageId](imessagemetadata.md#parent2messageid)
 * [referencedByMilestoneIndex](imessagemetadata.md#referencedbymilestoneindex)
@@ -46,6 +47,14 @@ ___
 •  **messageId**: string
 
 The message id.
+
+___
+
+### milestoneIndex
+
+• `Optional` **milestoneIndex**: undefined \| number
+
+Is this message a valid milestone.
 
 ___
 

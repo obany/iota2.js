@@ -86,6 +86,7 @@ You can create a MQTT client which once connected can stream the following feeds
 * messageMetadata - Metadata updates for a specified messageId
 * output - Output updates for a specified outputId
 * addressOutputs - Address output updates for a specified address
+* address25519Outputs - Address output updates for a specified ed25519 address
 * messagesRaw - All messages in binary form
 * messages - All messaged decoded to objects
 * indexRaw - All messages for a specified indexation key in binary form

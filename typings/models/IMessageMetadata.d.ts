@@ -24,6 +24,10 @@ export interface IMessageMetadata {
      */
     referencedByMilestoneIndex?: number;
     /**
+     * Is this message a valid milestone.
+     */
+    milestoneIndex?: number;
+    /**
      * The ledger inclusion state.
      */
     ledgerInclusionState?: LedgerInclusionState;
