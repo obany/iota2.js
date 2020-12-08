@@ -18,11 +18,11 @@ export interface IMilestonePayload extends ITypeBase<1> {
     /**
      * The 1st parent where this milestone attaches to.
      */
-    parent1: string;
+    parent1MessageId: string;
     /**
      * The 2nd parent where this milestone attaches to.
      */
-    parent2: string;
+    parent2MessageId: string;
     /**
      * The merkle proof inclusions.
      */

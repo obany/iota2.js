@@ -59,8 +59,8 @@ describe("Binary Message", () => {
         expect(payload.type).toEqual(1);
         expect(payload.index).toEqual(1087);
         expect(payload.timestamp).toEqual(1605190003);
-        expect(payload.parent1).toEqual("c0ab1d1f6886ba6317634da6b2d957e7c987a9699dd3707d1e2751fcf4b8efe3");
-        expect(payload.parent2).toEqual("04ba147c9cc9bebd3b97310a23d385f33d8e67ac42868b69bc06f5468e3c0a02");
+        expect(payload.parent1MessageId).toEqual("c0ab1d1f6886ba6317634da6b2d957e7c987a9699dd3707d1e2751fcf4b8efe3");
+        expect(payload.parent2MessageId).toEqual("04ba147c9cc9bebd3b97310a23d385f33d8e67ac42868b69bc06f5468e3c0a02");
         expect(payload.inclusionMerkleProof).toEqual("786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419");
         expect(payload.publicKeys.length).toEqual(2);
         expect(payload.publicKeys[0]).toEqual("ed3c3f1a319ff4e909cf2771d79fece0ac9bd9fd2ee49ea6c0885c9cb3b1248c");

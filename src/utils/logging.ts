@@ -136,8 +136,8 @@ export function logPayload(prefix: string, unknownPayload?: ITypeBase<unknown>):
             logger(`${prefix}Milestone Payload`);
             logger(`${prefix}\tIndex:`, payload.index);
             logger(`${prefix}\tTimestamp:`, payload.timestamp);
-            logger(`${prefix}\tParent 1:`, payload.parent1);
-            logger(`${prefix}\tParent 2:`, payload.parent2);
+            logger(`${prefix}\tParent 1:`, payload.parent1MessageId);
+            logger(`${prefix}\tParent 2:`, payload.parent2MessageId);
             logger(`${prefix}\tInclusion Merkle Proof:`, payload.inclusionMerkleProof);
             logger(`${prefix}\tPublic Keys:`, payload.publicKeys);
             logger(`${prefix}\tSignatures:`, payload.signatures);

@@ -154,8 +154,8 @@ export function deserializeMilestonePayload(readStream: ReadStream): IMilestoneP
     }
     const index = readStream.readUInt32("payloadMilestone.index");
     const timestamp = readStream.readUInt64("payloadMilestone.timestamp");
-    const parent1 = readStream.readFixedHex("payloadMilestone.parent1", MESSAGE_ID_LENGTH);
-    const parent2 = readStream.readFixedHex("payloadMilestone.parent2", MESSAGE_ID_LENGTH);
+    const parent1MessageId = readStream.readFixedHex("payloadMilestone.parent1MessageId", MESSAGE_ID_LENGTH);
+    const parent2MessageId = readStream.readFixedHex("payloadMilestone.parent2MessageId", MESSAGE_ID_LENGTH);
     const inclusionMerkleProof = readStream.readFixedHex("payloadMilestone.inclusionMerkleProof", MERKLE_PROOF_LENGTH);
     const publicKeysCount = readStream.readByte("payloadMilestone.publicKeysCount");
     const publicKeys = [];
@@ -172,8 +172,8 @@ export function deserializeMilestonePayload(readStream: ReadStream): IMilestoneP
         type: 1,
         index,
         timestamp: Number(timestamp),
-        parent1,
-        parent2,
+        parent1MessageId,
+        parent2MessageId,
         inclusionMerkleProof,
         publicKeys,
         signatures
@@ -190,8 +190,8 @@ export function serializeMilestonePayload(writeStream: WriteStream,
     writeStream.writeUInt32("payloadMilestone.type", object.type);
     writeStream.writeUInt32("payloadMilestone.index", object.index);
     writeStream.writeUInt64("payloadMilestone.timestamp", BigInt(object.timestamp));
-    writeStream.writeFixedHex("payloadMilestone.parent1", MESSAGE_ID_LENGTH, object.parent1);
-    writeStream.writeFixedHex("payloadMilestone.parent2", MESSAGE_ID_LENGTH, object.parent2);
+    writeStream.writeFixedHex("payloadMilestone.parent1MessageId", MESSAGE_ID_LENGTH, object.parent1MessageId);
+    writeStream.writeFixedHex("payloadMilestone.parent2MessageId", MESSAGE_ID_LENGTH, object.parent2MessageId);
 
     writeStream.writeFixedHex("payloadMilestone.inclusionMerkleProof",
         MERKLE_PROOF_LENGTH, object.inclusionMerkleProof);

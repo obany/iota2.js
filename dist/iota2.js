@@ -4612,8 +4612,8 @@
 	    }
 	    var index = readStream.readUInt32("payloadMilestone.index");
 	    var timestamp = readStream.readUInt64("payloadMilestone.timestamp");
-	    var parent1 = readStream.readFixedHex("payloadMilestone.parent1", common.MESSAGE_ID_LENGTH);
-	    var parent2 = readStream.readFixedHex("payloadMilestone.parent2", common.MESSAGE_ID_LENGTH);
+	    var parent1MessageId = readStream.readFixedHex("payloadMilestone.parent1MessageId", common.MESSAGE_ID_LENGTH);
+	    var parent2MessageId = readStream.readFixedHex("payloadMilestone.parent2MessageId", common.MESSAGE_ID_LENGTH);
 	    var inclusionMerkleProof = readStream.readFixedHex("payloadMilestone.inclusionMerkleProof", common.MERKLE_PROOF_LENGTH);
 	    var publicKeysCount = readStream.readByte("payloadMilestone.publicKeysCount");
 	    var publicKeys = [];
@@ -4629,8 +4629,8 @@
 	        type: 1,
 	        index: index,
 	        timestamp: Number(timestamp),
-	        parent1: parent1,
-	        parent2: parent2,
+	        parent1MessageId: parent1MessageId,
+	        parent2MessageId: parent2MessageId,
 	        inclusionMerkleProof: inclusionMerkleProof,
 	        publicKeys: publicKeys,
 	        signatures: signatures
@@ -4646,8 +4646,8 @@
 	    writeStream.writeUInt32("payloadMilestone.type", object.type);
 	    writeStream.writeUInt32("payloadMilestone.index", object.index);
 	    writeStream.writeUInt64("payloadMilestone.timestamp", BigInt(object.timestamp));
-	    writeStream.writeFixedHex("payloadMilestone.parent1", common.MESSAGE_ID_LENGTH, object.parent1);
-	    writeStream.writeFixedHex("payloadMilestone.parent2", common.MESSAGE_ID_LENGTH, object.parent2);
+	    writeStream.writeFixedHex("payloadMilestone.parent1MessageId", common.MESSAGE_ID_LENGTH, object.parent1MessageId);
+	    writeStream.writeFixedHex("payloadMilestone.parent2MessageId", common.MESSAGE_ID_LENGTH, object.parent2MessageId);
 	    writeStream.writeFixedHex("payloadMilestone.inclusionMerkleProof", common.MERKLE_PROOF_LENGTH, object.inclusionMerkleProof);
 	    writeStream.writeByte("payloadMilestone.publicKeysCount", object.publicKeys.length);
 	    for (var i = 0; i < object.publicKeys.length; i++) {
@@ -8527,8 +8527,8 @@
 	            logger(prefix + "Milestone Payload");
 	            logger(prefix + "\tIndex:", payload.index);
 	            logger(prefix + "\tTimestamp:", payload.timestamp);
-	            logger(prefix + "\tParent 1:", payload.parent1);
-	            logger(prefix + "\tParent 2:", payload.parent2);
+	            logger(prefix + "\tParent 1:", payload.parent1MessageId);
+	            logger(prefix + "\tParent 2:", payload.parent2MessageId);
 	            logger(prefix + "\tInclusion Merkle Proof:", payload.inclusionMerkleProof);
 	            logger(prefix + "\tPublic Keys:", payload.publicKeys);
 	            logger(prefix + "\tSignatures:", payload.signatures);
