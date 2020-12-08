@@ -2,7 +2,7 @@ import { SingleNodeClient } from "../../src/clients/singleNodeClient";
 
 describe("Client", () => {
     test("Can fail to construct with invalid endpoint", async () => {
-        expect(() => new SingleNodeClient("")).toThrow("correct format");
+        expect(() => new SingleNodeClient("")).toThrow("can not be empty");
     });
 
     test("Can be constructed with local url", async () => {

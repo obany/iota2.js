@@ -6095,8 +6095,8 @@
 	     * @param powProvider Optional local POW provider.
 	     */
 	    function SingleNodeClient(endpoint, basePath, powProvider) {
-	        if (!/^https?:\/\/\w+(\.\w+)*(:\d+)?(\/.*)?$/.test(endpoint)) {
-	            throw new Error("The endpoint is not in the correct format");
+	        if (!endpoint) {
+	            throw new Error("The endpoint can not be empty");
 	        }
 	        this._endpoint = endpoint.replace(/\/+$/, "");
 	        this._basePath = basePath !== null && basePath !== void 0 ? basePath : "/api/v1/";

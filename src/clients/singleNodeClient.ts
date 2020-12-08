@@ -56,8 +56,8 @@ export class SingleNodeClient implements IClient {
      * @param powProvider Optional local POW provider.
      */
     constructor(endpoint: string, basePath?: string, powProvider?: IPowProvider) {
-        if (!/^https?:\/\/\w+(\.\w+)*(:\d+)?(\/.*)?$/.test(endpoint)) {
-            throw new Error("The endpoint is not in the correct format");
+        if (!endpoint) {
+            throw new Error("The endpoint can not be empty");
         }
         this._endpoint = endpoint.replace(/\/+$/, "");
         this._basePath = basePath ?? "/api/v1/";
