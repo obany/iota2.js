@@ -15,7 +15,7 @@ export interface IMqttStatus {
     /**
      * The connection status.
      */
-    isConnected: boolean;
+    state: "disconnected" | "connected" | "disconnecting" | "connecting";
 
     /**
      * Any errors.

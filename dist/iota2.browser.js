@@ -5283,7 +5283,7 @@
 	        this.triggerStatusCallbacks({
 	            type: "subscription-remove",
 	            message: subscriptionId,
-	            isConnected: this._client !== undefined
+	            state: this.calculateState()
 	        });
 	        if (this._statusSubscriptions[subscriptionId]) {
 	            delete this._statusSubscriptions[subscriptionId];
@@ -5342,7 +5342,7 @@
 	        this.triggerStatusCallbacks({
 	            type: "subscription-add",
 	            message: subscriptionId,
-	            isConnected: this._client !== undefined
+	            state: this.calculateState()
 	        });
 	        if (isNewTopic) {
 	            this.mqttSubscribe(customTopic);
@@ -5370,7 +5370,7 @@
 	                this.triggerStatusCallbacks({
 	                    type: "error",
 	                    message: "Subscribe to topic " + topic + " failed on " + this._endpoint,
-	                    isConnected: this._client !== undefined,
+	                    state: this.calculateState(),
 	                    error: err
 	                });
 	            }
@@ -5390,7 +5390,7 @@
 	                this.triggerStatusCallbacks({
 	                    type: "error",
 	                    message: "Unsubscribe from topic " + topic + " failed on " + this._endpoint,
-	                    isConnected: this._client !== undefined,
+	                    state: this.calculateState(),
 	                    error: err
 	                });
 	            }
@@ -5418,7 +5418,7 @@
 	                            _this.triggerStatusCallbacks({
 	                                type: "connect",
 	                                message: "Connection complete " + _this._endpoint,
-	                                isConnected: true
+	                                state: _this.calculateState()
 	                            });
 	                        }
 	                    }
@@ -5426,7 +5426,7 @@
 	                        _this.triggerStatusCallbacks({
 	                            type: "error",
 	                            message: "Subscribe to topics failed on " + _this._endpoint,
-	                            isConnected: _this._client !== undefined,
+	                            state: _this.calculateState(),
 	                            error: err
 	                        });
 	                    }
@@ -5439,7 +5439,7 @@
 	                    _this.triggerStatusCallbacks({
 	                        type: "error",
 	                        message: "Error on " + _this._endpoint,
-	                        isConnected: _this._client !== undefined,
+	                        state: _this.calculateState(),
 	                        error: err
 	                    });
 	                });
@@ -5448,7 +5448,7 @@
 	                this.triggerStatusCallbacks({
 	                    type: "connect",
 	                    message: "Connection failed to " + this._endpoint,
-	                    isConnected: false,
+	                    state: this.calculateState(),
 	                    error: err
 	                });
 	            }
@@ -5471,7 +5471,7 @@
 	            this.triggerStatusCallbacks({
 	                type: "disconnect",
 	                message: "Disconnect complete " + this._endpoint,
-	                isConnected: true
+	                state: this.calculateState()
 	            });
 	        }
 	    };
@@ -5492,7 +5492,7 @@
 	                    this.triggerStatusCallbacks({
 	                        type: "error",
 	                        message: "Error decoding JSON for topic " + topic,
-	                        isConnected: this._client !== undefined,
+	                        state: this.calculateState(),
 	                        error: err
 	                    });
 	                }
@@ -5505,7 +5505,7 @@
 	                    this.triggerStatusCallbacks({
 	                        type: "error",
 	                        message: "Triggering callback failed for topic " + topic + " on subscription " + this._subscriptions[topic].subscriptionCallbacks[i].subscriptionId,
-	                        isConnected: this._client !== undefined,
+	                        state: this.calculateState(),
 	                        error: err
 	                    });
 	                }
@@ -5552,6 +5552,26 @@
 	            this.mqttDisconnect();
 	            this.mqttConnect();
 	        }
+	    };
+	    /**
+	     * Calculate the state of the client.
+	     * @returns The client state.
+	     * @internal
+	     */
+	    MqttClient.prototype.calculateState = function () {
+	        var state = "disconnected";
+	        if (this._client) {
+	            if (this._client.connected) {
+	                state = "connected";
+	            }
+	            else if (this._client.disconnecting) {
+	                state = "disconnecting";
+	            }
+	            else if (this._client.reconnecting) {
+	                state = "connecting";
+	            }
+	        }
+	        return state;
 	    };
 	    return MqttClient;
 	}());

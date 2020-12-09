@@ -265,7 +265,7 @@ export class MqttClient implements IMqttClient {
         this.triggerStatusCallbacks({
             type: "subscription-remove",
             message: subscriptionId,
-            isConnected: this._client !== undefined
+            state: this.calculateState()
         });
 
         if (this._statusSubscriptions[subscriptionId]) {
@@ -336,7 +336,7 @@ export class MqttClient implements IMqttClient {
         this.triggerStatusCallbacks({
             type: "subscription-add",
             message: subscriptionId,
-            isConnected: this._client !== undefined
+            state: this.calculateState()
         });
 
         if (isNewTopic) {
@@ -365,7 +365,7 @@ export class MqttClient implements IMqttClient {
                 this.triggerStatusCallbacks({
                     type: "error",
                     message: `Subscribe to topic ${topic} failed on ${this._endpoint}`,
-                    isConnected: this._client !== undefined,
+                    state: this.calculateState(),
                     error: err
                 });
             }
@@ -385,7 +385,7 @@ export class MqttClient implements IMqttClient {
                 this.triggerStatusCallbacks({
                     type: "error",
                     message: `Unsubscribe from topic ${topic} failed on ${this._endpoint}`,
-                    isConnected: this._client !== undefined,
+                    state: this.calculateState(),
                     error: err
                 });
             }
@@ -414,14 +414,14 @@ export class MqttClient implements IMqttClient {
                             this.triggerStatusCallbacks({
                                 type: "connect",
                                 message: `Connection complete ${this._endpoint}`,
-                                isConnected: true
+                                state: this.calculateState()
                             });
                         }
                     } catch (err) {
                         this.triggerStatusCallbacks({
                             type: "error",
                             message: `Subscribe to topics failed on ${this._endpoint}`,
-                            isConnected: this._client !== undefined,
+                            state: this.calculateState(),
                             error: err
                         });
                     }
@@ -436,7 +436,7 @@ export class MqttClient implements IMqttClient {
                     this.triggerStatusCallbacks({
                         type: "error",
                         message: `Error on ${this._endpoint}`,
-                        isConnected: this._client !== undefined,
+                        state: this.calculateState(),
                         error: err
                     });
                 });
@@ -444,7 +444,7 @@ export class MqttClient implements IMqttClient {
                 this.triggerStatusCallbacks({
                     type: "connect",
                     message: `Connection failed to ${this._endpoint}`,
-                    isConnected: false,
+                    state: this.calculateState(),
                     error: err
                 });
             }
@@ -469,7 +469,7 @@ export class MqttClient implements IMqttClient {
             this.triggerStatusCallbacks({
                 type: "disconnect",
                 message: `Disconnect complete ${this._endpoint}`,
-                isConnected: true
+                state: this.calculateState()
             });
         }
     }
@@ -490,7 +490,7 @@ export class MqttClient implements IMqttClient {
                     this.triggerStatusCallbacks({
                         type: "error",
                         message: `Error decoding JSON for topic ${topic}`,
-                        isConnected: this._client !== undefined,
+                        state: this.calculateState(),
                         error: err
                     });
                 }
@@ -503,7 +503,7 @@ export class MqttClient implements IMqttClient {
                         type: "error",
                         message: `Triggering callback failed for topic ${topic
                             } on subscription ${this._subscriptions[topic].subscriptionCallbacks[i].subscriptionId}`,
-                        isConnected: this._client !== undefined,
+                        state: this.calculateState(),
                         error: err
                     });
                 }
@@ -553,5 +553,26 @@ export class MqttClient implements IMqttClient {
             this.mqttDisconnect();
             this.mqttConnect();
         }
+    }
+
+    /**
+     * Calculate the state of the client.
+     * @returns The client state.
+     * @internal
+     */
+    private calculateState(): "disconnected" | "connected" | "disconnecting" | "connecting" {
+        let state: "disconnected" | "connected" | "disconnecting" | "connecting" = "disconnected";
+
+        if (this._client) {
+            if (this._client.connected) {
+                state = "connected";
+            } else if (this._client.disconnecting) {
+                state = "disconnecting";
+            } else if (this._client.reconnecting) {
+                state = "connecting";
+            }
+        }
+
+        return state;
     }
 }
